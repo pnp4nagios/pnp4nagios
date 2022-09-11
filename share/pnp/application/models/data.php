@@ -266,7 +266,7 @@ class Data_Model extends System_Model
         $xml         = array();
         if (file_exists($xmlfile)) {
             libxml_use_internal_errors(TRUE);
-            libxml_clear_errors(TRUE);
+            libxml_clear_errors();
             if(! $xml = simplexml_load_file($xmlfile) ){;
                 if( $throw_exception == TRUE ){
                     $errors = '<br>';

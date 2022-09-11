@@ -49,7 +49,7 @@ if ( ! extension_loaded('iconv'))
 	);
 }
 
-if (extension_loaded('mbstring') AND (ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING))
+if (extension_loaded('mbstring') AND (ini_get('mbstring.func_overload') & 2))
 {
 	trigger_error
 	(

@@ -1,0 +1,76 @@
+* Default Mode
+
+/etc/nagios/nagios.cfg
+
+ process_performance_data=1
+ service_perfdata_command=process-service-perfdata
+
+/etc/nagios/commands.cfg
+
+define command {
+  command_name    process-service-perfdata
+  command_line    /usr/bin/perl /usr/libexec/pnp4nagios/process_perfdata.pl
+}
+
+define command {
+  command_name    process-host-perfdata
+  command_line    /usr/bin/perl /usr/libexec/pnp4nagios/process_perfdata.pl -d HOSTPERFDATA
+}
+
+
+* Bulk Mode
+
+/etc/nagios/nagios.cfg :
+
+process_performance_data=1
+#
+# service performance data
+#
+service_perfdata_file=/var/spool/nagios/service-perfdata
+service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$
+service_perfdata_file_mode=a
+service_perfdata_file_processing_interval=15
+service_perfdata_file_processing_command=process-service-perfdata-file
+
+/etc/nagios/commands.cfg :
+
+define command{
+        command_name    process-service-perfdata-file
+        command_line    $USER1$/process_perfdata.pl --bulk=/var/spool/nagios/service-perfdata
+ }
+
+define command{
+        command_name    process-host-perfdata-file
+        command_line    $USER1$/process_perfdata.pl --bulk=/var/spool/nagios/host-perfdata
+ }
+
+
+* Bulk Mode with NPCD
+
+npcd daemon needs to be started :
+service npcd start
+chkconfig npcd on
+
+The configuration is identical to the bulk mode except for the used command.
+
+/etc/nagios/commands.cfg :
+
+define command{
+        command_name    process-service-perfdata-file
+        command_line    /bin/mv /var/spool/nagios/service-perfdata /var/spool/pnp4nagios/service-perfdata.$TIMET$
+ }
+
+define command{
+        command_name    process-host-perfdata-file
+        command_line    /bin/mv /var/spool/nagios/host-perfdata /var/spool/pnp4nagios/service-perfdata.$TIMET$
+ }
+
+
+* Nagios integration
+
+/etc/nagios/hostextinfo.cfg :
+
+define hostextinfo {
+    host_name localhost
+    action_url /pnp4nagios/graph?host=$HOSTNAME$
+    }
