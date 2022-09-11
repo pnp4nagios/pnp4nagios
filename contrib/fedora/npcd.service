@@ -1,0 +1,15 @@
+[Unit]
+Description=npcd rrd processor for pnp4nagios
+Documentation=http://docs.pnp4nagios.org/
+After=network.target local-fs.target
+
+[Service]
+Type=forking
+User=nagios
+Group=nagios
+Environment=CONFIG_FILE=/etc/pnp4nagios/npcd.cfg
+EnvironmentFile=-/etc/sysconfig/npcd
+ExecStart=/usr/sbin/npcd -d -f ${CONFIG_FILE}
+
+[Install]
+WantedBy=nagios.service

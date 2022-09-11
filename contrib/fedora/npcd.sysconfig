@@ -1,0 +1,5 @@
+#
+#
+# if the config file is in a different location, change it here
+# 
+#CONFIG_FILE=/etc/pnp4nagios/npcd.cfg

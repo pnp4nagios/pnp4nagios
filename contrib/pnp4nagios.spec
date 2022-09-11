@@ -12,17 +12,19 @@ License:        GPLv2
 URL:            https://github.com/celane/pnp4nagios
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
+BuildRequires:  git
 BuildRequires:  autoconf, automake, libtool
 BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)
-BuildRequires:  git
 Requires:       nagios
 Requires:       rrdtool-perl
+Requires:       php >= 8.0
 Requires:       php-gd
-Requires(post): chkconfig
-Requires(preun): chkconfig
-Requires(preun): initscripts
-Requires(postun): initscripts
+Requires:       systemd
+#Requires(post): chkconfig
+#Requires(preun): chkconfig
+#Requires(preun): initscripts
+#Requires(postun): initscripts
 
 %description
 PNP is an addon to nagios which analyzes performance data provided by plugins
@@ -34,6 +36,7 @@ and stores them automatically into RRD-databases.
 rm -rf %{NVdir}
 git clone %{url}.git %{NVdir}
 ###
+cd %{NVdir}
 autoreconf
 
 cp contrib/fedora/pnp4nagios-README.fedora README.fedora
@@ -56,6 +59,7 @@ make %{?_smp_mflags} all
 
 
 %install
+cd %{NVdir}
 if [ "$RPM_BUILD_ROOT" != "/" ]; then
     rm -rf $RPM_BUILD_ROOT
 fi
@@ -73,12 +77,16 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
-install -Dp -m 0644 %{SOURCE1} $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
-install -Dp -m 0755 %{SOURCE2} $RPM_BUILD_ROOT%{_initrddir}/npcd
+install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
+#install -Dp -m 0755 contrib/fedora/pnp4nagios-npcd.sysvinit $RPM_BUILD_ROOT%{_initrddir}/npcd
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
    > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
+install -Dp -m 0644 contrib/fedora/npcd.sysconfig \
+        $RPM_BUILD_ROOT%{_sysconfir}/sysconfig/npcd
+install -Dp -m 0644 contrib/fedora/npcd.service \
+        $RPM_BUILD_ROOT%{_unitdir}/npcd.service
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/nagios/brokers
 mv $RPM_BUILD_ROOT%{_libdir}/npcdmod.o \
    $RPM_BUILD_ROOT%{_libdir}/nagios/brokers/npcdmod.o
@@ -92,37 +100,22 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
 
 %clean
-if [ "$RPM_BUILD_ROOT" != "/" ]; then
-   rm -rf $RPM_BUILD_ROOT
-fi
+#if [ "$RPM_BUILD_ROOT" != "/" ]; then
+#   rm -rf $RPM_BUILD_ROOT
+#fi
 
-%post
-/sbin/chkconfig --add npcd
-
-
-%preun
-if [ $1 = 0 ]; then
-        /sbin/service npcd stop >/dev/null 2>&1
-        /sbin/chkconfig --del npcd
-fi
-
-
-%postun
-if [ "$1" -ge "1" ]; then
-        /sbin/service npcd condrestart >/dev/null 2>&1 || :
-fi
 
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog COPYING INSTALL README README.fedora
-%doc THANKS contrib/
+%doc %{NVdir}/AUTHORS %{NVdir}/ChangeLog %{NVdir}/COPYING
+%doc %{NVdir}/INSTALL %{NVdir}/README.md %{NVdir}/README.fedora
+%doc %{NVdir}/THANKS %{NVdir}/contrib/
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %attr(0640,root,nagios) %{_sysconfdir}/pnp4nagios/process_perfdata.cfg
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
-%attr(755,root,root) %{_initrddir}/npcd
 %attr(755,root,root) %{_sbindir}/npcd
 %{_libdir}/nagios/brokers/npcdmod.o
 %dir %{_libexecdir}/%{name}
@@ -135,11 +128,16 @@ fi
 # as it is not required if all dependencies are met.
 %exclude %{_datadir}/nagios/html/%{name}/install.php
 %{_mandir}/man8/*
-# This is a different version of Kohana like in Fedora/EPEL.
-# Needed for pnp4nagios web interface to work.
-%{_datadir}/nagios/html/%{name}/kohana
+
+%post
+systemctl daemon-reload
+
+
 
 %changelog
+* Sun Sep 11 2022 Cuck Lane <lane@dchooz.org> - 0.6.26-3
+- upgrade to php8
+
 * Mon Jun 08 2015 Ján ONDREJ (SAL) <ondrejj(at)salstar.sk> - 0.6.25-1
 - Update to upstream.
 
