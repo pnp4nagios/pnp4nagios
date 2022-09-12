@@ -21,10 +21,6 @@ Requires:       rrdtool-perl
 Requires:       php >= 8.0
 Requires:       php-gd
 Requires:       systemd
-#Requires(post): chkconfig
-#Requires(preun): chkconfig
-#Requires(preun): initscripts
-#Requires(postun): initscripts
 
 %description
 PNP is an addon to nagios which analyzes performance data provided by plugins
@@ -77,14 +73,14 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
-install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
-#install -Dp -m 0755 contrib/fedora/pnp4nagios-npcd.sysvinit $RPM_BUILD_ROOT%{_initrddir}/npcd
+install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf \
+        $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
    > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
 install -Dp -m 0644 contrib/fedora/npcd.sysconfig \
-        $RPM_BUILD_ROOT%{_sysconfir}/sysconfig/npcd
+        $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/npcd
 install -Dp -m 0644 contrib/fedora/npcd.service \
         $RPM_BUILD_ROOT%{_unitdir}/npcd.service
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/nagios/brokers
@@ -112,11 +108,12 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 %doc %{NVdir}/INSTALL %{NVdir}/README.md %{NVdir}/README.fedora
 %doc %{NVdir}/THANKS %{NVdir}/contrib/
 %dir %{_sysconfdir}/pnp4nagios
-%config(noreplace) %attr(0640,root,nagios) %{_sysconfdir}/pnp4nagios/process_perfdata.cfg
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
+%config(noreplace) %{_sysconfdir}/sysconfig/npcd
 %attr(755,root,root) %{_sbindir}/npcd
+%{_unitdir}/npcd.service
 %{_libdir}/nagios/brokers/npcdmod.o
 %dir %{_libexecdir}/%{name}
 %attr(755,root,root) %{_libexecdir}/%{name}/*

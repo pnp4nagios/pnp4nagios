@@ -32,6 +32,7 @@ class Rrdtool_Model extends System_Model
         }
 
         $rrdtool = $this->config->conf['rrdtool'] . " - ";
+        putenv("XDG_CACHE_HOME=/tmp/apache-fontconfig");
         $command = $this->RRD_CMD;
         $process = proc_open($rrdtool, $descriptorspec, $pipes);
         $debug = Array();
