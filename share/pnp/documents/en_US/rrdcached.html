@@ -80,7 +80,7 @@ Option -z defines a maximum delay which will be used to spread the write cycles 
 <p>
 Option -p defines a PID file
 </p>
-<pre class="code">-p /var/run/rrdcached.pid</pre>
+<pre class="code">-p /run/rrdcached.pid</pre>
 
 <p>
 Option -j defines the path to a journaling directory. All requests will be logged there so that they can be processed after a restart in case the daemon crashes.
@@ -126,7 +126,7 @@ Because two components of PNP have to prepared for the use of rrdcached there ar
 # EXPERIMENTAL rrdcached Support
 # Use only with rrdtool svn revision 1511+
 #
-RRD_DAEMON_OPTS = unix:/var/run/rrdcached.sock
+RRD_DAEMON_OPTS = unix:/run/rrdcached.sock
 </pre>
 
 <p>
@@ -138,7 +138,7 @@ RRD_DAEMON_OPTS = unix:/var/run/rrdcached.sock
 # Use only with rrdtool svn revision 1511+
 #
 # $conf[&#039;RRD_DAEMON_OPTS&#039;] = &#039;unix:/tmp/rrdcached.sock&#039;;
-$conf[&#039;RRD_DAEMON_OPTS&#039;] = &#039;unix:/var/run/rrdcached.sock&#039;;
+$conf[&#039;RRD_DAEMON_OPTS&#039;] = &#039;unix:/run/rrdcached.sock&#039;;
 </pre>
 
 <p>

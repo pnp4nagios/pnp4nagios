@@ -859,6 +859,7 @@ final class Kohana {
 		{
 			// PHP errors have 5 args, always
 			$PHP_ERROR = (func_num_args() === 5);
+			$PHP_ERROR = (gettype($exception) == "integer");
 	
 			// Test to see if errors should be displayed
 			if ($PHP_ERROR AND (error_reporting() & $exception) === 0)

@@ -53,20 +53,6 @@ class Input_Core {
 
 		if (Input::$instance === NULL)
 		{
-			// magic_quotes_runtime is enabled
-			if (function_exists('get_magic_quotes_runtime'))
-			{
-				ini_set('magic_quotes_runtime', 0);
-				Kohana::log('debug', 'Disable magic_quotes_runtime! It is evil and deprecated: http://php.net/magic_quotes');
-			}
-
-			// magic_quotes_gpc is enabled
-			if (function_exists('get_magic_quotes_gpc'))
-			{
-				$this->magic_quotes_gpc = TRUE;
-				Kohana::log('debug', 'Disable magic_quotes_gpc! It is evil and deprecated: http://php.net/magic_quotes');
-			}
-
 			// register_globals is enabled
 			if (ini_get('register_globals'))
 			{
@@ -131,7 +117,7 @@ class Input_Core {
 						continue;
 
 					// Sanitize $_COOKIE
-					$_COOKIE[$this->clean_input_keys($key)] = $this->clean_input_data($val);
+					$_COOKIE[$this->clean_cookie($key)] = $this->clean_input_data($val);
 				}
 			}
 			else
@@ -401,9 +387,21 @@ class Input_Core {
 	{
 		$chars = PCRE_UNICODE_PROPERTIES ? '\pL' : 'a-zA-Z';
 
-		if ( ! preg_match('#^['.$chars.'0-9:_.-]++$#uD', $str))
+		if ( ! preg_match('#^['.$chars.'0-9:_.\-]++$#uD', $str))
 		{
 			exit('Disallowed key characters in global data.');
+		}
+
+		return $str;
+	}
+
+	public function clean_cookie($str)
+	{
+		$chars = PCRE_UNICODE_PROPERTIES ? '\pL' : 'a-zA-Z';
+
+		if ( ! preg_match('#^[\%'.$chars.'0-9:_.\-\$\@]++$#uD', $str))
+		{
+			exit("Disallowed key characters in global data.");
 		}
 
 		return $str;

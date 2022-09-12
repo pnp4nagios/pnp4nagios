@@ -7,9 +7,11 @@ After=network.target local-fs.target
 Type=forking
 User=nagios
 Group=nagios
-Environment=CONFIG_FILE=/etc/pnp4nagios/npcd.cfg
+PIDFile=/run/nagios/npcd.pid
+Environment="CONFIG_FILE=/etc/pnp4nagios/npcd.cfg"
 EnvironmentFile=-/etc/sysconfig/npcd
 ExecStart=/usr/sbin/npcd -d -f ${CONFIG_FILE}
+ExecStop=/bin/kill -s QUIT $MAINPID
 
 [Install]
 WantedBy=nagios.service

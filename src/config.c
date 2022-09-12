@@ -563,7 +563,7 @@ int prepare_vars() {
 	if (macro_x[CONFIG_OPT_PIDFILE] != NULL) {
 		pidfile = macro_x[CONFIG_OPT_PIDFILE];
 	} else
-		pidfile = "/var/run/npcd.pid";
+		pidfile = "/run/nagios/npcd.pid";
 
 	if (macro_x[CONFIG_OPT_LOGLEVEL] != NULL) {
 		loglevel = atoi(macro_x[CONFIG_OPT_LOGLEVEL]);

@@ -1625,7 +1625,7 @@ sub print_help {
     Start in Gearman worker mode
     --daemon
     Run as daemon
-    --pidfile=/var/run/process_perfdata.pid
+    --pidfile=/run/nagios/process_perfdata.pid
     The pidfile used while running in as Gearman worker daemon
 
 EOD
