@@ -166,6 +166,14 @@ void npcdmod_file_roller() {
 
 	/* move the original file */
 	result = my_rename(perfdata_file, spool_file);
+        if (result != 0) {
+		snprintf(temp_buffer, sizeof(temp_buffer) - 1,
+				"npcdmod: Could not rename perfdata file. %s", strerror(errno));
+		temp_buffer[sizeof(temp_buffer) - 1] = '\x0';
+		write_to_all_logs(temp_buffer, NSLOG_INFO_MESSAGE);
+                return;
+	}
+          
 
 	/* open a new file */
 	if ((fp = fopen(perfdata_file, "a")) == NULL) {

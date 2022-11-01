@@ -207,7 +207,7 @@ void check_sig(int signr) {
 		break;
 
 	default:
-		snprintf(buffer, sizeof(buffer - 1),
+		snprintf(buffer, MAX_LOGMESSAGE_SIZE - 1),
 				"Caught the Signal '%d' but don't care about this.\n", signr);
 		LOG(2, buffer);
 		break;

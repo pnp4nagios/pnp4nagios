@@ -245,7 +245,7 @@ int main(int argc, char **argv) {
 				filecounter, directory);
 		LOG(2, buffer);
 
-		for (i = 0, namelist; i < filecounter; i++) {
+		for (i = 0; i < filecounter; i++) {
 
 #ifdef HAVE_GETLOADAVG
 			if (use_load_threshold == TRUE) {
@@ -356,7 +356,7 @@ int main(int argc, char **argv) {
 		if (we_should_stop == TRUE)
 			break;
 
-		for (i = 0, namelist; i < filecounter; i++) {
+		for (i = 0; i < filecounter; i++) {
 			free(namelist[i]);
 		}
 
