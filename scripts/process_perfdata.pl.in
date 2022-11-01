@@ -1394,11 +1394,18 @@ sub read_internals {
     my @files = @_;
     my @chunks;
     foreach my $file (sort { $a <=> $b} @files){
-        unless ( rename($conf{'STATS_DIR'}."/".$file, $conf{'STATS_DIR'}."/".$file."-PID-".$$) ){
-            print_log( "ERROR: renaming stats file " . $conf{'STATS_DIR'}."/".$file . " to " . $conf{'STATS_DIR'}."/".$file."-PID-".$$ . " failed", 1 );
+	my $curfile = $conf{'STATS_DIR'}."/".$file;
+	my $newfile = $conf{'STATS_DIR'}."/".$file."-PID-".$$;
+	unless ( -e $curfile) {
+	    print_log("ERROR: stats file $curfile not found",1);
+	    next;
+	}
+        unless ( rename($curfile, $newfile) ){
+            print_log( "ERROR: renaming stats file $curfile to $newfile failed", 1 );
             next;
         }
-        open( STAT, "< ".$conf{'STATS_DIR'}."/".$file."-PID-".$$ );
+	#print_log("INFO: renamed stats file $curfile to $newfile",1);
+        open( STAT, "< $newfile" );
         %stats = (
             timet       => 0,
             error       => 0,
@@ -1421,7 +1428,7 @@ sub read_internals {
             $stats{skipped} += $chunks[7];
         }
         close(STAT);
-        unlink($conf{'STATS_DIR'}."/".$file."-PID-".$$);
+        unlink($newfile);
         process_internals();
     }
 }

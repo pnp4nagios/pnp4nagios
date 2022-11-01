@@ -1,5 +1,5 @@
 %define version 0.6.26
-%define relnum 6
+%define relnum 8
 %define NVdir %{name}-%{version}
 
 Name:           pnp4nagios
@@ -61,12 +61,12 @@ if [ "$RPM_BUILD_ROOT" != "/" ]; then
 fi
 make install DESTDIR=$RPM_BUILD_ROOT 
 make install-config DESTDIR=$RPM_BUILD_ROOT 
-# remove -sample from filename suffix
-for i in $RPM_BUILD_ROOT/%{_sysconfdir}/pnp4nagios/*-sample \
-         $RPM_BUILD_ROOT/%{_sysconfdir}/pnp4nagios/*/*-sample
-do
-  mv ${i} ${i%%-sample}
-done
+# NO...do NOT remove -sample from filename suffix
+#for i in $RPM_BUILD_ROOT/%{_sysconfdir}/pnp4nagios/*-sample \
+#         $RPM_BUILD_ROOT/%{_sysconfdir}/pnp4nagios/*/*-sample
+#do
+#  mv ${i} ${i%%-sample}
+#done
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config.php.*
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 
@@ -87,6 +87,10 @@ mkdir -p $RPM_BUILD_ROOT%{_libdir}/nagios/brokers
 mv $RPM_BUILD_ROOT%{_libdir}/npcdmod.o \
    $RPM_BUILD_ROOT%{_libdir}/nagios/brokers/npcdmod.o
 mv $RPM_BUILD_ROOT%{_prefix}/man $RPM_BUILD_ROOT%{_datadir}/
+
+# these are based on old xml and no longer useful
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/rrd_modify.pl
+rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/rrd_convert.pl
 
 # Move kohana to pnp4nagios, there is another kohana in fedore/EPEL,
 # which can be installed.
