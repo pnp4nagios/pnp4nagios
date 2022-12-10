@@ -27,6 +27,7 @@ if( $< == 0 ){
 use warnings;
 use strict;
 use POSIX;
+use Fcntl qw(:flock);
 use Getopt::Long;
 use Time::HiRes qw(gettimeofday tv_interval);
 use vars qw ( $TEMPLATE %NAGIOS $t0 $t1 $rt $delayed_write $rrdfile @ds_create $count $line $name $ds_update $dstype %CTPL);
@@ -1366,20 +1367,22 @@ sub store_internals {
         return;
     }
     my $lockfile = $conf{'STATS_DIR'}."/".'stats_lockfile';
-    open(LOCK, ">$lockfile") or die "cannot create stats lock file ",$!;
+    open(LOCK, ">>$lockfile") or die "cannot create stats lock file ",$!;
     my $lockstat;
     my $locktries = 10;
     while ($locktries > 0) {
-        $lockstat  = flock(LOCK, 2+8);
+        $lockstat  = flock(LOCK, LOCK_EX|LOCK_NB);
         last if $lockstat;
-        print_log("did not get stats lock, $locktries attempts remain",2);
+        print_log("INFO: did not get stats lock, $locktries attempts remain",2);
         $locktries--;
         sleep(1) if $locktries > 0;
     }
-    if ($locktries == 0) {
-        print_log("failed to get stats file lock, bailing",0);
+    if (!$lockstat) {
+        print_log("ERROR: failed to get stats file lock, bailing",0);
         return;
-    }
+    } else {
+	print_log("DEBUG: got stats file lock",3);
+    } 
     
     my $statsfile = $conf{'STATS_DIR'}."/".(int $stats{timet} / 60);
     open( STAT, ">> $statsfile" ) or die "Cant create statistic file ", $!;
@@ -1400,6 +1403,7 @@ sub check_internals {
         next if $file =~ /^\.\.?$/; # skip . and ..
         next if $file =~ /-PID-/;   # skip temporary files
         next if $file == (int $stats{timet} / 60); # skip our current file
+	next if $file =~ /stats_lockfile/;
         push @files, $file;
     }
     read_internals(@files);
@@ -1435,6 +1439,7 @@ sub read_internals {
             update      => 0,
         );
         while(<STAT>){
+	    #print_log("stat info: $_",3);
             @chunks = split();
             $stats{timet}    = $chunks[0];
             $stats{runtime} += $chunks[1];

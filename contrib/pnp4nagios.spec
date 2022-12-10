@@ -1,5 +1,5 @@
 %define version 0.6.26
-%define relnum 8
+%define relnum 11
 %define NVdir %{name}-%{version}
 
 Name:           pnp4nagios
