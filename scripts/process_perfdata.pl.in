@@ -1358,17 +1358,35 @@ sub init_stats {
 
 #
 # Store some internal runtime infos
+# adding locking, since host/service perfdata jobs conflict on this
 #
 sub store_internals {
     if( ! -w $conf{'STATS_DIR'}){
         print_log("*** ERROR: ".$conf{'STATS_DIR'}." is not writable or does not exist",0);
         return;
     }
+    my $lockfile = $conf{'STATS_DIR'}."/".'stats_lockfile';
+    OPEN(LOCK, ">$lockfile") or die "cannot create stats lock file ",$!;
+    my $lockstat;
+    my $locktries = 10;
+    while ($locktries > 0) {
+        $lockstat  = flock(LOCK, 2+8);
+        last if $lockstat;
+        print_log("did not get stats lock, $locktries attempts remain",2);
+        $locktries--;
+        sleep(1) if $locktries > 0;
+    }
+    if ($locktries == 0) {
+        print_log("failed to get stats file lock, bailing",0);
+        return;
+    }
+    
     my $statsfile = $conf{'STATS_DIR'}."/".(int $stats{timet} / 60);
     open( STAT, ">> $statsfile" ) or die "Cant create statistic file ", $!;
     printf(STAT "%d %f %d %d %d %d %d %d\n", $stats{timet},$stats{runtime},$stats{rows},$stats{update},$stats{create},$stats{error},$stats{invalid},$stats{skipped});
     close(STAT);
     check_internals();
+    close(LOCK);
 }
 
 #
