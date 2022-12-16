@@ -1,5 +1,5 @@
 %define version 0.6.26
-%define relnum 11
+%define relnum 12
 %define NVdir %{name}-%{version}
 
 Name:           pnp4nagios
@@ -18,8 +18,9 @@ BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)
 Requires:       nagios
 Requires:       rrdtool-perl
-Requires:       php >= 8.0
+Requires:       php >= 5.6
 Requires:       php-gd
+Requires:       php-xml
 Requires:       systemd
 
 %description
