@@ -124,8 +124,7 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 
 %post
 systemctl daemon-reload
-
-
+systemctl try-restart npcd
 
 %changelog
 * Sun Sep 11 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-3
