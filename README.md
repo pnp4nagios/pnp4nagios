@@ -30,3 +30,17 @@ This repository is no longer maintained!
 I am a long time Nagios/Icinga/Monitoring/Devops Professional. I've been
 "the toolsguy" long from "devops" was even a "new" term.
 
+
+
+## build RPM from git
+
+The spec file is in the "dist" subdirectory.  Install git-build-rpm (it's on
+github) and, as an example:
+
+cd (main directory of this git package; where this README.md file is located)
+git build-rpm --rpm-dir /home/local/lane/rpmbuild --dist .fc35
+
+The --rpm-dir option is to keep the .srpm file from the build, the
+--dist option is to avoid the longwinded "-%{version}-%{release}%{timestamp}.%{dist}..." package name.
+
+
