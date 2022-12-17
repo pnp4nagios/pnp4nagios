@@ -1,18 +1,15 @@
-%define version 0.6.26
-%define relnum 12
-%define NVdir %{name}-%{version}
-
 Name:           pnp4nagios
-Version:        %{version}
-Release:        %{relnum}%{?dist}
+Version:        0.6.26
+Release:        12%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
 License:        GPLv2
 URL:            https://github.com/celane/pnp4nagios
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0:        %{name}-%{version}.tar.gz
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
-BuildRequires:  git
+#BuildRequires:  git
 BuildRequires:  autoconf, automake, libtool
 BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)
@@ -29,11 +26,7 @@ and stores them automatically into RRD-databases.
 
 
 %prep
-### build from git ###
-rm -rf %{NVdir}
-git clone %{url}.git %{NVdir}
-###
-cd %{NVdir}
+%setup -q -n %{name}-%{version}
 autoreconf
 
 cp contrib/fedora/pnp4nagios-README.fedora README.fedora
@@ -43,7 +36,6 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 
 %build
-cd %{NVdir}
 %configure --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
@@ -56,7 +48,6 @@ make %{?_smp_mflags} all
 
 
 %install
-cd %{NVdir}
 if [ "$RPM_BUILD_ROOT" != "/" ]; then
     rm -rf $RPM_BUILD_ROOT
 fi
@@ -109,9 +100,9 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 
 %files
 %defattr(644,root,root,755)
-%doc %{NVdir}/AUTHORS %{NVdir}/ChangeLog %{NVdir}/COPYING
-%doc %{NVdir}/INSTALL %{NVdir}/README.md %{NVdir}/README.fedora
-%doc %{NVdir}/THANKS %{NVdir}/contrib/
+%doc /AUTHORS /ChangeLog /COPYING
+%doc /INSTALL /README.md /README.fedora
+%doc /THANKS /contrib/
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
@@ -137,7 +128,7 @@ systemctl daemon-reload
 
 
 %changelog
-* Sun Sep 11 2022 Cuck Lane <lane@dchooz.org> - 0.6.26-3
+* Sun Sep 11 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-3
 - upgrade to php8
 
 * Mon Jun 08 2015 Ján ONDREJ (SAL) <ondrejj(at)salstar.sk> - 0.6.25-1
