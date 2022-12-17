@@ -100,9 +100,9 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 
 %files
 %defattr(644,root,root,755)
-%doc /AUTHORS /ChangeLog /COPYING
-%doc /INSTALL /README.md /README.fedora
-%doc /THANKS /contrib/
+%doc AUTHORS ChangeLog COPYING
+%doc INSTALL README.md README.fedora
+%doc THANKS contrib/
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
