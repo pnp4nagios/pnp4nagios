@@ -1369,7 +1369,7 @@ sub store_internals {
     my $lockfile = $conf{'STATS_DIR'}."/".'stats_lockfile';
     open(LOCK, ">>$lockfile") or die "cannot create stats lock file ",$!;
     my $lockstat;
-    my $locktries = 10;
+    my $locktries = 60;
     while ($locktries > 0) {
         $lockstat  = flock(LOCK, LOCK_EX|LOCK_NB);
         last if $lockstat;

@@ -24,7 +24,6 @@ Requires:       systemd
 PNP is an addon to nagios which analyzes performance data provided by plugins
 and stores them automatically into RRD-databases.
 
-
 %prep
 %setup -q -n %{name}-%{version}
 autoreconf
@@ -80,16 +79,22 @@ mv $RPM_BUILD_ROOT%{_libdir}/npcdmod.o \
    $RPM_BUILD_ROOT%{_libdir}/nagios/brokers/npcdmod.o
 mv $RPM_BUILD_ROOT%{_prefix}/man $RPM_BUILD_ROOT%{_datadir}/
 
-# these are based on old xml and no longer useful
-rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/rrd_modify.pl
-rm $RPM_BUILD_ROOT%{_libexecdir}/%{name}/rrd_convert.pl
-
 # Move kohana to pnp4nagios, there is another kohana in fedore/EPEL,
 # which can be installed.
 mv $RPM_BUILD_ROOT%{_libdir}/kohana \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/kohana
 sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
+
+
+%package logrotate
+Summary:        config for rotating pnp4nagios logs
+Requires:       logrotate
+Group:          Applications/System
+
+%description: logrotate
+config file used by logrotate, set up for pnp4nagios logs
+
 
 %clean
 #if [ "$RPM_BUILD_ROOT" != "/" ]; then
@@ -105,7 +110,6 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 %doc THANKS contrib/
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
-%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/npcd
 %attr(755,root,root) %{_sbindir}/npcd
@@ -122,11 +126,19 @@ sed -i 's|%{_libdir}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
 %exclude %{_datadir}/nagios/html/%{name}/install.php
 %{_mandir}/man8/*
 
+%files logrotate
+%config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
+
+
+
 %post
 systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
+* Tue Dec 20 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-13
+- minor config cleanups
+
 * Sun Sep 11 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-3
 - upgrade to php8
 
