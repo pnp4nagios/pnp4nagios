@@ -153,7 +153,7 @@ files for errors, and flagging them for attention.
 
 %files logwatch
 %defattr(644,root,root)
-%config(noreplace) %attr(666,root,root) %{_sysconfdir}/logwatch/scripts/services/%{name}
+%config(noreplace) %attr(555,root,root) %{_sysconfdir}/logwatch/scripts/services/%{name}
 %config(noreplace) %{_sysconfdir}/logwatch/conf/services/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logwatch/conf/logfiles/%{name}.conf
 
