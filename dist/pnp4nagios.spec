@@ -1,6 +1,6 @@
 Name:           pnp4nagios
 Version:        0.6.26
-Release:        12%{?dist}
+Release:        14%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
@@ -64,8 +64,20 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
+#
 install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
+#
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/scripts/services
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/services
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles
+install -m 0666 contrib/fedora/logwatch/scripts/services/pnp4nagios \
+        $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/scripts/services/
+install -m 0644 contrib/fedora/logwatch/conf/services/pnp4nagios.conf \
+        $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/services/
+install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
+        $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
+#
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
@@ -92,8 +104,18 @@ Summary:        config for rotating pnp4nagios logs
 Requires:       logrotate
 Group:          Applications/System
 
-%description: logrotate
+%description logrotate
 config file used by logrotate, set up for pnp4nagios logs
+
+
+%package logwatch
+Summary:        config and scripts for checking pnp4nagios log files
+Requires:       logwatch
+Group:          Applications/System
+
+%description logwatch
+config files and log scanning script for checking pnp4nagios log
+files for errors, and flagging them for attention. 
 
 
 %clean
@@ -129,6 +151,11 @@ config file used by logrotate, set up for pnp4nagios logs
 %files logrotate
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 
+%files logwatch
+%defattr(644,root,root)
+%config(noreplace) %attr(666,root,root) %{_sysconfdir}/logwatch/scripts/services/%{name}
+%config(noreplace) %{_sysconfdir}/logwatch/conf/services/%{name}.conf
+%config(noreplace) %{_sysconfdir}/logwatch/conf/logfiles/%{name}.conf
 
 
 %post
@@ -136,8 +163,8 @@ systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
-* Tue Dec 20 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-13
-- minor config cleanups
+* Tue Dec 20 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-14
+- minor config cleanups, add logwatch and logrotate subpackages
 
 * Sun Sep 11 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-3
 - upgrade to php8

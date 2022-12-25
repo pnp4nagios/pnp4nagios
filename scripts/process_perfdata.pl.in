@@ -1388,6 +1388,7 @@ sub store_internals {
     open( STAT, ">> $statsfile" ) or die "Cant create statistic file ", $!;
     printf(STAT "%d %f %d %d %d %d %d %d\n", $stats{timet},$stats{runtime},$stats{rows},$stats{update},$stats{create},$stats{error},$stats{invalid},$stats{skipped});
     close(STAT);
+    sleep(2);  # prevent rrd update too soon?
     check_internals();
     close(LOCK);
 }
@@ -1466,7 +1467,7 @@ sub process_internals {
         DISP_HOSTNAME => 'pnp-internal',
         SERVICEDESC => 'runtime',
         DISP_SERVICEDESC => 'runtime',
-        TIMET => $stats{timet},
+        TIMET => 'N', #$stats{timet},
         DATATYPE => 'SERVICEPERFDATA',
         CHECK_COMMAND => 'pnp-runtime',
         PERFDATA => "runtime=".$stats{runtime}."s rows=".$stats{rows}." errors=".$stats{error}." invalid=".$stats{invalid}." skipped=".$stats{skipped} ." update=".$stats{update}. " create=".$stats{create}
