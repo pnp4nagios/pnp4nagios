@@ -46,7 +46,7 @@ while (defined(my $ThisLine = <STDIN>)) {
             ($ThisLine =~ /NPCD: Processing file (host|service)-perfdata\.\d+ with ID \d+ - going to exec/) or
             ($ThisLine =~ /NPCD: Have to wait: Filecounter = \d+ - thread_counter = \d+/) or
             ($ThisLine =~ /NPCD: No more files to process\.\.\. waiting for \d+ seconds/) or
-            false
+            0 # this line prevents blame-shifting as lines are added above
             )
 	{
             if ( $Debug >= 6 ) {
