@@ -15,6 +15,9 @@ abstract class Controller_Core {
 	// Allow all controllers to run in production by default
 	const ALLOW_PRODUCTION = TRUE;
 
+	public $uri = '';
+	public $input = '';
+
 	/**
 	 * Loads URI, and Input into this controller.
 	 *

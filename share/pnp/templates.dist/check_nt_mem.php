@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_nt -v MEMUSE
 #
+include 'arrayfix.php';
 $opt[1] = "-X0 --vertical-label \"Megabyte\" -u $MAX[1] -l 0  --title \"Windows Memory\" ";
 
 $def[1] =  "DEF:var1=$RRDFILE[1]:$DS[1]:AVERAGE "; 

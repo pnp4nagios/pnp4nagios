@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_snmp_int.pl (COUNTER)
 #
+include 'arrayfix.php';
 $opt[1] = " --vertical-label \"Bytes\" -b 1000 --title \"Interface Traffic for $hostname / $servicedesc\" ";
 $def[1] = "DEF:var1=$RRDFILE[1]:$DS[1]:AVERAGE " ;
 $def[1] .= "DEF:var2=$RRDFILE[2]:$DS[2]:AVERAGE " ;

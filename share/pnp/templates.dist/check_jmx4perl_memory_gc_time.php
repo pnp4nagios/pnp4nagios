@@ -5,6 +5,7 @@
 # Dataset: memory_gc_time
 # Perfdata: 'Copy time'=426.511627906977;10000;20000
 #
+include 'arrayfix.php';
 $opt[1]  = "--vertical-label \"s\" --title \"GC Copy Time $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1a",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::cdef("var1","var1a,1000,/") ;

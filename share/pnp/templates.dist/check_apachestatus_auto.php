@@ -3,6 +3,8 @@
 # Copyright (c) 2012 Joerg Linge (pitchfork@pnp4nagios.org)
 # Plugin: check_apachestatus_auto (http://www.spreendigital.de/blog/nagios/?#check_apachestatus_auto)
 #
+include 'arrayfix.pnp';
+#
 # Worker
 #
 $i=0;

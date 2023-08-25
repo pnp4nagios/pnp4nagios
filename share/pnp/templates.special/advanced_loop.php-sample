@@ -12,6 +12,10 @@ $this->MACRO['COMMENT'] = "Inbound Traffc for all Cloud Nodes";
 $services = $this->tplGetServices("node","eth0");
 #
 # The Datasource Name for Graph 0
+if (!is_array($ds_name)) $ds_name = [];
+if (!is_arry($opt)) $opt = [];
+if (!is_array($def)) $def = [];
+
 $ds_name[0] = "RTA Times"; 
 $opt[0]     = "--title \"Stacked RTA Times\"";
 $def[0]     = "";

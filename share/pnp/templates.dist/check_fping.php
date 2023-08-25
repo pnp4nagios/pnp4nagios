@@ -5,6 +5,8 @@
 #
 # RTA
 #
+include 'arrayfix.pnp';
+
 $ds_name[1] = "Round Trip Times";
 $opt[1]  =  "--vertical-label \"RTA\"  --title \"Ping times\" ";
 

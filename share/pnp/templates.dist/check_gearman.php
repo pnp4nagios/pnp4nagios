@@ -4,6 +4,7 @@
 # Template used for check_gearman whitch is part of mod-gearman
 # http://labs.consol.de/nagios/mod-gearman
 #
+include 'arrayfix.pnp';
 $i=0;
 $color['waiting'] = '#F46312';
 $color['running'] = '#0354E4';

@@ -6,7 +6,7 @@
 #
 # This is a template for the visualisation addon PNP (http://www.pnp4nagios.org)
 #
-
+include 'arrayfix.php';
 $def[1] = "";
 $opt[1] = "";
 

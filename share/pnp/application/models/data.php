@@ -17,6 +17,8 @@ class Data_Model extends System_Model
     public  $XPORT = "";
     public  $TEMPLATE_FILE = "";
     public  $GRAPH_TYPE = 'normal';
+    public  $config = '';
+    public  $auth = '';
     /*
     * 
     *

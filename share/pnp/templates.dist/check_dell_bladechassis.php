@@ -5,6 +5,7 @@
 #
 # $Id: check_dell_bladechassis.php 16833 2010-03-16 13:54:15Z trondham $
 #
+include 'arrayfix.pnp';
 
 # Array with different colors
 $colors = array("0022ff", "22ff22", "ff0000", "00aaaa", "ff00ff",

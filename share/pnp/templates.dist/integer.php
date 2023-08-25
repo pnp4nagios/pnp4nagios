@@ -5,6 +5,7 @@
 #
 # 09/04/2015 - TruePath Technologies Inc. (DRM): Added getRandomColor to fix color array size limit
 #
+include 'arrayfix.php';
 $def[1] = "";
 $opt[1] = "";
 

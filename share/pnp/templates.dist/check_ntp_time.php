@@ -3,6 +3,7 @@
 # Contributed by Mathias Kettner
 # Plugin: check_ntp
 #
+include 'arrayfix.php';
 $range = $CRIT[1];
 
 $opt[1] = "--vertical-label 'offset (s)' -l -$range  -u $range --title '$hostname: NTP time offset' ";

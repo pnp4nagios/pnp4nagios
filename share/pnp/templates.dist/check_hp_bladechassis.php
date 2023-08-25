@@ -5,6 +5,7 @@
 #
 # $Id: check_hp_bladechassis.php 16834 2010-03-16 13:55:32Z trondham $
 #
+include 'arrayfix.php';
 
 # Color for power usage in watts
 $PWRcolor = "66FF00";

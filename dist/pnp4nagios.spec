@@ -1,6 +1,6 @@
 Name:           pnp4nagios
-Version:        0.6.26
-Release:        14%{?dist}
+Version:        0.6.27
+Release:        2%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
@@ -18,6 +18,7 @@ Requires:       rrdtool-perl
 Requires:       php >= 5.6
 Requires:       php-gd
 Requires:       php-xml
+Requires:       php-mbstring
 Requires:       systemd
 
 %description
@@ -78,6 +79,9 @@ install -m 0644 contrib/fedora/logwatch/conf/services/pnp4nagios.conf \
 install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
 #
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/systemd/system/httpd.service.d
+install -m 0644 contrib/fedora/pnp4nagios.httpd.plugin.conf \
+  $RPM_BUILD_ROOT%{_sysconfdir}/systemd/system/httpd.service.d/pnp4nagios.conf
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
@@ -134,6 +138,7 @@ files for errors, and flagging them for attention.
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/npcd
+%config(noreplace) %{_sysconfdir}/systemd/system/httpd.service.d/*
 %attr(755,root,root) %{_sbindir}/npcd
 %{_unitdir}/npcd.service
 %{_libdir}/nagios/brokers/npcdmod.o
@@ -163,6 +168,9 @@ systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
+* Fri Aug 18 2023 Chuck Lane <lane@dhooz.org> - 0.6.27-1
+- many pnp8.2 deprecation fixes, get XDG_CACHE_HOME in systemd setup
+  
 * Tue Dec 20 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-14
 - minor config cleanups, add logwatch and logrotate subpackages
 

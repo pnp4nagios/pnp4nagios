@@ -5,6 +5,7 @@
 # Dataset: connector_nr_requests
 # Perfdata: nr_requests=152.8;900;1000
 #
+include 'arrayfix.php';
 $opt[1]  = "-X0 --vertical-label \"Requets\" --title \"Requests $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::gradient('var1', '#F5F5F5', '#C0C0C0' ); 

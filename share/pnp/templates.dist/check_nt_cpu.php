@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_nt -v CPULOAD
 #
+include 'arrayfix.php';
 $opt[1] = "--vertical-label \"$UNIT[1]\" -u $MAX[1] -l $MIN[1]  --title \"CPU Load for $hostname / $servicedesc\" ";
 #
 #

@@ -6,6 +6,7 @@
 #
 # http://www.my-plugin.de/wiki/projects/check_multi/examples/nagiostats
 #
+include 'arrayfix.php';
 $ds_name[1] = "Host and Service Latency";
 
 $opt[1]  = "--vertical-label \"Time in ms\" -l0 --title \"Host and Service Latency in ms - $hostname\" ";

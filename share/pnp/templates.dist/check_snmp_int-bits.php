@@ -5,6 +5,7 @@
 # Output based on Bits/s
 #
 #
+include 'arrayfix.php';
 $opt[1] = " --vertical-label \"Traffic\" -b 1000 --title \"Interface Traffic for $hostname / $servicedesc\" ";
 $def[1] = "DEF:var1=$RRDFILE[1]:$DS[1]:AVERAGE " ;
 $def[1] .= "DEF:var2=$RRDFILE[2]:$DS[2]:AVERAGE " ;

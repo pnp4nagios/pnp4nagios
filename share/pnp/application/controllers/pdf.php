@@ -7,6 +7,13 @@
  * @license    GPL
  */
 class Pdf_Controller extends System_Controller  {
+    public $use_bg = '';
+    public $bg = '';
+    public $pdf_page_size = '';
+    public $pdf_margin_left = '';
+    public $pdf_margin_right = '';
+    public $pdf_margin_top = '';
+    public $type = '';
 
     public function __construct(){
         parent::__construct();

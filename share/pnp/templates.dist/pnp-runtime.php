@@ -5,6 +5,8 @@
 #
 # Runtime 
 #
+include 'arrayfix.php';
+
 $opt[1] = "--vertical-label \"$UNIT[1]\" --title \"Runtime of process_perfdata.pl\" ";
 #
 #

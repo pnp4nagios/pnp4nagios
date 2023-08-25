@@ -22,7 +22,7 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+include 'arrayfix.php';
 # Array with different colors
 $colors = array("0022ff", "22ff22", "ff0000", "00aaaa", "ff00ff",
 		"ffa500", "cc0000", "0000cc", "0080C0", "8080C0",

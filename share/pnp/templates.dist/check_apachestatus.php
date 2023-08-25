@@ -7,6 +7,7 @@
 # pnp4nagios templating: Roman Ovchinnikov <coolthecold@gmail.com>
 # pnp version >= 0.6.5
 #
+include 'arrayfix.pnp';
 #
 # from apache's scoreboard.h
 #	 #define SERVER_DEAD 0

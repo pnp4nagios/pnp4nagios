@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Template for check_multi
 # 
+include 'arrayfix.php';
 
 $opt[1] = "--vertical-label num  --title \"Number of Checks\" ";
 if (isset($MIN[1]) && is_numeric($MIN[1])) {

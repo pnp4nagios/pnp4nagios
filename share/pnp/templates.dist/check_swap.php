@@ -4,6 +4,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 #
 # RRDtool Options
+include 'arrayfix.php';
 $opt[1] = "-X 0 --vertical-label MB -l 0 -u $MAX[1] --title \"Swap usage $hostname / $servicedesc\" ";
 #
 #
