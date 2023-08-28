@@ -14,6 +14,15 @@ Alias @BASE_URL@ "@datarootdir@"
    	   	Order allow,deny
    	   	Allow from all
    	</IfVersion>
+        #
+        # need this for fontconfig->rrdtool graph
+        # cache dir should be writable 
+        #
+        <If "-z %{XDG_CACHE_HOME}">
+            <IfModule mod_env.c>
+                 SetEnv XDG_CACHE_HOME /tmp/apache-fontconfig
+            </IfModule>
+        </If>
    	#
    	# Use the same value as defined in nagios.conf
    	#

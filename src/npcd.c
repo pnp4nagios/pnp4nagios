@@ -185,7 +185,7 @@ int main(int argc, char **argv) {
 					strerror(errno));
 			exit(EXIT_FAILURE);
 		} else {
-			fprintf(fppid, "%d", getpid());
+			fprintf(fppid, "%d\n", getpid());
 			fclose(fppid);
 		}
 	}

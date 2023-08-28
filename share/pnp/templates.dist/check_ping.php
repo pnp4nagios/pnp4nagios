@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_icmp [Multigraph]
 #
+include 'arrayfix.php';
 # RTA
 #
 $ds_name[1] = "Round Trip Times";

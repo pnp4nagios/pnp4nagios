@@ -2,6 +2,7 @@
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 #
+include 'arrayfix.php';
 
 $name = $NAME[1];
 

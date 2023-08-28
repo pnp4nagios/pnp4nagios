@@ -7,6 +7,9 @@
  * @license    GPL
  */
 class Page_Controller extends System_Controller  {
+    public $is_authorized = '';
+    public $page = '';
+    public $pages = '';
 
     public function __construct(){
         parent::__construct();

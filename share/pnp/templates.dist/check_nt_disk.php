@@ -4,6 +4,7 @@
 # Template für check_nt -v USEDDISKSPACE -l 
 #
 # RRDtool Options
+include 'arrayfix.php';
 $opt[1] = "--vertical-label GB -u $MAX[1] -l 0 --title \"Used Diskspace for $hostname / $servicedesc\" ";
 #
 #

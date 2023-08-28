@@ -5,6 +5,7 @@
 #
 # RTA
 #
+include 'arrayfix.inc';
 $ds_name[1] = "Round Trip Times";
 $opt[1]  = "--lower-limit=0 --vertical-label \"RTA\" --title \"Ping times\" ";
 $opt[1] .=  rrd::darkteint();

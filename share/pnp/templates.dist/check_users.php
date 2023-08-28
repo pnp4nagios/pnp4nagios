@@ -3,7 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Template for check_users
 #
-
+include 'arrayfix.php';
 $opt[1] = "--lower-limit=$MIN[1] --vertical-label \"Users\"  --title \"Users\" ";
 
 

@@ -5,6 +5,8 @@
 #
 # Response Time
 #
+include 'arrayfix.php';
+
 $opt[1] = "--vertical-label \"$UNIT[1]\" --title \"Response Times $hostname / $servicedesc\" ";
 #
 #

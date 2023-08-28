@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ(2.61)
-AC_INIT(pnp, 0.6.26, pnp4nagios-devel@lists.sourceforge.net)
+AC_PREREQ([2.71])
+AC_INIT([pnp],[0.6.27],[pnp4nagios-devel@lists.sourceforge.net])
 AC_CONFIG_SRCDIR(src/)
 AC_CONFIG_HEADERS(include/config.h:include/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
@@ -11,9 +11,9 @@ AC_DEFINE([DEFAULT_NAGIOS_USER], [nagios], [Default Nagios User])
 AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
 
 PKG_NAME=pnp4nagios
-PKG_VERSION="0.6.26"
+PKG_VERSION="0.6.27"
 PKG_HOME_URL="http://www.pnp4nagios.org/pnp/start"
-PKG_REL_DATE="08-21-2017"
+PKG_REL_DATE="08-29-2023"
 AC_SUBST(PKG_NAME)
 AC_SUBST(PKG_VERSION)
 AC_SUBST(PKG_HOME_URL)
@@ -42,7 +42,15 @@ AC_PATH_PROG(CP,cp)
 # Checks for libraries.
 
 # Checks for header files.
-AC_HEADER_STDC
+m4_warn([obsolete],
+[The preprocessor macro `STDC_HEADERS' is obsolete.
+  Except in unusual embedded environments, you can safely include all
+  ISO C90 headers unconditionally.])dnl
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
+
 AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
 #AC_CHECK_HEADERS(netinet/in.h string.h sys/socket.h unistd.h stdio.h stdlib.h getopt.h signal.h)
@@ -50,7 +58,19 @@ AC_CHECK_HEADERS(dirent.h stdio.h errno.h unistd.h syslog.h signal.h stdlib.h di
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
-AC_TYPE_SIGNAL
+#m4_warn([obsolete],
+#[your code may safely assume C89 semantics that RETSIGTYPE is void.
+#Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+#AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+#[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+#],
+#		 [return *(signal (0, 0)) (0) == 1;])],
+#		   [ac_cv_type_signal=int],
+#		   [ac_cv_type_signal=void])])
+#AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+#		    (`int' or `void').])
+
 AC_TYPE_UID_T
 
 # Checks for structure members
@@ -287,7 +307,7 @@ fi
 AC_SUBST(RRDS)
 
 AC_CONFIG_FILES( subst Makefile share/Makefile lib/Makefile scripts/Makefile src/Makefile sample-config/Makefile man/Makefile )
-AC_OUTPUT()
+AC_OUTPUT
 
 $PERL subst summary
 $PERL subst scripts/process_perfdata.pl 

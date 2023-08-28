@@ -3,6 +3,7 @@
 # Fuer check_pcmeasure.pl von Wolfgang Barth
 # Erstellt von Joerg Peter Geissler <lairdofglencairn AT nagios-wiki.de>  
 #
+include 'arrayfix.php';
 if ($WARN[1] == "") {
 	$WARN[1] = 0;
 }

@@ -4,7 +4,7 @@
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 #
-
+include 'arrayfix.php';
 $opt[0] = '--title "Check Latency"';
 $ds_name[0] = "Check Latency";
 $def[0] = "";

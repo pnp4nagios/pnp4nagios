@@ -7,6 +7,22 @@
  * @license GPL
  */
 class System_Controller extends Template_Controller {
+    public $data = '';
+    public $config = '';
+    public $rrdtool = '';
+    public $auth = '';
+    public $start = '';
+    public $end = '';
+    public $theme = '';
+    public $view = '';
+    public $host = '';
+    public $service = '';
+    public $source = '';
+    public $version = '';
+    public $tpl = '';
+    public $controller = '';
+    public $session = '';
+    public $url = '';
 
     public function __construct()
     {

@@ -2,7 +2,7 @@
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 #
-
+include 'arrayfix.php';
 $opt[1] = "--vertical-label \"TBS usage %\" -u102 -l0 --title \"Tablespace usage $servicedesc\" ";
 $ds_name[1] = "TBS usage %";
 
