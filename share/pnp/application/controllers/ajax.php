@@ -75,6 +75,7 @@ class Ajax_Controller extends System_Controller  {
             $item = $_POST['item'];
             $basket = $this->session->get("basket");
             if(!is_array($basket)){
+                $basket = [];
                 $basket[] = "$item";
             }else{
                 if(!in_array($item,$basket)){

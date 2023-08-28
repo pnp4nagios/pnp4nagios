@@ -1,6 +1,6 @@
 Name:           pnp4nagios
 Version:        0.6.27
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
@@ -168,6 +168,9 @@ systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
+* Mon Aug 28 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-3
+- one more pnp8.2 fix, update release number
+
 * Fri Aug 18 2023 Chuck Lane <lane@dhooz.org> - 0.6.27-1
 - many pnp8.2 deprecation fixes, get XDG_CACHE_HOME in systemd setup
   
