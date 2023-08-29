@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Template for check_dns
 #
+include 'arrayfix.pnp';
 
 $opt[1] = "--lower-limit=$MIN[1] --vertical-label $UNIT[1]  --title \"DNS Response Time\" ";
 

@@ -4,6 +4,7 @@
 # Copyright (c) 2011 Joerg Linge (support@pnp4nagios.org)
 # Plugin: check_mysql_health (http://www.consol.com/opensource/nagios/check-mysql-health)
 #
+include 'arrayfix.php';
 
 $defcnt = 1;
 

@@ -5,6 +5,7 @@
 # Dataset: connector_proc_time
 # Perfdata: proc_time=1671.9;40000;50000
 #
+include 'arrayfix.php';
 $opt[1]  = "--vertical-label \"s\" --title \"Processing Time $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1a",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::cdef("var1","var1a,1000,/") ;

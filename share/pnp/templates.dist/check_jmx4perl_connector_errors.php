@@ -5,6 +5,7 @@
 # Dataset: connector_errors 
 # Perfdata: errors=0;90;100
 #
+include 'arrayfix.php';
 $opt[1]  = "--force-rules-legend -X0 --vertical-label \"Errors\" --title \"Connector Errors $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::area  ("var1", "#D9D9D9");

@@ -1,3 +1,9 @@
+**pnp-0.6.27 08/18/2023** 
+  * many php 8.2 fixes to remove 'deprecated' errors:
+	pre-defining class variables (instead of dynamic),
+	explicitly re-creating arrays as needed
+	converting utf8_encode to mbstring
+
 **pnp-0.6.26-2 09/18/2022
   * various php8 fixes
   * rrdtools needs env XDG_CACHE_HOME for fontconfig 

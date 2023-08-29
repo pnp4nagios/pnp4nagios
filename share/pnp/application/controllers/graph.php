@@ -7,6 +7,8 @@
  * @license    GPL
  */
 class Graph_Controller extends System_Controller  {
+    public $is_authorized = '';
+    public $title = '';
 
     public function __construct()
     {

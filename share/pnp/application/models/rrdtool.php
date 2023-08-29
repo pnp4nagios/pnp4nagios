@@ -6,6 +6,7 @@ class Rrdtool_Model extends System_Model
 {
 
     private $RRD_CMD   = FALSE;
+    public $config = '';
     /*
     *
     *
@@ -32,7 +33,19 @@ class Rrdtool_Model extends System_Model
         }
 
         $rrdtool = $this->config->conf['rrdtool'] . " - ";
-        putenv("XDG_CACHE_HOME=/tmp/apache-fontconfig");
+        
+        $xdg_cache = getenv("XDG_CACHE_HOME");
+        if (!$xdg_cache) {
+           $data = "ERROR: environment var XDG_CACHE_HOME not defined (should be writable cache dir)";
+           return $data;
+        }
+        if (!is_dir($xdg_cache) || !is_writeable($xdg_cache)) {
+           $data = "ERROR: env XDG_CACHE_HOME (".$xdg_cache.") is not writable directory";
+           return $data;
+        }
+
+
+
         $command = $this->RRD_CMD;
         $process = proc_open($rrdtool, $descriptorspec, $pipes);
         $debug = Array();

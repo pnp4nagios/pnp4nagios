@@ -5,6 +5,7 @@
 #
 # CPU Load
 #
+include 'arrayfix.php';
 $opt[1] = " -u 100 -l 0 --vertical-label \"$UNIT[1]\" --title \"CPU Load $hostname / $servicedesc\" ";
 #
 #

@@ -18,6 +18,7 @@ Requires:       rrdtool-perl
 Requires:       php >= 5.6
 Requires:       php-gd
 Requires:       php-xml
+Requires:       php-mbstring
 Requires:       systemd
 
 %description
@@ -64,6 +65,7 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}/kohana
 #
 install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
@@ -78,6 +80,9 @@ install -m 0644 contrib/fedora/logwatch/conf/services/pnp4nagios.conf \
 install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
 #
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/systemd/system/httpd.service.d
+install -m 0644 contrib/fedora/pnp4nagios.httpd.plugin.conf \
+  $RPM_BUILD_ROOT%{_sysconfdir}/systemd/system/httpd.service.d/pnp4nagios.conf
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
@@ -134,6 +139,7 @@ files for errors, and flagging them for attention.
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/sysconfig/npcd
+%config(noreplace) %{_sysconfdir}/systemd/system/httpd.service.d/*
 %attr(755,root,root) %{_sbindir}/npcd
 %{_unitdir}/npcd.service
 %{_libdir}/nagios/brokers/npcdmod.o
@@ -141,8 +147,10 @@ files for errors, and flagging them for attention.
 %attr(755,root,root) %{_libexecdir}/%{name}/*
 %attr(755,nagios,nagios) %{_localstatedir}/lib/%{name}
 %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}
+%attr(755,apache,apache) %{_localstatedir}/log/%{name}/kohana
 %attr(755,nagios,nagios) %{_localstatedir}/spool/%{name}
 %{_datadir}/nagios/html/%{name}
+%config(noreplace) %{_datadir}/nagios/html/%{name}/application/config/config.php
 # Remove install check script
 # as it is not required if all dependencies are met.
 %exclude %{_datadir}/nagios/html/%{name}/install.php
@@ -163,6 +171,12 @@ systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
+* Mon Aug 28 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-3
+- one more pnp8.2 fix, update release number
+
+* Fri Aug 18 2023 Chuck Lane <lane@dhooz.org> - 0.6.27-1
+- many pnp8.2 deprecation fixes, get XDG_CACHE_HOME in systemd setup
+  
 * Tue Dec 20 2022 Chuck Lane <lane@dchooz.org> - 0.6.26-14
 - minor config cleanups, add logwatch and logrotate subpackages
 

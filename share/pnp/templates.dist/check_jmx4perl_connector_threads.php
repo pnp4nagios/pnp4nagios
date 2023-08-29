@@ -5,6 +5,7 @@
 # Dataset: connector_sets 
 # Perfdata: connector_threads=200;160;180;0;200
 #
+include 'arrayfix.php';
 $opt[1]  = "-X0 --vertical-label \"Threads\" --title \"Connector Threads $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::gradient('var1', '#F5F5F5', '#C0C0C0' ); 

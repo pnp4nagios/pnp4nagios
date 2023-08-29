@@ -5,6 +5,7 @@
 # Dataset: connector_received 
 # Perfdata: bytes_received=57223.4645669291;83886080;104857600
 #
+include 'arrayfix.php';
 $opt[1]  = "--vertical-label \"Bytes\" --title \"Connector Received $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::gradient('var1', '#F5F5F5', '#C0C0C0' ); 

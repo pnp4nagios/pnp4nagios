@@ -3,6 +3,8 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_iftraffic.pl (COUNTER)
 #
+include 'arrayfix.php';
+
 $opt[1]  = "--vertical-label \"Traffic\" -b 1024 --title \"Interface Traffic for $hostname / $servicedesc\" ";
 $def[1]  = "DEF:var1=$RRDFILE[3]:$DS[3]:AVERAGE " ;
 $def[1] .= "DEF:var2=$RRDFILE[4]:$DS[4]:AVERAGE " ;

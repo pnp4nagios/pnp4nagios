@@ -5,6 +5,7 @@
 #
 # Open Files 
 #
+include 'arrayfix.php';
 $opt[1] = "--vertical-label \"$UNIT[1]\" --title \"Open Files $hostname / $servicedesc\" ";
 #
 #

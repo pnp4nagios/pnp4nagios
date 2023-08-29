@@ -5,6 +5,7 @@
 #
 # User Connections
 #
+include 'arrayfix.php';
 $opt[1] = "--vertical-label \"$UNIT[1]\" --title \"User Connections $hostname / $servicedesc\" ";
 #
 #

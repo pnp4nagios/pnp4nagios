@@ -2,6 +2,9 @@
 #
 # This is a very basic static Template
 #
+if (!is_array($ds_name)) $ds_name = [];
+if (!is_arry($opt)) $opt = [];
+if (!is_array($def)) $def = [];
 #
 # Some Macros 
 $this->MACRO['TITLE'] = "All Ping Times for Cluster Nodes"; 

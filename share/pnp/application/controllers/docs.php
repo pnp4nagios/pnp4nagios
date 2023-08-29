@@ -8,6 +8,13 @@
  */
 class Docs_Controller extends System_Controller  {
 
+    public $doc_language = '';
+    public $lang = '';
+    public $page = '';
+    public $content = '';
+    public $toc = '';
+    public $graph_width = '';
+    
     public function __construct()
     {
         parent::__construct();

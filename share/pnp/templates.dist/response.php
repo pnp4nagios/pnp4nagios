@@ -2,9 +2,9 @@
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 #
+include 'arrayfix.php';
 
 $opt[1] = "--vertical-label \"Response Time\"  --title \"Response Time For $hostname / $servicedesc\" ";
-
 
 $def[1] =  "DEF:var1=$RRDFILE[1]:$DS[1]:AVERAGE " ;
 $def[1] .= "AREA:var1#00FF00:\"Response Times \" " ;

@@ -3,6 +3,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_pnp_rrds.pl
 #
+include 'arrayfix.php';
 $opt[1] = "--slope-mode --watermark \"Created by PNP4Nagios\" --title \"PNP4Nagios XML Statistics\" ";
 #
 #

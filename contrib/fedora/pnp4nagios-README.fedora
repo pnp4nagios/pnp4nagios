@@ -1,3 +1,16 @@
+(For Fedora and other redhat-ish variants)
+
+**** httpd integration ****
+pnp4nagios.httpd.plugin.conf -> /etc/systemd/system/httpd.service.d/pnp4nagios.conf
+systemctl daemon-reload
+...this sets the XDG_CACHE_HOME environment variable needed by
+fontconfig that is in turn needed by rrdtool graph generation
+it should be an apache-writable directory, typically /var/cache/httpd 
+
+
+**** nagios integration *****
+
+
 * Default Mode
 
 /etc/nagios/nagios.cfg

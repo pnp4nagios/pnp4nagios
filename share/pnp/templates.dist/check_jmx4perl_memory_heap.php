@@ -5,6 +5,7 @@
 # Dataset: memory_heap
 # Perfdata: Heap=9783304B;540069068.8;607577702.4;0;675086336
 #
+include 'arrayfix.php';
 $opt[1]  = "--vertical-label \"Bytes\" --title \"Memory Heap $hostname / $servicedesc\" ";
 $def[1]  = rrd::def("var1",$RRDFILE[1],$DS[1],"AVERAGE") ;
 $def[1] .= rrd::gradient('var1', '#F5F5F5', '#C0C0C0' ); 

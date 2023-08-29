@@ -5,6 +5,7 @@
 # Based on a template for check_nagiostats written by Joerg Linge
 # Copyright (c) 2017 Yannick Charton
 #
+include 'arrayfix.php';
 
 $graph = 0; 
 $opt[$graph] = '--title "Check Latency" --vertical-label "seconds"';
