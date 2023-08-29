@@ -65,6 +65,7 @@ rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}/kohana
 #
 install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/pnp4nagios
@@ -146,8 +147,10 @@ files for errors, and flagging them for attention.
 %attr(755,root,root) %{_libexecdir}/%{name}/*
 %attr(755,nagios,nagios) %{_localstatedir}/lib/%{name}
 %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}
+%attr(755,apache,apache) %{_localstatedir}/log/%{name}/kohana
 %attr(755,nagios,nagios) %{_localstatedir}/spool/%{name}
 %{_datadir}/nagios/html/%{name}
+%config(noreplace) %{_datadir}/nagios/html/%{name}/application/config/config.php
 # Remove install check script
 # as it is not required if all dependencies are met.
 %exclude %{_datadir}/nagios/html/%{name}/install.php
