@@ -6,7 +6,8 @@ Summary:        Nagios performance data analysis tool
 Group:          Applications/System
 License:        GPLv2
 URL:            https://github.com/pnp4nagios/celane
-Source0:        %{name}-%{version}.tar.gz
+Source0:        celane-%{version}.tar.gz
+#Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 #BuildRequires:  git
