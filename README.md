@@ -3,7 +3,7 @@
 The new/current place for the pnp4nagios organization is
    https://github.com/pnp4nagios
 With this *particular* version residing in
-   https://github.com/pnp4nagios/celane      
+   https://github.com/pnp4nagios/pnp4nagios
 
 
 This is a fork of [@lingej's original pnp4nagios package](https://github.com/lingej/pnp4nagios).

@@ -1,13 +1,12 @@
 Name:           pnp4nagios
 Version:        0.6.27
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
 License:        GPLv2
-URL:            https://github.com/pnp4nagios/celane
-Source0:        celane-%{version}.tar.gz
-#Source0:        %{name}-%{version}.tar.gz
+URL:            https://github.com/pnp4nagios/pnp4nagios
+Source0:        %{name}-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 #BuildRequires:  git
@@ -27,7 +26,7 @@ PNP is an addon to nagios which analyzes performance data provided by plugins
 and stores them automatically into RRD-databases.
 
 %prep
-%setup -q -n celane-%{version}
+%setup -q 
 autoreconf
 
 cp contrib/fedora/pnp4nagios-README.fedora README.fedora

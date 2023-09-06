@@ -2672,7 +2672,7 @@ printf "%s\n" "#define DEFAULT_NAGIOS_GROUP nagios" >>confdefs.h
 
 PKG_NAME=pnp4nagios
 PKG_VERSION="0.6.27"
-PKG_HOME_URL="https://github.com/pnp4nagios/celane"
+PKG_HOME_URL="https://github.com/pnp4nagios/pnp4nagios"
 PKG_REL_DATE="08-29-2023"
 
 
