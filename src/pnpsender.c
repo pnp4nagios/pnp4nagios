@@ -239,7 +239,7 @@ int process_arguments(int argc, char **argv) {
 				"                  like \"serviceperfdata\", \"hostperfdata\", \"eventhandler\"\n");
 		printf("\n\n");
 		printf(
-				"Visit the PNP website at http://www.pnp4nagios.org/pnp/ for bug fixes, new\n");
+				"Visit the PNP website at https://github.com/pnp4nagios/celane for bug fixes, new\n");
 		printf(
 				"releases, online documentation, FAQs, information on subscribing to\n");
 		printf("the mailing lists.\n");

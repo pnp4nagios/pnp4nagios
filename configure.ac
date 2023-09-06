@@ -12,7 +12,7 @@ AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
 
 PKG_NAME=pnp4nagios
 PKG_VERSION="0.6.27"
-PKG_HOME_URL="http://www.pnp4nagios.org/pnp/start"
+PKG_HOME_URL="https://github.com/pnp4nagios/celane"
 PKG_REL_DATE="08-29-2023"
 AC_SUBST(PKG_NAME)
 AC_SUBST(PKG_VERSION)

@@ -278,7 +278,7 @@ sub print_usage () {
 }
 
 sub print_support {
-    print "SUPPORT: http://www.pnp4nagios.org/pnp/\n";
+    print "SUPPORT: https://github.com/pnp4nagios/celane\n";
     print "\n\n";
 }
 

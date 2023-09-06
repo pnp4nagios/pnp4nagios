@@ -479,7 +479,7 @@ int process_arguments(int argc, char **argv) {
 		printf("\t\tPath to config file\n");
 		printf("\n");
 		printf(
-				"Visit the Website at http://sourceforge.net/projects/pnp4nagios/ for bug fixes, \n");
+				"Visit the Website at https://github.com/pnp4nagios/celane for bug fixes, \n");
 		printf("new releases, online documentation, FAQs, Mailinglists.\n");
 		printf("\n");
 

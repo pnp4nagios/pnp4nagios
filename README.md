@@ -1,5 +1,11 @@
 # PNP4Nagios
 
+The new/current place for the pnp4nagios organization is
+   https://github.com/pnp4nagios
+With this *particular* version residing in
+   https://github.com/pnp4nagios/celane      
+
+
 This is a fork of [@lingej's original pnp4nagios package](https://github.com/lingej/pnp4nagios).
 
 As a long-time user of `pnpnagios`, I am trying to give the project a
@@ -22,9 +28,10 @@ Instructions can be found in
 
 ## Documentation
 
-While it's still up, the bext source of documentation is at
-https://docs.pnp4nagios.org. I will work on reproducing that, in some form,
-soon.
+The old site for documentation at https://docs.pnp4nagios.org is no longer
+up; the replacement is https://github.com/pnp4nagios/docs
+It's possible that there are still some references to the old site scattered
+here and there. 
 
 
 ## About Me
@@ -37,12 +44,21 @@ I am a long time Nagios/Icinga/Monitoring/Devops Professional. I've been
 ## build RPM from git
 
 The spec file is in the "dist" subdirectory.  Install git-build-rpm (it's on
-github) and, as an example:
+github, surprise!) and, as an example:
 
-cd (main directory of this git package; where this README.md file is located)
-git build-rpm --rpm-dir /home/local/lane/rpmbuild --dist .fc35
+HERE=(main directory of this git package; where this README.md file is located)
+cd $HERE
+git build-rpm --rpm-dir /home/local/lane/rpmbuild --spec dist/pnp4nagios.spec --dist .fc35
 
-The --rpm-dir option is to keep the .srpm file from the build, the
---dist option is to avoid the longwinded "-%{version}-%{release}%{timestamp}.%{dist}..." package name.
+The --rpm-dir option is to keep the .srpm file from the build (it will be
+in your usual SRPMS subdirectory in your rpmbuild tree), the
+--dist option is to avoid the longwinded "-%{version}-%{release}%{timestamp}.%{dist}..." package name. The rpms will get copied from the rpmbuild tree to
+$HERE. 
 
+You can also just get the source code, do a
+./configure
+then
+make
+etc....but some of us (me) prefers to have a software package, to organize
+software installation/update/removal. 
 
