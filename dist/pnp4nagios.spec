@@ -27,7 +27,7 @@ PNP is an addon to nagios which analyzes performance data provided by plugins
 and stores them automatically into RRD-databases.
 
 %prep
-%setup -q
+%setup -q -n celane-%{version}
 autoreconf
 
 cp contrib/fedora/pnp4nagios-README.fedora README.fedora
