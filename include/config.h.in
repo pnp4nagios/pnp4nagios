@@ -156,7 +156,7 @@
 #undef RETSIGTYPE
 
 /* Define to 1 if you have the ANSI C header files. */
-#undef STDC_HEADERS
+/* obsolete #undef STDC_HEADERS */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const
