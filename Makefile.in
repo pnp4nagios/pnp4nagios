@@ -1,7 +1,7 @@
 ###############################
 # Makefile for PNP
 #
-# Last Modified: 12-10-2006
+# Last Modified: 09-06-2023
 ###############################
 
 
@@ -37,9 +37,10 @@ PERL=@PERL@
 
 none:
 	@echo "Please supply a command line argument (i.e. 'make all').  Other targets are:"
-	@echo "   clean"
+	@echo "   clean: Remove artifacts from compilation"
 	@echo "   install install-init install-config install-processperfdata install-html fullinstall"
 	@echo "   install-plugins"
+	@echo "   distclean: Deeper clean to remove configure and Makefile. Recreate via autogen.sh"
 
 all:
 	cd $(SRC_BASE) && $(MAKE)
