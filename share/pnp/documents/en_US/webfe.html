@@ -13,38 +13,17 @@ Nagios itself features external URLs using so called extended info configs. Due 
 </p>
 
 </div>
-<!-- SECTION "Nagios web frontend" [1-285] -->
-<h2><a name="nagios_2x" id="nagios_2x">Nagios 2.x</a></h2>
-<div class="level2">
-
-<p>
-
-With Nagios 2.x the integration of external URLs into the nagios web interface is made using Extended Info Objects for <a href="http://nagios.sourceforge.net/docs/2_0/xodtemplate.html#serviceextinfo" class="urlextern" title="http://nagios.sourceforge.net/docs/2_0/xodtemplate.html#serviceextinfo"  rel="nofollow">services</a>. For PNP we use the directive action_url to call the PNP web frontend with the appropriate options.
-</p>
-<pre class="code">
-define serviceextinfo {
-   host_name             localhost
-   service_description   load
-   action_url            /pnp4nagios/index.php/graph?host=$HOSTNAME$&amp;srv=$SERVICEDESC$
-}
-</pre>
-
-<p>
-You have to specify an additional Extended Info Definition for every service.
-</p>
-
-</div>
-<!-- SECTION "Nagios 2.x" [286-887] -->
+<!-- SECTION "Nagios 3.x" [286-887] -->
 <h2><a name="nagios_3x" id="nagios_3x">Nagios 3.x</a></h2>
 <div class="level2">
 
 <p>
 
-Since nagios 3.0 the action_url-directive has be moved to the <a href="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#host" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#host"  rel="nofollow">host</a> or <a href="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#service" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#service"  rel="nofollow">service</a> definition. This way the definition of URLs to the PNP-interface has been simplified. The <a href="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#serviceextinfo" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#serviceextinfo"  rel="nofollow">serviceextinfo</a> and <a href="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#hostextinfo" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/objectdefinitions.html#hostextinfo"  rel="nofollow">hostextinfo</a> definitions are deprecated. 
+Since nagios 3.0 the action_url-directive has be moved to the <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#host" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#host"  rel="nofollow">host</a> or <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#service" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#service"  rel="nofollow">service</a> definition. This way the definition of URLs to the PNP-interface has been simplified. The <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#serviceextinfo" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#serviceextinfo"  rel="nofollow">serviceextinfo</a> and <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#hostextinfo" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/objectdefinitions.html#hostextinfo"  rel="nofollow">hostextinfo</a> definitions are deprecated. 
 </p>
 
 <p>
-First two nagios templates are defined. If you used the Nagios <a href="http://nagios.sourceforge.net/docs/3_0/quickstart.html" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/quickstart.html"  rel="nofollow">quickstart installation guides</a> you can append these lines to templates.cfg:
+First two nagios templates are defined. If you used the Nagios <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/quickstart.html" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/quickstart.html"  rel="nofollow">quickstart installation guides</a> you can append these lines to templates.cfg:
 </p>
 <pre class="code">
 define host {
@@ -97,7 +76,7 @@ The links to the correct URLs are created automagically.<br/>
 <div class="level2">
 
 <p>
-You can integrate PNP into Nagios in a way that you have current graphs without clicking any icons. This can be accomplished using the <a href="http://nagios.sourceforge.net/docs/3_0/cgiincludes.html" class="urlextern" title="http://nagios.sourceforge.net/docs/3_0/cgiincludes.html"  rel="nofollow">CGI Includes</a> which allow us to include JavaScript code in the status detail view ( status.cgi ). 
+You can integrate PNP into Nagios in a way that you have current graphs without clicking any icons. This can be accomplished using the <a href="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/cgiincludes.html" class="urlextern" title="https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/cgiincludes.html"  rel="nofollow">CGI Includes</a> which allow us to include JavaScript code in the status detail view ( status.cgi ). 
 </p>
 
 <p>
