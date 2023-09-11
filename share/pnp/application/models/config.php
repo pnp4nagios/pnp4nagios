@@ -20,6 +20,7 @@ class Config_Model extends System_Model
 
         # Default Values
         $conf['doc_language']           = Kohana::config('core.doc_language');
+	$conf['fontconfig_cache']	= Kohana::config('core.fontconfig_cache');
         $conf['graph_width']            = Kohana::config('core.graph_width');
         $conf['graph_height']           = Kohana::config('core.graph_height');
         $conf['zgraph_width']           = Kohana::config('core.zgraph_width');
