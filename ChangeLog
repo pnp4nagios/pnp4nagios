@@ -1,7 +1,8 @@
-**pnp-0.6.27-4 09/05/2023**
+**pnp-0.6.27-4 09/12/2023**
 	* update URLs and related text
 	* clean up autoconf stuff
-
+	* add scripts/config4rpm_path.sh to test existing rpm installation (tjyang)
+	
 **pnp-0.6.27 08/18/2023**
   * many php 8.2 fixes to remove 'deprecated' errors:
 	pre-defining class variables (instead of dynamic),
