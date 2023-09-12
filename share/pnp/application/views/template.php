@@ -44,16 +44,16 @@ jQuery(window).load(
 	if( delta < 600 )
 	    delta = 600;
 	var sec_per_px = parseInt( delta / graph_width);
-	var start = ostart + Math.ceil( selection.x1 * sec_per_px );  
-	var end   = ostart + ( selection.x2 * sec_per_px );  
-        window.location = link + '&start=' + start + '&end=' + end ; 
+	var start = ostart + Math.ceil( selection.x1 * sec_per_px );
+	var end   = ostart + ( selection.x2 * sec_per_px );
+        window.location = link + '&start=' + start + '&end=' + end ;
 
     }
-	
+
 	var sfilter = "<?php echo $this->session->get('sfilter') ?>";
 	var spfilter = "<?php echo $this->session->get('spfilter') ?>";
 	var pfilter = "<?php echo $this->session->get('pfilter') ?>";
-	
+
 	if(jQuery("#service-filter").length) {
 		console.log("send keyup")
 		jQuery("#service-filter").keyup()
@@ -70,13 +70,14 @@ jQuery(document).ready(function(){
     jQuery("img").fadeIn(1500);
     jQuery("#basket_action_add a").live("click", function(){
         var item = (this.id)
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
         jQuery.ajax({
             type: "POST",
             url: path + "ajax/basket/add",
-            data: { item: item },
+            data: { item: item, "csrf_token": token },
             success: function(msg){
                 jQuery("#basket_items").html(msg);
-                window.location.reload() 
+                window.location.reload()
             }
         });
     });
@@ -85,34 +86,36 @@ jQuery(document).ready(function(){
             type: "POST",
             url: path + "ajax/basket/clear",
             success: function(msg){
-                window.location.reload() 
+                window.location.reload()
             }
         });
     });
     jQuery("#basket-show").live("click", function(){
-                window.location.href = path + 'page/basket' 
+                window.location.href = path + 'page/basket'
     });
     jQuery(".basket_action_remove a").live("click", function(){
         var item = (this.id)
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
         jQuery.ajax({
             type: "POST",
             url: path + "ajax/basket/remove/",
-            data: { item: item },
+            data: { item: item, "csrf_token": token },
             success: function(msg){
                 jQuery("#basket_items").html(msg);
-                window.location.reload() 
+                window.location.reload()
             }
         });
     });
     jQuery("#basket_items" ).sortable({
         update: function(event, ui) {
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
 	    var items = jQuery(this).sortable('toArray').toString();
             jQuery.ajax({
                 type: "POST",
                 url: path + "ajax/basket/sort",
-                data: { items: items },
+                data: { items: items, "csrf_token": token },
                 success: function(msg){
-                    window.location.reload() 
+                    window.location.reload()
                 }
             });
         }
@@ -135,10 +138,11 @@ jQuery(document).ready(function(){
 		}else{
 			jQuery("#service-filter").css('background-color','white');
 		}
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
 		jQuery.ajax({
 			type: "POST",
 			url: path + "ajax/filter/set-sfilter",
-			data: { sfilter: sfilter }
+            data: { sfilter: sfilter, "csrf_token": token }
 		});
         jQuery("#services span[id^='service']").each(function () {
             if (jQuery(this).attr('id').search(new RegExp("service-.*" + sfilter,"i")) == 0) {
@@ -156,10 +160,11 @@ jQuery(document).ready(function(){
 		}else{
 			jQuery("#special-filter").css('background-color','white');
 		}
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
 		jQuery.ajax({
 			type: "POST",
 			url: path + "ajax/filter/set-spfilter",
-			data: { spfilter: spfilter }
+            data: { spfilter: spfilter, "csrf_token": token }
 		});
         jQuery("#special-templates span[id^='special']").each(function () {
             if (jQuery(this).attr('id').search(new RegExp("special-.*" + spfilter,"i")) == 0) {
@@ -177,10 +182,11 @@ jQuery(document).ready(function(){
 		}else{
 			jQuery("#page-filter").css('background-color','white');
 		}
+		var token = "<?php echo $this->session->get('csrf_token') ?>"
 		jQuery.ajax({
 			type: "POST",
 			url: path + "ajax/filter/set-pfilter",
-			data: { pfilter: pfilter }
+            data: { pfilter: pfilter, "csrf_token": token }
 		});
         jQuery("#pages span[id^='page']").each(function () {
             if (jQuery(this).attr('id').search(new RegExp("page-.*" + pfilter,"i")) == 0) {
