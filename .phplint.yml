@@ -1,0 +1,10 @@
+path:
+  - lib/
+  - share/
+extensions:
+  - php
+exclude:
+  - vendor
+warning: false
+memory-limit: -1
+no-cache: false
