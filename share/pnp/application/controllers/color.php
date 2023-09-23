@@ -8,7 +8,8 @@
  */
 class Color_Controller extends System_Controller  {
 
-
+    public $scheme = array();
+    
     public function __construct()
     {
         parent::__construct();
