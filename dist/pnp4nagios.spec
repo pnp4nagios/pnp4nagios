@@ -144,7 +144,7 @@ files for errors, and flagging them for attention.
 %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}
 %attr(755,apache,apache) %{_localstatedir}/log/%{name}/kohana
 %attr(755,nagios,nagios) %{_localstatedir}/spool/%{name}
-%{_datadir}/nagios/html/%{name}
+%{_datadir}/nagios/html/%{name}/
 %config(noreplace) %{_datadir}/nagios/html/%{name}/application/config/config.php
 # Remove install check script
 # as it is not required if all dependencies are met.
@@ -156,7 +156,7 @@ files for errors, and flagging them for attention.
 
 %files logwatch
 %defattr(644,root,root)
-%config(noreplace)%{_sysconfdir}/logwatch/scripts/services/%{name}
+%config(noreplace) %{_sysconfdir}/logwatch/scripts/services/%{name}
 %config(noreplace) %{_sysconfdir}/logwatch/conf/services/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logwatch/conf/logfiles/%{name}.conf
 
