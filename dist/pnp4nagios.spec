@@ -162,6 +162,8 @@ files for errors, and flagging them for attention.
 
 
 %post
+# since npcd.service file changed, need reload, maybe
+systemctl daemon-reload
 systemctl try-restart npcd
 
 %changelog
