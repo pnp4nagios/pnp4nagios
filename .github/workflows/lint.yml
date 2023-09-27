@@ -1,0 +1,35 @@
+name: Lint
+
+on:
+  push:
+    branches: [ "master", "main" , "testing"]
+  pull_request:
+
+jobs:
+  php-lint:
+    name: "phplint"
+    runs-on: "${{ matrix.operating-system }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system:
+          - "ubuntu-22.04"
+        php-version:
+          - "8.1"
+          - "8.2"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup PHP runtime
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "${{ matrix.php-version }}"
+          coverage: "none"
+
+      - name: Lint PHP files
+        run: |
+          curl -Ls https://github.com/overtrue/phplint/releases/latest/download/phplint.phar -o /usr/local/bin/phplint
+          chmod +x /usr/local/bin/phplint
+          /usr/local/bin/phplint -c .phplint.yml -v
