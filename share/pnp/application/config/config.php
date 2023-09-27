@@ -33,6 +33,20 @@ $config['url_suffix'] = '';
 $config['internal_cache'] = FALSE;
 
 /**
+ * rrdtool graph uses pango to do graphics, and pango calls fontconfig to
+ * deal with font stuff...but fontconfig needs a cache directory in 
+ * XDG_CACHE_HOME.  Automatically set up for interactive use, but not for
+ * web servers.  It should be a 'cache' directory writable by the webserver
+ * So for apache on linux, /var/cache/httpd  is already set up and owned by
+ * apache...but for other systems/webservers this may need changed. 
+ * NOTE that this propagates down to application/models/rrdtool.php where the
+ * environment variable is set for rrdtool to use. 
+ */
+
+$config['fontconfig_cache'] = '/var/cache/httpd';
+
+
+/**
  * Enable or disable gzip output compression. This can dramatically decrease
  * server bandwidth usage, at the cost of slightly higher CPU usage. Set to
  * the compression level (1-9) that you want to use, or FALSE to disable.

@@ -33,8 +33,17 @@ class Rrdtool_Model extends System_Model
         }
 
         $rrdtool = $this->config->conf['rrdtool'] . " - ";
-        
-        $xdg_cache = getenv("XDG_CACHE_HOME");
+
+	/* this is needed by Fontconfig, used by pango, used by rrdtool graph
+	** it's automatically set up for 'interactive' sessions, but  web servers
+	** don't have it (usually?). If there are 'red screens' instead of graphs,
+	** there's a good chance this is why */
+	
+	$fc_cache = $this->config->conf['fontconfig_cache'];
+	
+
+	putenv("XDG_CACHE_HOME=".$fc_cache); 
+	$xdg_cache = getenv("XDG_CACHE_HOME");
         if (!$xdg_cache) {
            $data = "ERROR: environment var XDG_CACHE_HOME not defined (should be writable cache dir)";
            return $data;

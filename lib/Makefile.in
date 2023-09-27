@@ -287,6 +287,7 @@ install:
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/utf8/ltrim.php $(DESTDIR)$(LIBDIR)/kohana/system/core/utf8/ltrim.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/Benchmark.php $(DESTDIR)$(LIBDIR)/kohana/system/core/Benchmark.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/Bootstrap.php $(DESTDIR)$(LIBDIR)/kohana/system/core/Bootstrap.php
+	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/Security.php $(DESTDIR)$(LIBDIR)/kohana/system/core/Security.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/Kohana.php $(DESTDIR)$(LIBDIR)/kohana/system/core/Kohana.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/core/utf8.php $(DESTDIR)$(LIBDIR)/kohana/system/core/utf8.php
 	$(INSTALL) -m 644 $(INSTALL_OPTS) kohana/system/views/kohana_profiler_table.php $(DESTDIR)$(LIBDIR)/kohana/system/views/kohana_profiler_table.php
