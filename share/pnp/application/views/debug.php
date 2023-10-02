@@ -1,50 +1,50 @@
-<?php 
-if($this->is_authorized === FALSE){
+<?php
+if ($this->is_authorized === false) {
     print "<div class=\"pagebody b1\"><h2>Your are not authorized to view this site</h2></div>";
-    return; 
-}    
+    return;
+}
 ?>
 <div class="pagebody b1">
 
 <script type="text/javascript">
-	jQuery(function() {
-		jQuery("#tabs").tabs();
-	});
+    jQuery(function() {
+        jQuery("#tabs").tabs();
+    });
 </script>
 <table class="body"><tr><td valign="top">
 <div class="gw left ui-corner-all">
 
 <div id="tabs">
-	<ul>
-		<li><a href="#tabs-1">Data Structure</a></li>
-		<li><a href="#tabs-2">RRD Datasource</a></li>
-		<li><a href="#tabs-3">Nagios Macros</a></li>
-		<li><a href="#tabs-4">PHP Session </a></li>
-	</ul>
-	<div id="tabs-1">
-	<h3>$this->data->STRUCT</h3>
-	<pre>
+    <ul>
+        <li><a href="#tabs-1">Data Structure</a></li>
+        <li><a href="#tabs-2">RRD Datasource</a></li>
+        <li><a href="#tabs-3">Nagios Macros</a></li>
+        <li><a href="#tabs-4">PHP Session </a></li>
+    </ul>
+    <div id="tabs-1">
+    <h3>$this->data->STRUCT</h3>
+    <pre>
 <?php print_r($this->data->STRUCT);?>
-	</pre>
-	</div>
-	<div id="tabs-2">
-	<h3>$this->data->DS</h3>
-	<pre>
+    </pre>
+    </div>
+    <div id="tabs-2">
+    <h3>$this->data->DS</h3>
+    <pre>
 <?php print_r($this->data->DS);?>
-	</pre>
-	</div>
-	<div id="tabs-3">
-	<h3>$this->data->MACRO</h3>
-	<pre>
+    </pre>
+    </div>
+    <div id="tabs-3">
+    <h3>$this->data->MACRO</h3>
+    <pre>
 <?php print_r($this->data->MACRO);?>
-	</pre>
-	</div>
-	<div id="tabs-4">
-	<h3>$this->session->get()</h3>
-	<pre>
+    </pre>
+    </div>
+    <div id="tabs-4">
+    <h3>$this->session->get()</h3>
+    <pre>
 <?php print_r($this->session->get());?>
-	</pre>
-	</div>
+    </pre>
+    </div>
 </div>
 </div>
     </td><td valign="top">

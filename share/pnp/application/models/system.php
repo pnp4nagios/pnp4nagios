@@ -1,14 +1,15 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 
 /**
- * Retrieves the PNP config files 
+ * Retrieves the PNP config files
  */
-class System_Model extends Model {
+class System_Model extends Model
+{
+    public $ERROR = null;
 
-    public $ERROR = NULL;
-
-    public function __construct() {
-
+    public function __construct()
+    {
     }
-
 }
