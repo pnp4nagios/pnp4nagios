@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * @package  Cache
  *
@@ -25,8 +27,8 @@
  */
 $config['default'] = array
 (
-	'driver'   => 'file',
-	'params'   => APPPATH.'cache',
-	'lifetime' => 1800,
-	'requests' => 1000
+    'driver'   => 'file',
+    'params'   => APPPATH . 'cache',
+    'lifetime' => 1800,
+    'requests' => 1000
 );

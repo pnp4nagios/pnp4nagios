@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * @package Session
  *
@@ -27,7 +29,7 @@ $config['validate'] = array('user_agent');
  * Note: this has no effect on the native session driver.
  * Note: the cookie driver always encrypts session data. Set to TRUE for stronger encryption.
  */
-$config['encryption'] = FALSE;
+$config['encryption'] = false;
 
 /**
  * Session lifetime. Number of seconds that each session will last.
