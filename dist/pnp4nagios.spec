@@ -1,15 +1,16 @@
+%global debug_package %{nil}
+
 Name:           pnp4nagios
-Version:        0.6.27
+Version:        %{version_}
 Release:        5%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
 License:        GPLv2
 URL:            https://github.com/pnp4nagios/pnp4nagios
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
-#BuildRequires:  git
 BuildRequires:  autoconf, automake, libtool
 BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)

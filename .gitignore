@@ -41,3 +41,5 @@ man/npcd.8
 *.swo
 
 pnp4nagios*.rpm
+pnp4nagios*.tgz
+pnp4nagios*.tar.gz

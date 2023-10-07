@@ -1,9 +1,10 @@
 ###############################
 # Makefile for PNP
 #
-# Last Modified: 12-10-2006
+# Last Modified: 10-05-2023
 ###############################
 
+VERSION=@PKG_VERSION@
 
 # Source code directories
 SRC_BASE=@srcdir@/src
@@ -34,6 +35,8 @@ DATAROOTDIR=@datarootdir@
 
 CP=@CP@
 PERL=@PERL@
+
+.PHONY: clean dist distclean devclean
 
 none:
 	@echo "Please supply a command line argument (i.e. 'make all').  Other targets are:"
@@ -180,4 +183,9 @@ fullinstall: install install-webconf install-config install-init
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
+
+dist:
+	dist/maketar.sh $(VERSION)
+
+
 
