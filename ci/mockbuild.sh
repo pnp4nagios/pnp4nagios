@@ -6,9 +6,10 @@ VERSION=$1
 dnf install -y epel-release
 dnf install -y mock
 
-tar -xf dist/${NAME}-${VERSION}.tgz ${NAME}-${VERSION}/dist/${NAME}.spec
+tar -xf ${NAME}-${VERSION}.tgz ${NAME}-${VERSION}/dist/${NAME}.spec
+mv ${NAME}-${VERSION}/dist/${NAME}.spec .
 
-RELEASE=$(grep 'Release: ' ${NAME}-${VERSION}/${NAME}.spec | cut -d ':' -f2 | awk -F'%' '{print $1}' | tr -d ' ')
+RELEASE=$(grep 'Release: ' ${NAME}.spec | cut -d ':' -f2 | awk -F'%' '{print $1}' | tr -d ' ')
 echo RELEASE=${RELEASE} >> $GITHUB_ENV
 
 mkdir outputs
