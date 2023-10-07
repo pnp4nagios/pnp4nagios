@@ -12,13 +12,14 @@ RELEASE=$(grep 'Release: ' ${NAME}-${VERSION}/${NAME}.spec | cut -d ':' -f2 | aw
 echo RELEASE=${RELEASE} >> $GITHUB_ENV
 
 mkdir outputs
+ls -lR 
 
 config='almalinux-8-x86_64'
 dist='el8'
 mock -r $config  \
      --define="version_ $VERSION" \
-     --spec=${NAME}-${VERSION}/dist/${NAME}.spec \
-     --sources=dist/ --resultdir=./outputs -N
+     --spec=${NAME}.spec \
+     --sources=. --resultdir=./outputs -N
 
 exit 0
 
