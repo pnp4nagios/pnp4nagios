@@ -1,9 +1,11 @@
 autom4te.cache
 subst
+configure
 summary
 *Makefile
 config.log
 config.status
+dist/pnp4nagios.spec
 scripts/rc.npcd
 scripts/rc.pnp_gearman_worker
 scripts/check_pnp_rrds.pl
@@ -12,6 +14,7 @@ scripts/rrd_modify.pl
 src/*.o
 src/npcd
 include/config.h
+include/stamp-h
 *~
 
 sample-config/pnp/config.php

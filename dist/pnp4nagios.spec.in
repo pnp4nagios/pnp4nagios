@@ -1,8 +1,8 @@
 %global debug_package %{nil}
 
 Name:           pnp4nagios
-Version:        %{version_}
-Release:        5%{?dist}
+Version:        @PACKAGE_VERSION@
+Release:        @PACKAGE_RELEASE@%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System

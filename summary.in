@@ -1,8 +1,8 @@
 #@PERL@ -w
-@PERL_LIB_PATH_CODE@
+use lib '@PERL_LIB_PATH@';
 
 my %conf = (
-    VERSION           => "@PKG_VERSION@",
+    VERSION           => "@PACKAGE_VERSION@",
     USE_RRDs          => "@RRDS@",
     DEBUG_LEVEL       => "@DEBUG@",
     PERL_LIB_PATH     => "@PERL_LIB_PATH@"
@@ -30,7 +30,7 @@ if($rrdtool_version == ""){
 }
 
 printf ("\n\n");
-printf ("*** Configuration summary for %s-%s %s ***","@PKG_NAME@","@PKG_VERSION@","@PKG_REL_DATE@");
+printf ("*** Configuration summary for %s-%s %s ***","@PACKAGE_NAME@","@PACKAGE_VERSION@","@PKG_REL_DATE@");
 printf ("\n\n");
 printf ("  General Options:\n");
 printf ("  -------------------------         -------------------\n");
@@ -49,7 +49,7 @@ printf ("\n");
 printf ("  Web Interface Options:\n");
 printf ("  -------------------------         -------------------\n");
 printf ("  HTML URL:                         %s\n","http://localhost@BASE_URL@");
-printf ("  Apache Config File:               %s\n","@HTTPD_CONF@/@PKG_NAME@.conf");
+printf ("  Apache Config File:               %s\n","@HTTPD_CONF@/@PACKAGE_NAME@.conf");
 if( $#ARGV == -1){
 printf ("\n\n"); 
 printf ("  Review the options above for accuracy.  If they look okay,\n");

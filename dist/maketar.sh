@@ -2,19 +2,45 @@
 # collect up all the "base" files into a tar file
 # exclude the stuff that gets created during a build
 
-# 
+# usage: maketar.sh [version] [release] [releasedate]
+# defaults from configure.ac if not provided
+
 me=`realpath -e -L $0`
+distdir=`dirname $me`
+basedir=`realpath -e -L $distdir/..`
+#echo "distdir $distdir"
+#echo "basedir $basedir"
+
 VERSION=$1
+CVER=`awk -F, '/^AC_INIT/ {print $2}' $basedir/configure.ac|tr -d '[]'`
 if [ "x${VERSION}" == "x" ] ;
 then
-    echo "usage: $0 version"
+    VERSION=$CVER
+    echo "VERSION ($VERSION) from configure.ac"
+elif [ "${VERSION}" != "${CVER}" ] ;
+then
+    echo "$0 version requested $VERSION mismatch configure.ac $CVER"
     exit 1
 fi
+    
+RELEASE=$2
+if [ "x${RELEASE}" == "x" ] ;
+then
+    RELEASE=`awk -F'"' '/^PACKAGE_RELEASE=/{print $2}' $basedir/configure.ac`
+    echo "RELEASE ($RELEASE) from configure.ac"
+fi
 
-distdir=`dirname $me`
-echo "distdir $distdir"
+RELDATE=$3
+if [ "x${RELDATE}" == "x" ] ;
+then
+    RELDATE=`awk -F'"' '/^PKG_REL_DATE=/{print $2}' $basedir/configure.ac`
+    echo "RELDATE ($RELDATE) from configure.ac"
+fi
+
+echo "Version $VERSION Release $RELEASE Date $RELDATE"
+
 tdir=`mktemp -p "/tmp" -d "pnp4nagiosDIST_XXXXXXXX"`
-echo "tempdir $tdir"
+#echo "tempdir $tdir"
 pushd $tdir >/dev/null
 
 #directory for dist 
@@ -26,16 +52,29 @@ pushd pnp4nagios-${VERSION} >/dev/null
 
 #echo "in tar base dir " `pwd`
 
-for f in AUTHORS ChangeLog ci configure.ac config.sub contrib COPYING \
-                dist helpers include INSTALL install-sh lib \
-                Makefile.in man README.md sample-config scripts \
-                share src subst.in summary.in THANKS ; 
+for f in AUTHORS ChangeLog ci dist config.sub contrib COPYING \
+                 helpers include INSTALL install-sh lib \
+                 Makefile.in man README.md sample-config scripts \
+                 share src subst.in summary.in THANKS ; 
 do
-#    echo "ln -s $distdir/../$f ."
-    ln -s $distdir/../$f  .  
+#    echo "ln -s $basedir/$f ."
+    ln -s $basedir/$f  .  
 done
 
-ls
+# update version/release/release_date 
+cp $basedir/configure.ac .
+rm dist/pnp4nagios.spec
+cp dist/pnp4nagios.spec.in dist/pnp4nagios.spec
+sed -i "s/@PACKAGE_VERSION@/${VERSION}/" dist/pnp4nagios.spec
+sed -i "s/@PACKAGE_RELEASE@/${RELEASE}/" dist/pnp4nagios.spec
+sed -i "s/PACKAGE_RELEASE=\"[^\"]*\"/PACKAGE_RELEASE=\"${RELEASE}\"/" \
+    configure.ac
+sed -i "s/PKG_REL_DATE=\"[^\"]*\"/PKG_REL_DATE=\"${RELDATE}\"/" \
+    configure.ac
+
+#ls
+#ls dist
+
 
 popd >/dev/null
 
@@ -45,14 +84,16 @@ find -L pnp4nagios-${VERSION} -name '*.in' >dist.exclude
 sed -i 's/.in$//' dist.exclude
 # ...and no archives in dist, either
 find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.tgz' >>dist.exclude
-
+# exception is pnp4nagios.spec
+grep -v dist/pnp4nagios.spec dist.exclude >dist.x
+mv dist.x dist.exclude
 
 #GNU makefile 'dist' guideline is that files in the archive
 #should have world rx permissions
 chmod 0755 -R pnp4nagios-${VERSION}
 
 #make the tar archive, rereferencing symbolic links
-tar chzvf pnp4nagios-${VERSION}.tgz -X dist.exclude pnp4nagios-${VERSION}
+tar chzf pnp4nagios-${VERSION}.tgz -X dist.exclude --exclude-backups pnp4nagios-${VERSION}
 mv pnp4nagios-${VERSION}.tgz $distdir
 popd >/dev/null
 # clean up temp directory

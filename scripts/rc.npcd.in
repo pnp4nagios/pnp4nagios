@@ -6,7 +6,7 @@
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: @PKG_NAME@ NPCD Daemon Version @PKG_VERSION@
+# Short-Description: @PACKAGE_NAME@ NPCD Daemon Version @PACKAGE_VERSION@
 # Description:          Nagios Performance Data C Daemon
 ### END INIT INFO
 

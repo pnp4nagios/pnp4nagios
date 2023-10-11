@@ -38,7 +38,7 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <table cellspacing="0">
 <tr>
 <th>PNP4Nagios Version</th>
-<td class="pass">@PKG_NAME@-@PKG_VERSION@</td>
+<td class="pass">@PACKAGE_NAME@-@PACKAGE_VERSION@</td>
 </tr>
 <tr>
 <th>Prefix</th>
@@ -198,7 +198,7 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 
 <div id="results">
 <?php if ($failed > 0): ?>
-<p class="fail">@PKG_NAME@ may not work correctly with your environment. Remove or rename the <code><?php echo __FILE__ ?></code> file on your own risk.</p>
+<p class="fail">@PACKAGE_NAME@ may not work correctly with your environment. Remove or rename the <code><?php echo __FILE__ ?></code> file on your own risk.</p>
 <?php else: ?>
 <p class="pass">Your environment passed all requirements. Remove or rename the <code><?php echo __FILE__ ?></code> file now.</p>
 <?php endif ?>

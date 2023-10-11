@@ -9,8 +9,8 @@ INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
 PERFDATADIR=@PERFDATA_DIR@
 DATAROOTDIR=@datarootdir@
-PKG_NAME=@PKG_NAME@
-PKG_VERSION=@PKG_VERSION@
+PACKAGE_NAME=@PACKAGE_NAME@
+PACKAGE_VERSION=@PACKAGE_VERSION@
 HTTPD_CONF=@HTTPD_CONF@
 CP=@CP@
 
@@ -41,7 +41,7 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/background.pdf $(DESTDIR)$(SYSCONFDIR)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PKG_VERSION); \
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION); \
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR); \
 
 install-config: 
@@ -50,7 +50,7 @@ install-config:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PKG_VERSION); \
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION); \
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR); \
 		
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/config_local.php ] ;then \
@@ -58,13 +58,13 @@ install-config:
 	fi
 		
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg ] ;then \
-		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg.$(PKG_VERSION); \
+		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg.$(PACKAGE_VERSION); \
 	else\
 		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg; \
 	fi
 		
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/npcd.cfg ] ;then \
-		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg.$(PKG_VERSION); \
+		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg.$(PACKAGE_VERSION); \
 	else\
 		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg; \
 	fi
@@ -80,5 +80,5 @@ install-config:
 install-webconf: 
 
 	$(INSTALL) -m 755 -d $(DESTDIR)$(HTTPD_CONF)
-	$(INSTALL) -m 644 httpd.conf $(DESTDIR)$(HTTPD_CONF)/$(PKG_NAME).conf
+	$(INSTALL) -m 644 httpd.conf $(DESTDIR)$(HTTPD_CONF)/$(PACKAGE_NAME).conf
 	
