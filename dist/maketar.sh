@@ -98,7 +98,8 @@ chmod 0755 -R pnp4nagios-${VERSION}
 tar chzf pnp4nagios-${VERSION}.tgz -X dist.exclude --exclude-backups pnp4nagios-${VERSION}
 mv pnp4nagios-${VERSION}.tgz $distdir
 
-zip -q -r pnp4nagios-${VERSION}.zip  pnp4nagios-${VERSION}/ -x\*~ -x\*\# -x\@dist.exclude
+zip -r -q pnp4nagios-${VERSION}.zip  pnp4nagios-${VERSION}/ -x\*~ -x\*\# -x\@dist.exclude
+mv pnp4nagios-${VERSION}.zip $distdir
 popd >/dev/null
 # clean up temp directory
 rm -rf $tdir
