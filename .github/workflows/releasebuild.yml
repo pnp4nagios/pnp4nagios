@@ -47,7 +47,7 @@ jobs:
           name: pnp4nagios-${{ env.VERSION }}.tgz
           path: dist/pnp4nagios-${{ env.VERSION }}.tgz
 
-      - name Upload zip
+      - name: Upload zip
         uses: actions/upload-artifact@v3
         with:
           name: pnp4nagios-${{ env.VERSION }}.zip
