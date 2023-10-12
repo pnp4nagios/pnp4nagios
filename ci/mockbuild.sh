@@ -16,17 +16,14 @@ mkdir outputs
 
 
 BREL="${RELEASE}.alma"
-sed '/^Release: /s/$RELEASE/$BREL/' <${NAME}.spec.base >${NAME}.spec
+sed "/^Release:/c\
+Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
 config='almalinux-8-x86_64'
 mock -r $config  \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs 
 
 
-# release 16.el8.alma
-# srpm name-version-(release).src.rpm
-
-exit 0
 config='fedora-38-x86_64'
 mock -r $config \
      --spec=${NAME}.spec \
