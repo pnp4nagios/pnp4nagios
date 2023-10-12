@@ -5,6 +5,8 @@
 # usage: maketar.sh [version] [release] [releasedate]
 # defaults from configure.ac if not provided
 
+# also makes a zip file
+
 me=`realpath -e -L $0`
 distdir=`dirname $me`
 basedir=`realpath -e -L $distdir/..`
@@ -95,6 +97,8 @@ chmod 0755 -R pnp4nagios-${VERSION}
 #make the tar archive, rereferencing symbolic links
 tar chzf pnp4nagios-${VERSION}.tgz -X dist.exclude --exclude-backups pnp4nagios-${VERSION}
 mv pnp4nagios-${VERSION}.tgz $distdir
+
+zip -q -r pnp4nagios-${VERSION}.zip  pnp4nagios-${VERSION}/ -x\*~ -x\*\# -x\@dist.exclude
 popd >/dev/null
 # clean up temp directory
 rm -rf $tdir
