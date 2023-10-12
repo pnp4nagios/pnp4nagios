@@ -79,7 +79,7 @@ jobs:
             name: pnp4nagios-${{ env.VERSION }}.tgz
 
         - name: Download zip
-          uses: actions/download-artiact@v3
+          uses: actions/download-artifact@v3
           with:
             name: pnp4nagios-${{ env.VERSION }}.zip
 
