@@ -21,10 +21,10 @@ Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
 config='almalinux-8-x86_64'
 mock -r $config  \
      --spec=${NAME}.spec \
-     --sources=. --resultdir=./outputs 
+     --sources=. --resultdir=./outputs -N
 
-
+cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
 mock -r $config \
      --spec=${NAME}.spec \
-     --sources=. --resultdir=./outputs
+     --sources=. --resultdir=./outputs -N
