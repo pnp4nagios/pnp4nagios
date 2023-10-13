@@ -338,6 +338,7 @@ AC_OUTPUT
 # $PERL subst contrib/ssi/status-header.ssi 
 # $PERL subst man/npcd.8
 # 
-$PERL summary
+#$PERL summary
+cat summary
 #
 

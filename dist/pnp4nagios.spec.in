@@ -47,8 +47,6 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
            --with-perfdata-dir=%{_localstatedir}/lib/%{name} \
            --with-perfdata-spool-dir=%{_localstatedir}/spool/%{name}
 
-ls
-cat summary
 make %{?_smp_mflags} all
 
 
