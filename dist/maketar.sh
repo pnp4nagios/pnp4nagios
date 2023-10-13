@@ -54,8 +54,8 @@ pushd pnp4nagios-${VERSION} >/dev/null
 
 #echo "in tar base dir " `pwd`
 
-for f in AUTHORS ChangeLog ci dist config.sub contrib COPYING \
-                 helpers include INSTALL install-sh lib \
+for f in AUTHORS ChangeLog ci dist config.guess config.sub contrib \
+                 COPYING helpers include INSTALL install-sh lib \
                  Makefile.in man README.md sample-config scripts \
                  share src subst.in summary.in THANKS ; 
 do
