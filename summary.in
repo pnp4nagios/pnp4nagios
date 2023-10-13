@@ -1,4 +1,4 @@
-#@PERL@ -w        -*- perl -*- 
+#!@PERL@ -w     -*- perl -*-
 BEGIN {
     if ("@PERL_LIB_PATH@" ne "no") {
         use lib '@PERL_LIB_PATH@' ;       
@@ -27,11 +27,13 @@ my $RRD_BINARY = "@RRDTOOL@";
 @v = split(/ /,$T[0]);
 $rrdtool_version = $v[1];
 $rrdtool_message = "";
-if($rrdtool_version == ""){
+if($rrdtool_version eq ""){
     $rrdtool_message = "WARNING: \"$RRD_BINARY\" does not look like rrdtool";
 }else{
     $rrdtool_message = "$RRD_BINARY Version $rrdtool_version";
 }
+
+$prefix = '' unless defined $prefix;
 
 printf ("\n\n");
 printf ("*** Configuration summary for %s-%s %s ***","@PACKAGE_NAME@","@PACKAGE_VERSION@","@PKG_REL_DATE@");

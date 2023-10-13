@@ -1,6 +1,5 @@
 autom4te.cache
 subst
-configure
 summary
 *Makefile
 config.log

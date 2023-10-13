@@ -92,7 +92,7 @@ jobs:
         - name: rename tgz/zip files
           run: |
                mv pnp4nagios-${{ env.VERSION }}.tgz pnp4nagios-${{ env.VERSION }}-${{ env.RELEASE }}.tgz          
-               mv pnp4nagios-${{ env.VERSION }}.zip pnp4nagios-${{ env.RELEASE }}-.zip
+               mv pnp4nagios-${{ env.VERSION }}.zip pnp4nagios-${{ env.version }}-${{ env.RELEASE }}.zip
 
         - name: move rpms to main dir
           run: mv outputs/*.rpm .
