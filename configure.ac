@@ -317,7 +317,6 @@ AC_OUTPUT
 
 
 
-# $PERL subst summary
 # $PERL subst scripts/process_perfdata.pl 
 # $PERL subst scripts/rrd_convert.pl 
 # $PERL subst scripts/rrd_modify.pl 
@@ -338,6 +337,7 @@ AC_OUTPUT
 # $PERL subst contrib/ssi/status-header.ssi 
 # $PERL subst man/npcd.8
 # 
+$PERL subst summary
 $PERL summary
 #
 
