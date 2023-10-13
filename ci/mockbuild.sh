@@ -26,7 +26,6 @@ mkdir outputs
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
 mock -r $config \
-     -i perl-lib \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
 

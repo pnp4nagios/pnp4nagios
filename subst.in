@@ -1,4 +1,4 @@
-#!@PERL@ -w
+#!@PERL@ -w  -*- perl -*-
 
 my ${prefix}="@prefix@";
 

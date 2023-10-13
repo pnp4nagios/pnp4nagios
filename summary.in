@@ -1,5 +1,9 @@
-#@PERL@ -w
-use lib '@PERL_LIB_PATH@';
+#@PERL@ -w        -*- perl -*- 
+BEGIN {
+    if ("@PERL_LIB_PATH@" ne "no") {
+        use lib '@PERL_LIB_PATH@' ;       
+    }   
+}
 
 my %conf = (
     VERSION           => "@PACKAGE_VERSION@",
