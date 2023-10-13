@@ -36,6 +36,8 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 
 %build
+cat summary
+
 %configure --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
