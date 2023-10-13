@@ -15,16 +15,18 @@ RELEASE=$(grep '^Release: ' ${NAME}.spec | cut -d ':' -f2 | awk -F'%' '{print $1
 mkdir outputs
 
 
-BREL="${RELEASE}.alma"
-sed "/^Release:/c\
-Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
-config='almalinux-8-x86_64'
-mock -r $config  \
-     --spec=${NAME}.spec \
-     --sources=. --resultdir=./outputs -N
+# BREL="${RELEASE}.alma"
+# sed "/^Release:/c\
+# Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
+# config='almalinux-8-x86_64'
+# mock -r $config  \
+#      --spec=${NAME}.spec \
+#      --sources=. --resultdir=./outputs -N
 
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
 mock -r $config \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
+
+cat outputs/build.log
