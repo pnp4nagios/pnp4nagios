@@ -325,7 +325,7 @@ class rrd_Core {
     }
 
 
-	public static function alerter($vname=FALSE, $label=FALSE, $warning=FALSE, $critical=FALSE, $opacity = 'ff', $unit, $color_green = '#00ff00', $color_btw   = '#ffff00', $color_red   = '#ff0000', $line_col = '#0000ff') {
+	public static function alerter($vname=FALSE, $label=FALSE, $warning=FALSE, $critical=FALSE, $opacity = 'ff', $unit=FALSE, $color_green = '#00ff00', $color_btw   = '#ffff00', $color_red   = '#ff0000', $line_col = '#0000ff') {
 	
 		if($vname === FALSE){
 			throw new Kohana_exception("rrd::". __FUNCTION__ . "() First Parameter 'vname' is missing");
@@ -363,7 +363,7 @@ class rrd_Core {
 	    return $line;
     }
 
-    public static function alerter_gr($vname=FALSE,$label=FALSE,$warning=FALSE,$critical=FALSE,$opacity='ff',$unit,$color_green='#00ff00',$color_btw='#ffff00',$color_red='#ff0000',$line_col='#0000ff',$start_color="#ffffff") {
+    public static function alerter_gr($vname=FALSE,$label=FALSE,$warning=FALSE,$critical=FALSE,$opacity='ff',$unit=FALSE,$color_green='#00ff00',$color_btw='#ffff00',$color_red='#ff0000',$line_col='#0000ff',$start_color="#ffffff") {
 
         if($vname === FALSE){
             throw new Kohana_exception("rrd::". __FUNCTION__ . "() First Parameter 'vname' is missing");
