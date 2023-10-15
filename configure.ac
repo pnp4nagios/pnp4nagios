@@ -13,8 +13,8 @@ AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
 # release and release_date
 # ...gets overwritten by github release-building
 #
-PACKAGE_RELEASE="5"
-PKG_REL_DATE="2023-10-10"
+PACKAGE_RELEASE="4"
+PKG_REL_DATE="2023-10-15"
 AC_SUBST(PACKAGE_RELEASE)
 AC_SUBST(PKG_REL_DATE)
 #

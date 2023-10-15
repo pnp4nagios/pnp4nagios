@@ -87,6 +87,8 @@ find -L pnp4nagios-${VERSION} -name '*.in' >dist.exclude
 sed -i 's/.in$//' dist.exclude
 # ...and no archives in dist, either
 find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.tgz' >>dist.exclude
+find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.zip' >>dist.exclude
+
 # exception is pnp4nagios.spec
 grep -v dist/pnp4nagios.spec dist.exclude >dist.x
 mv dist.x dist.exclude
