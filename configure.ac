@@ -302,7 +302,7 @@ AC_SUBST(RRDS)
 
 AC_CONFIG_FILES( subst Makefile share/Makefile lib/Makefile scripts/Makefile src/Makefile sample-config/Makefile man/Makefile )
 AC_CONFIG_FILES([include/stamp-h], [date -Is > include/stamp-h])
-AC_CONFIG_FILES(summary scripts/process_perfdata.pl scripts/rrd_convert.pl)
+AC_CONFIG_FILES(scripts/process_perfdata.pl scripts/rrd_convert.pl)
 AC_CONFIG_FILES(scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker)
 AC_CONFIG_FILES(scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php)
 AC_CONFIG_FILES(sample-config/httpd.conf sample-config/lighttpd.pnp4nagios.conf)
@@ -337,7 +337,9 @@ AC_OUTPUT
 # $PERL subst contrib/ssi/status-header.ssi 
 # $PERL subst man/npcd.8
 # 
-#$PERL subst summary
-#$PERL summary
+#### need to use 'subst' instead of configure for this
+#### to deal with 'use lib "no"' case 
+$PERL subst summary
+$PERL summary
 #
 
