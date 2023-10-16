@@ -4,7 +4,7 @@ summary
 *Makefile
 config.log
 config.status
-dist/pnp4nagios.spec
+ci/pnp4nagios.spec
 scripts/rc.npcd
 scripts/rc.pnp_gearman_worker
 scripts/check_pnp_rrds.pl

@@ -54,7 +54,7 @@ pushd pnp4nagios-${VERSION} >/dev/null
 
 #echo "in tar base dir " `pwd`
 
-for f in AUTHORS ChangeLog ci dist config.guess config.sub contrib \
+for f in AUTHORS ChangeLog ci config.guess config.sub contrib \
                  configure \
                  COPYING helpers include INSTALL install-sh lib \
                  Makefile.in man README.md sample-config scripts \
@@ -66,17 +66,14 @@ done
 
 # update version/release/release_date 
 cp $basedir/configure.ac .
-rm dist/pnp4nagios.spec
-cp dist/pnp4nagios.spec.in dist/pnp4nagios.spec
-sed -i "s/@PACKAGE_VERSION@/${VERSION}/" dist/pnp4nagios.spec
-sed -i "s/@PACKAGE_RELEASE@/${RELEASE}/" dist/pnp4nagios.spec
+rm ci/pnp4nagios.spec
+cp ci/pnp4nagios.spec.in ci/pnp4nagios.spec
+sed -i "s/@PACKAGE_VERSION@/${VERSION}/" ci/pnp4nagios.spec
+sed -i "s/@PACKAGE_RELEASE@/${RELEASE}/" ci/pnp4nagios.spec
 sed -i "s/PACKAGE_RELEASE=\"[^\"]*\"/PACKAGE_RELEASE=\"${RELEASE}\"/" \
     configure.ac
 sed -i "s/PKG_REL_DATE=\"[^\"]*\"/PKG_REL_DATE=\"${RELDATE}\"/" \
     configure.ac
-
-#ls
-#ls dist
 
 
 popd >/dev/null
@@ -90,7 +87,7 @@ find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.tgz' >>dist.exclude
 find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.zip' >>dist.exclude
 
 # exception is pnp4nagios.spec
-grep -v dist/pnp4nagios.spec dist.exclude >dist.x
+grep -v ci/pnp4nagios.spec dist.exclude >dist.x
 mv dist.x dist.exclude
 
 #GNU makefile 'dist' guideline is that files in the archive

@@ -310,7 +310,7 @@ AC_CONFIG_FILES(sample-config/misccommands.cfg-sample sample-config/pnp/config.p
 AC_CONFIG_FILES(sample-config/pnp/npcd.cfg-sample)
 AC_CONFIG_FILES(sample-config/pnp/process_perfdata.cfg-sample)
 AC_CONFIG_FILES(sample-config/pnp/pnp4nagios_release contrib/ssi/status-header.ssi)
-AC_CONFIG_FILES(man/npcd.8 dist/pnp4nagios.spec)
+AC_CONFIG_FILES(man/npcd.8 ci/pnp4nagios.spec)
 
 AC_OUTPUT
 

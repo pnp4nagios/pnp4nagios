@@ -5726,7 +5726,7 @@ ac_config_files="$ac_config_files sample-config/pnp/process_perfdata.cfg-sample"
 
 ac_config_files="$ac_config_files sample-config/pnp/pnp4nagios_release contrib/ssi/status-header.ssi"
 
-ac_config_files="$ac_config_files man/npcd.8 dist/pnp4nagios.spec"
+ac_config_files="$ac_config_files man/npcd.8 ci/pnp4nagios.spec"
 
 
 cat >confcache <<\_ACEOF
@@ -6442,7 +6442,7 @@ do
     "sample-config/pnp/pnp4nagios_release") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/pnp4nagios_release" ;;
     "contrib/ssi/status-header.ssi") CONFIG_FILES="$CONFIG_FILES contrib/ssi/status-header.ssi" ;;
     "man/npcd.8") CONFIG_FILES="$CONFIG_FILES man/npcd.8" ;;
-    "dist/pnp4nagios.spec") CONFIG_FILES="$CONFIG_FILES dist/pnp4nagios.spec" ;;
+    "ci/pnp4nagios.spec") CONFIG_FILES="$CONFIG_FILES ci/pnp4nagios.spec" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac

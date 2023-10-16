@@ -208,7 +208,7 @@ fullinstall: install install-webconf install-config install-init
 	@echo ""
 
 dist:
-	dist/maketar.sh $(VERSION)
+	ci/maketar.sh $(VERSION)
 
 
 
