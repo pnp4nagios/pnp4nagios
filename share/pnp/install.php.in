@@ -1,5 +1,4 @@
 <?php defined('SYSPATH') OR die('No direct access allowed.');?>
-<?php require('application/lib/jsonwrapper.php');?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -38,7 +37,7 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <table cellspacing="0">
 <tr>
 <th>PNP4Nagios Version</th>
-<td class="pass">@PKG_NAME@-@PKG_VERSION@</td>
+<td class="pass">@PACKAGE_NAME@-@PACKAGE_VERSION@</td>
 </tr>
 <tr>
 <th>Prefix</th>
@@ -78,6 +77,14 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <td class="pass">Pass</td>
 <?php else: $failed++ ?>
 <td class="fail">PHP function <a href="http://docs.pnp4nagios.org/faq/i10">proc_open</a> not available/enabled</td>
+<?php endif ?>
+</tr>
+<tr>
+<th>PHP XML extension</th>
+<?php if (function_exists('simplexml_load_file')): ?>
+<td class="pass">Pass</td>
+<?php else: $failed++ ?>
+<td class="fail">PHP SimpleXML extension not available</td>
 <?php endif ?>
 </tr>
 <tr>
@@ -198,7 +205,7 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 
 <div id="results">
 <?php if ($failed > 0): ?>
-<p class="fail">@PKG_NAME@ may not work correctly with your environment. Remove or rename the <code><?php echo __FILE__ ?></code> file on your own risk.</p>
+<p class="fail">@PACKAGE_NAME@ may not work correctly with your environment. Remove or rename the <code><?php echo __FILE__ ?></code> file on your own risk.</p>
 <?php else: ?>
 <p class="pass">Your environment passed all requirements. Remove or rename the <code><?php echo __FILE__ ?></code> file now.</p>
 <?php endif ?>

@@ -1,15 +1,16 @@
+%global debug_package %{nil}
+
 Name:           pnp4nagios
-Version:        0.6.27
-Release:        5%{?dist}
+Version:        @PACKAGE_VERSION@
+Release:        @PACKAGE_RELEASE@%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
 License:        GPLv2
 URL:            https://github.com/pnp4nagios/pnp4nagios
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
-#BuildRequires:  git
 BuildRequires:  autoconf, automake, libtool
 BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)
@@ -35,6 +36,8 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 
 %build
+
+
 %configure --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
@@ -43,6 +46,7 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
            --datarootdir=%{_datadir}/nagios/html/%{name} \
            --with-perfdata-dir=%{_localstatedir}/lib/%{name} \
            --with-perfdata-spool-dir=%{_localstatedir}/spool/%{name}
+
 make %{?_smp_mflags} all
 
 

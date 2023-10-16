@@ -2,22 +2,24 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT([pnp],[0.6.27],[pnp4nagios-devel@lists.sourceforge.net])
+AC_INIT([pnp4nagios],[0.6.27],[pnp4nagios-devel@lists.sourceforge.net],[],[https://github.com/pnp4nagios/pnp4nagios])
 AC_CONFIG_SRCDIR(src/)
 AC_CONFIG_HEADERS(include/config.h:include/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
 
 AC_DEFINE([DEFAULT_NAGIOS_USER], [nagios], [Default Nagios User])
 AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
-
-PKG_NAME=pnp4nagios
-PKG_VERSION="0.6.27"
-PKG_HOME_URL="https://github.com/pnp4nagios/pnp4nagios"
-PKG_REL_DATE="09-06-2023"
-AC_SUBST(PKG_NAME)
-AC_SUBST(PKG_VERSION)
-AC_SUBST(PKG_HOME_URL)
+#
+# release and release_date
+# ...gets overwritten by github release-building
+#
+PACKAGE_RELEASE="4"
+PKG_REL_DATE="2023-10-15"
+AC_SUBST(PACKAGE_RELEASE)
 AC_SUBST(PKG_REL_DATE)
+#
+#
+#
 AC_SUBST(ac_configure_args)
 XML_STRUCTURE_VERSION="4"
 AC_SUBST(XML_STRUCTURE_VERSION)
@@ -88,14 +90,14 @@ AC_ARG_WITH(layout,[  --with-layout=\[default,debian\] sets directory layout],la
 case $layout in
 	debian)
 		prefix="/"
-		sysconfdir="/etc/${PKG_NAME}"
-		localstatedir="/var/log/${PKG_NAME}"
-		libexecdir="/usr/lib/${PKG_NAME}/libexec"
-		libdir="/usr/lib/${PKG_NAME}"
-		datarootdir="/usr/share/${PKG_NAME}/html"
-		PERFDATA_LOG="/var/log/${PKG_NAME}/perfdata.log"
-		PERFDATA_DIR="/var/lib/${PKG_NAME}/perfdata"
-		PERFDATA_SPOOL_DIR="/var/spool/${PKG_NAME}"
+		sysconfdir="/etc/${PACKAGE_NAME}"
+		localstatedir="/var/log/${PACKAGE_NAME}"
+		libexecdir="/usr/lib/${PACKAGE_NAME}/libexec"
+		libdir="/usr/lib/${PACKAGE_NAME}"
+		datarootdir="/usr/share/${PACKAGE_NAME}/html"
+		PERFDATA_LOG="/var/log/${PACKAGE_NAME}/perfdata.log"
+		PERFDATA_DIR="/var/lib/${PACKAGE_NAME}/perfdata"
+		PERFDATA_SPOOL_DIR="/var/spool/${PACKAGE_NAME}"
 		bindir="/usr/bin"
 		sbindir="/usr/sbin"
 	;;
@@ -212,8 +214,8 @@ elif test -d /sbin/init.d; then
     init_dir="/sbin/init.d"
 fi
 
-BASE_URL=${PKG_NAME}
-AC_ARG_WITH(base-url,[  --with-base-url=/${PKG_NAME} ],BASE_URL=$withval,BASE_URL=/${PKG_NAME})
+BASE_URL=${PACKAGE_NAME}
+AC_ARG_WITH(base-url,[  --with-base-url=/${PACKAGE_NAME} ],BASE_URL=$withval,BASE_URL=/${PACKAGE_NAME})
 AC_SUBST(BASE_URL)
 
 dnl User can override init script location
@@ -299,27 +301,44 @@ fi
 AC_SUBST(RRDS)
 
 AC_CONFIG_FILES( subst Makefile share/Makefile lib/Makefile scripts/Makefile src/Makefile sample-config/Makefile man/Makefile )
+AC_CONFIG_FILES([include/stamp-h], [date -Is > include/stamp-h])
+AC_CONFIG_FILES(scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker)
+AC_CONFIG_FILES(scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php)
+AC_CONFIG_FILES(sample-config/httpd.conf sample-config/lighttpd.pnp4nagios.conf)
+AC_CONFIG_FILES(sample-config/nginx.pnp4nagios.conf sample-config/nagios.cfg-sample)
+AC_CONFIG_FILES(sample-config/misccommands.cfg-sample sample-config/pnp/config.php)
+AC_CONFIG_FILES(sample-config/pnp/npcd.cfg-sample)
+AC_CONFIG_FILES(sample-config/pnp/process_perfdata.cfg-sample)
+AC_CONFIG_FILES(sample-config/pnp/pnp4nagios_release contrib/ssi/status-header.ssi)
+AC_CONFIG_FILES(man/npcd.8 ci/pnp4nagios.spec)
+
 AC_OUTPUT
 
+
+
+# $PERL subst scripts/rrd_modify.pl 
+# $PERL subst scripts/rc.npcd 
+# $PERL subst scripts/rc.pnp_gearman_worker 
+# $PERL subst scripts/check_pnp_rrds.pl 
+# $PERL subst share/pnp/index.php 
+# $PERL subst share/pnp/install.php 
+# $PERL subst sample-config/httpd.conf
+# $PERL subst sample-config/lighttpd.pnp4nagios.conf
+# $PERL subst sample-config/nginx.pnp4nagios.conf
+# $PERL subst sample-config/nagios.cfg-sample
+# $PERL subst sample-config/misccommands.cfg-sample 
+# $PERL subst sample-config/pnp/config.php 
+# $PERL subst sample-config/pnp/npcd.cfg-sample 
+# $PERL subst sample-config/pnp/process_perfdata.cfg-sample
+# $PERL subst sample-config/pnp/pnp4nagios_release
+# $PERL subst contrib/ssi/status-header.ssi 
+# $PERL subst man/npcd.8
+# 
+#### need to use 'subst' instead of configure for this
+#### to deal with 'use lib "no"' case 
 $PERL subst summary
 $PERL subst scripts/process_perfdata.pl 
 $PERL subst scripts/rrd_convert.pl 
-$PERL subst scripts/rrd_modify.pl 
-$PERL subst scripts/rc.npcd 
-$PERL subst scripts/rc.pnp_gearman_worker 
-$PERL subst scripts/check_pnp_rrds.pl 
-$PERL subst share/pnp/index.php 
-$PERL subst share/pnp/install.php 
-$PERL subst sample-config/httpd.conf
-$PERL subst sample-config/lighttpd.pnp4nagios.conf
-$PERL subst sample-config/nginx.pnp4nagios.conf
-$PERL subst sample-config/nagios.cfg-sample
-$PERL subst sample-config/misccommands.cfg-sample 
-$PERL subst sample-config/pnp/config.php 
-$PERL subst sample-config/pnp/npcd.cfg-sample 
-$PERL subst sample-config/pnp/process_perfdata.cfg-sample
-$PERL subst sample-config/pnp/pnp4nagios_release
-$PERL subst contrib/ssi/status-header.ssi 
-$PERL subst man/npcd.8
-
 $PERL summary
+#
+

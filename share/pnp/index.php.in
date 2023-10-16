@@ -1,6 +1,6 @@
 <?php
 /**
- * @PKG_NAME@–@PKG_VERSION@
+ * @PACKAGE_NAME@–@PACKAGE_VERSION@
  * This file acts as the "front controller" to your application. You can
  * configure your application, modules, and system directories here.
  * PHP error_reporting level may also be changed.
@@ -8,8 +8,8 @@
  * @see http://kohanaphp.com
  */
 
-define('PNP_NAME'     , '@PKG_NAME@');
-define('PNP_VERSION'  , '@PKG_VERSION@');
+define('PNP_NAME'     , '@PACKAGE_NAME@');
+define('PNP_VERSION'  , '@PACKAGE_VERSION@');
 define('PNP_REL_DATE' , '@PKG_REL_DATE@');
 define('PNP_ETC_PATH' , '@sysconfdir@');
 define('PNP_LOG_PATH' , '@localstatedir@');
@@ -130,8 +130,6 @@ $kohana_system = file_exists($kohana_system) ? $kohana_system : DOCROOT.$kohana_
 define('APPPATH', str_replace('\\', '/', realpath($kohana_application)).'/');
 define('MODPATH', str_replace('\\', '/', realpath($kohana_modules)).'/');
 define('SYSPATH', str_replace('\\', '/', realpath($kohana_system)).'/');
-// JSON Wrapper used for PHP 5.1.x
-require('application/lib/jsonwrapper.php');
 // Clean up
 unset($kohana_application, $kohana_modules, $kohana_system);
 

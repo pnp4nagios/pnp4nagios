@@ -1,0 +1,74 @@
+<html><head><title>gradient1.php</title></head><body>
+<h2>gradient1.php</h2>
+<pre><code>
+&lt;?php
+#
+# Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
+# Plugin: check_icmp [Multigraph]
+#
+# RTA
+#
+$ds_name[1] = "Round Trip Times";
+$opt[1]  = "--lower=0 --vertical-label \"RTA\" --title \"Ping times\" ";
+$def[1]  =  rrd::def("var1", $RRDFILE[1], $DS[1], "AVERAGE") ;
+$def[1] .=  rrd::gradient('var1','f0f0f0','0000a0','Round Trip Times',20);
+$def[1] .=  rrd::gprint("var1", array("LAST", "MAX", "AVERAGE"), "%6.2lf $UNIT[1]") ;
+
+if($WARN[1] != ""){
+    if($UNIT[1] == "%%"){ $UNIT[1] = "%"; };
+    $def[1] .= rrd::hrule($WARN[1], "#FF8c00", "Warning  ".$WARN[1].$UNIT[1]."\\n");
+}
+if($CRIT[1] != ""){
+    if($UNIT[1] == "%%"){ $UNIT[1] = "%"; };
+    $def[1] .= rrd::hrule($CRIT[1], "#FF0000", "Critical  ".$CRIT[1].$UNIT[1]."\\n");
+}
+
+?>
+</file>
+
+<file php gradient2.php>
+&lt;?php
+#
+#
+$_WARNRULE = '#FFFF00';
+$_CRITRULE = '#FF0000';
+
+$lower = $MAX[2] * -1;
+if (strlen ($LABEL[1]) >= strlen ($LABEL[2])){
+    $lenlabel = strlen ($LABEL[1]) + 2;
+} else {
+    $lenlabel = strlen ($LABEL[2]) + 2;
+}
+$label1 = sprintf("%' -".$lenlabel."s", $LABEL[1]);
+$label2 = sprintf("%' -".$lenlabel."s", $LABEL[2]);
+
+    $ds_name[1] = "$LABEL[1] / $LABEL[2] " ;
+    $opt[1] = "--vertical-label $UNIT[1] --title \"Traffic For $hostname / $servicedesc\" ";
+    $opt[1] .= '--color=BACK#000000 ';
+    $opt[1] .= '--color=FONT#F7F7F7 ';
+    $opt[1] .= '--color=SHADEA#ffffff ';
+    $opt[1] .= '--color=SHADEB#ffffff ';
+    $opt[1] .= '--color=CANVAS#000000 ';
+    $opt[1] .= '--color=GRID#00991A ';
+    $opt[1] .= '--color=MGRID#00991A ';
+    $opt[1] .= '--color=ARROW#00FF00 ';
+    $opt[1] .= '--slope-mode ';
+    $def[1] =  "DEF:inb=$RRDFILE[1]:$DS[1]:MAX " ;
+    $def[1] .= "DEF:outb=$RRDFILE[2]:$DS[2]:MAX " ;
+    $def[1] .= "CDEF:outbi=outb,-1,* " ;
+    $def[1] .= rrd::gradient('inb','f0f0f0','0000a0',$label1,20);
+    $def[1] .= "GPRINT:inb:LAST:\"%3.3lf $UNIT[1] LAST \" ";
+    $def[1] .= "GPRINT:inb:MAX:\"%3.3lf $UNIT[1] MAX \" ";
+    $def[1] .= "GPRINT:inb" . ':AVERAGE:"%3.3lf ' . $UNIT[1] . ' AVERAGE \j" ';
+    $def[1] .= rrd::gradient('outbi','ffff42','ee7318',$label2,20);
+    $def[1] .= "GPRINT:outb:LAST:\"%3.3lf $UNIT[2] LAST \" ";
+    $def[1] .= "GPRINT:outb:MAX:\"%3.3lf $UNIT[2] MAX \" ";
+    $def[1] .= "GPRINT:outb" . ':AVERAGE:"%3.3lf ' . $UNIT[2] . ' AVERAGE \j" ';
+    $def[1] .= "COMMENT:\"  \\l\" " ;
+    $def[1] .= "LINE1:0#ffffff " ;
+    $def[1] .= "HRULE:" . $WARN[1] . $_WARNRULE . ':"Inbound Warning on  ' . $WARN[1] . ' ' . $UNIT[1] . '" ' ;
+    $def[1] .= "HRULE:" . $WARN[2] * -1 . $_WARNRULE . ':"Outbound Warning on  ' . $WARN[2] . ' ' . $UNIT[2] . '\j" ';
+    $def[1] .= "HRULE:" . $CRIT[1] . $_CRITRULE . ':"Inbound Critical on ' . $CRIT[1] . ' ' . $UNIT[1] . '" ';
+    $def[1] .= "HRULE:" . $CRIT[2] * -1 . $_CRITRULE . ':"Outbound Critical on ' . $CRIT[2] . ' ' . $UNIT[2] . '\j" ';
+?>
+</file></code></pre></body></html>

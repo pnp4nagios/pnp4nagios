@@ -1,0 +1,122 @@
+---
+
+# based on https://github.com/hpcng/warewulf/blob/development/.github/workflows/releasebuild.yml
+# Thanks!
+
+name: releasebuild
+
+on:
+  release:
+    types:
+      - published
+#          echo "TAG=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+jobs:
+  distbuild:
+    name: Checkout code and build tgz
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set the version
+        id: version_number
+        run: |
+          TAG=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=${TAG%-*}" >> $GITHUB_ENV
+          echo "RELEASE=${TAG#*-}" >> $GITHUB_ENV
+          echo "RELDATE=`date -I`" >> $GITHUB_ENV
+
+      - name: Set the git source location
+        id: source_loc
+        run: |
+          echo "SRC=${GITHUB_REF}" >> $GITHUB_ENV
+
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Build tar.gz
+        run: dist/maketar.sh ${{ env.VERSION }} ${{ env.RELEASE }} ${{ env.RELDATE }} 
+
+      - name: Upload mock script
+        uses: actions/upload-artifact@v3
+        with:
+          name: mockbuild.sh 
+          path: ci/mockbuild.sh 
+
+      - name: Upload tar.gz
+        uses: actions/upload-artifact@v3
+        with:
+          name: pnp4nagios-${{ env.VERSION }}.tgz
+          path: dist/pnp4nagios-${{ env.VERSION }}.tgz
+
+      - name: Upload zip
+        uses: actions/upload-artifact@v3
+        with:
+          name: pnp4nagios-${{ env.VERSION }}.zip
+          path: dist/pnp4nagios-${{ env.VERSION }}.zip
+
+  rpmbuild:
+      name: Build using Rocky Linux
+      needs: distbuild
+      runs-on: ubuntu-latest
+      container:
+        image: rockylinux/rockylinux
+        options: --privileged
+      steps:
+        - name: Set the version
+          id: version_number
+          run: |
+             TAG=${GITHUB_REF#refs/tags/v}
+             echo "VERSION=${TAG%-*}" >> $GITHUB_ENV
+             echo "RELEASE=${TAG#*-}" >> $GITHUB_ENV
+ 
+        - name: Download mock build script
+          uses: actions/download-artifact@v3
+          with:
+            name: mockbuild.sh
+
+        - name: Download tgz
+          uses: actions/download-artifact@v3
+          with:
+            name: pnp4nagios-${{ env.VERSION }}.tgz
+
+        - name: Download zip
+          uses: actions/download-artifact@v3
+          with:
+            name: pnp4nagios-${{ env.VERSION }}.zip
+
+        - name: Set execute bit
+          run: chmod +x mockbuild.sh
+
+        - name: Run rpm build script
+          run: ./mockbuild.sh  ${{ env.VERSION }}
+
+        - name: rename tgz/zip files
+          run: |
+               mv pnp4nagios-${{ env.VERSION }}.tgz pnp4nagios-${{ env.VERSION }}-${{ env.RELEASE }}.tgz          
+               mv pnp4nagios-${{ env.VERSION }}.zip pnp4nagios-${{ env.version }}-${{ env.RELEASE }}.zip
+
+        - name: move rpms to main dir
+          run: mv outputs/*.rpm .
+
+        - name: Upload Assets To Release
+          if: "!github.event.release.prerelease"
+          uses: xresloader/upload-to-github-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            file: "*.rpm;*.tgz;*.zip"
+            draft: false
+            update_latest_release: true
+            tags: true
+
+        - name: Upload Assets To Pre-Release
+          if: "github.event.release.prerelease"
+          uses: xresloader/upload-to-github-release@v1
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          with:
+            file: "*.rpm;*.tgz;*.zip"
+            draft: false
+            update_latest_release: false
+            prerelease: true
+            tags: true
+            

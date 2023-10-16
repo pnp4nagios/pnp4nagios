@@ -1,6 +1,6 @@
 #!@PERL@ -w
 # nagios: -epn
-## @PKG_NAME@–@PKG_VERSION@
+## @PACKAGE_NAME@–@PACKAGE_VERSION@
 #
 # Copyright (c) 2006-2015 PNP4Nagios Developer Team (http://www.pnp4nagios.org)
 #
