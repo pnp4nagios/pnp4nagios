@@ -2672,8 +2672,8 @@ printf "%s\n" "#define DEFAULT_NAGIOS_GROUP nagios" >>confdefs.h
 # release and release_date
 # ...gets overwritten by github release-building
 #
-PACKAGE_RELEASE="5"
-PKG_REL_DATE="2023-10-10"
+PACKAGE_RELEASE="4"
+PKG_REL_DATE="2023-10-15"
 
 
 #
@@ -5710,8 +5710,6 @@ ac_config_files="$ac_config_files subst Makefile share/Makefile lib/Makefile scr
 
 ac_config_files="$ac_config_files include/stamp-h"
 
-ac_config_files="$ac_config_files summary scripts/process_perfdata.pl scripts/rrd_convert.pl"
-
 ac_config_files="$ac_config_files scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker"
 
 ac_config_files="$ac_config_files scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php"
@@ -6427,9 +6425,6 @@ do
     "sample-config/Makefile") CONFIG_FILES="$CONFIG_FILES sample-config/Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "include/stamp-h") CONFIG_FILES="$CONFIG_FILES include/stamp-h" ;;
-    "summary") CONFIG_FILES="$CONFIG_FILES summary" ;;
-    "scripts/process_perfdata.pl") CONFIG_FILES="$CONFIG_FILES scripts/process_perfdata.pl" ;;
-    "scripts/rrd_convert.pl") CONFIG_FILES="$CONFIG_FILES scripts/rrd_convert.pl" ;;
     "scripts/rrd_modify.pl") CONFIG_FILES="$CONFIG_FILES scripts/rrd_modify.pl" ;;
     "scripts/rc.npcd") CONFIG_FILES="$CONFIG_FILES scripts/rc.npcd" ;;
     "scripts/rc.pnp_gearman_worker") CONFIG_FILES="$CONFIG_FILES scripts/rc.pnp_gearman_worker" ;;
@@ -7042,9 +7037,6 @@ fi
 
 
 
-# $PERL subst summary
-# $PERL subst scripts/process_perfdata.pl
-# $PERL subst scripts/rrd_convert.pl
 # $PERL subst scripts/rrd_modify.pl
 # $PERL subst scripts/rc.npcd
 # $PERL subst scripts/rc.pnp_gearman_worker
@@ -7063,6 +7055,11 @@ fi
 # $PERL subst contrib/ssi/status-header.ssi
 # $PERL subst man/npcd.8
 #
+#### need to use 'subst' instead of configure for this
+#### to deal with 'use lib "no"' case
+$PERL subst summary
+$PERL subst scripts/process_perfdata.pl
+$PERL subst scripts/rrd_convert.pl
 $PERL summary
 #
 
