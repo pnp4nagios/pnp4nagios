@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Build tar.gz
-        run: dist/maketar.sh ${{ env.VERSION }} ${{ env.RELEASE }} ${{ env.RELDATE }} 
+        run: ci/maketar.sh ${{ env.VERSION }} ${{ env.RELEASE }} ${{ env.RELDATE }} 
 
       - name: Upload mock script
         uses: actions/upload-artifact@v3
@@ -45,13 +45,13 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pnp4nagios-${{ env.VERSION }}.tgz
-          path: dist/pnp4nagios-${{ env.VERSION }}.tgz
+          path: ci/pnp4nagios-${{ env.VERSION }}.tgz
 
       - name: Upload zip
         uses: actions/upload-artifact@v3
         with:
           name: pnp4nagios-${{ env.VERSION }}.zip
-          path: dist/pnp4nagios-${{ env.VERSION }}.zip
+          path: ci/pnp4nagios-${{ env.VERSION }}.zip
 
   rpmbuild:
       name: Build using Rocky Linux
