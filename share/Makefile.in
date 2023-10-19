@@ -30,6 +30,7 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents/images/smileys
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents/en_US
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents/de_DE
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents/templates
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/lib
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/cache
@@ -62,6 +63,9 @@ install:
 	for file in pnp/documents/de_DE/*; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/documents/de_DE; done
 
+	for file in pnp/documents/templates/*; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/documents/templates; done
+
 	for file in pnp/application/models/*.php; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/models; done
 
@@ -85,9 +89,6 @@ install:
 
 	for file in pnp/application/helpers/*.php; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/helpers; done
-
-	for file in pnp/application/lib/*.php; \
-		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/lib; done
 
 	for file in pnp/application/i18n/de_DE/*.php; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/i18n/de_DE; done

@@ -44,7 +44,7 @@ my $opt_ncmd = "/usr/local/nagios/var/rw/nagios.cmd";
 my $opt_phost = "";
 my $opt_pservice = "";
 my $opt_ignore;
-my $VERSION  = "@PKG_VERSION@";
+my $VERSION  = "@PACKAGE_VERSION@";
 my $PROGNAME = basename($0);
 my $PASV = 0;
 my $USER = getpwuid($<);

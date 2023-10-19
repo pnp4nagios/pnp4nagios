@@ -4,6 +4,7 @@ summary
 *Makefile
 config.log
 config.status
+ci/pnp4nagios.spec
 scripts/rc.npcd
 scripts/rc.pnp_gearman_worker
 scripts/check_pnp_rrds.pl
@@ -12,6 +13,7 @@ scripts/rrd_modify.pl
 src/*.o
 src/npcd
 include/config.h
+include/stamp-h
 *~
 
 sample-config/pnp/config.php
@@ -41,3 +43,6 @@ man/npcd.8
 *.swo
 
 pnp4nagios*.rpm
+pnp4nagios*.tgz
+pnp4nagios*.tar.gz
+pnp4nagios*.zip

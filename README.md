@@ -43,12 +43,14 @@ I am a long time Nagios/Icinga/Monitoring/Devops Professional. I've been
 
 ## build RPM from git
 
-The spec file is in the "dist" subdirectory.  Install git-build-rpm (it's on
+The spec file is in the "ci" subdirectory.  Install git-build-rpm (it's on
 github, surprise!) and, as an example:
 
 HERE=(main directory of this git package; where this README.md file is located)
 cd $HERE
-git build-rpm --rpm-dir /home/local/lane/rpmbuild --spec dist/pnp4nagios.spec --dist .fc35
+autoconf   # builds 'configure'
+./configure  # builds 'ci/pnp4nagios.spec'
+git build-rpm --rpm-dir /home/local/lane/rpmbuild --spec ci/pnp4nagios.spec --dist .fc35
 
 The --rpm-dir option is to keep the .srpm file from the build (it will be
 in your usual SRPMS subdirectory in your rpmbuild tree), the
@@ -56,9 +58,10 @@ in your usual SRPMS subdirectory in your rpmbuild tree), the
 $HERE. 
 
 You can also just get the source code, do a
+autoconf
 ./configure
 then
-make
+make all
 etc....but some of us (me) prefers to have a software package, to organize
 software installation/update/removal. 
 

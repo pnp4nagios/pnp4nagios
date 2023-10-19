@@ -1,6 +1,6 @@
 #!@PERL@
 # nagios: -epn
-## @PKG_NAME@–@PKG_VERSION@
+## @PACKAGE_NAME@–@PACKAGE_VERSION@
 ## Copyright (c) 2005-2015 Joerg Linge (http://www.pnp4nagios.org)
 ##
 ## This program is free software; you can redistribute it and/or
@@ -63,7 +63,7 @@ my %conf = (
 
 my %const = (
     XML_STRUCTURE_VERSION => "@XML_STRUCTURE_VERSION@",
-    VERSION               => "@PKG_VERSION@",
+    VERSION               => "@PACKAGE_VERSION@",
 );
 
 #
