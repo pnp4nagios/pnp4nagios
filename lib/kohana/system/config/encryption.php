@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * @package  Encrypt
  *
@@ -25,7 +27,7 @@
  */
 $config['default'] = array
 (
-	'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
-	'mode'   => MCRYPT_MODE_NOFB,
-	'cipher' => MCRYPT_RIJNDAEL_128
+    'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
+    'mode'   => MCRYPT_MODE_NOFB,
+    'cipher' => MCRYPT_RIJNDAEL_128
 );

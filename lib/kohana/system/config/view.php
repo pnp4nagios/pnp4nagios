@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * @package  Core
  *
@@ -6,12 +8,12 @@
  */
 $config['allowed_filetypes'] = array
 (
-	'gif',
-	'jpg', 'jpeg',
-	'png',
-	'tif', 'tiff',
-	'swf',
-	'htm', 'html',
-	'css',
-	'js'
+    'gif',
+    'jpg', 'jpeg',
+    'png',
+    'tif', 'tiff',
+    'swf',
+    'htm', 'html',
+    'css',
+    'js'
 );

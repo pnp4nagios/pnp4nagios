@@ -1,4 +1,4 @@
-name: Lint
+name: PHP Tests
 
 on:
   push:
@@ -27,9 +27,13 @@ jobs:
         with:
           php-version: "${{ matrix.php-version }}"
           coverage: "none"
+          tools: phpcs
+
+      - name: Setup dependencies
+        run: composer require -n --no-progress overtrue/phplint
 
       - name: Lint PHP files
-        run: |
-          curl -Ls https://github.com/overtrue/phplint/releases/latest/download/phplint.phar -o /usr/local/bin/phplint
-          chmod +x /usr/local/bin/phplint
-          /usr/local/bin/phplint -c .phplint.yml -v
+        run: ./vendor/bin/phplint -c .phplint.yml -v
+
+      - name: Run PHP CodeSniffer
+        run: phpcs -wps --colors

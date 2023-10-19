@@ -6,33 +6,33 @@
  <?php echo Kohana::lang('common.color-header') ?>
  </div>
 <div class="p4 ui-widget-content ui-corner-bottom" style="width: 600px">
-	<?php if (!empty($this->scheme)) {
-		foreach( $this->scheme as $key => $colors ){
-			print "<h3>\"" . $key . "\"</h3><ul class=\"colorscheme\">";  
-			foreach($colors as $color){
-				print "<li class=\"colorscheme\"><span class=\"colorscheme\" style=\"background-color:".$color."\">" . "</span></li>\n";
-			}
-			print "</ul>";
-		}
-		print "<br><br>";
-	} ?>
+    <?php if (!empty($this->scheme)) {
+        foreach ($this->scheme as $key => $colors) {
+            print "<h3>\"" . $key . "\"</h3><ul class=\"colorscheme\">";
+            foreach ($colors as $color) {
+                print "<li class=\"colorscheme\"><span class=\"colorscheme\" style=\"background-color:" . $color . "\">" . "</span></li>\n";
+            }
+            print "</ul>";
+        }
+        print "<br><br>";
+    } ?>
     </div>
     </td><td>
-	<div class="right">
+    <div class="right">
 
-	<?php if (!empty($color_box)) {
-     		echo $color_box;
-	} ?>
+    <?php if (!empty($color_box)) {
+            echo $color_box;
+    } ?>
 
-	<?php if (!empty($logo_box)) {
-     		echo $logo_box;
-	} ?>
-	</div>
+    <?php if (!empty($logo_box)) {
+            echo $logo_box;
+    } ?>
+    </div>
     </td></tr>
-	<tr valign="top"><td colspan="2">
+    <tr valign="top"><td colspan="2">
     <div class="cb p4 ui-widget-content ui-corner-all">
-	<?php echo pnp::print_version(); ?>
+    <?php echo pnp::print_version(); ?>
     </div>
     </div>
-	</td></tr></table>
+    </td></tr></table>
 </div>

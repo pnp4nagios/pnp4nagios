@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * SwiftMailer driver, used with the email helper.
  *
@@ -19,4 +21,4 @@ $config['driver'] = 'native';
  * @param   string  sendmail: executable path, with -bs or equivalent attached
  * @param   array   smtp: hostname, (username), (password), (port), (auth), (encryption)
  */
-$config['options'] = NULL;
+$config['options'] = null;

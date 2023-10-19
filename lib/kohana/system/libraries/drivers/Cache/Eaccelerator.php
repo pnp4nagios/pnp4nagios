@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Eaccelerator-based Cache driver.
  *
@@ -9,58 +11,52 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Eaccelerator_Driver implements Cache_Driver {
+class Cache_Eaccelerator_Driver implements Cache_Driver
+{
+    public function __construct()
+    {
+        if (! extension_loaded('eaccelerator')) {
+            throw new Kohana_Exception('cache.extension_not_loaded', 'eaccelerator');
+        }
+    }
 
-	public function __construct()
-	{
-		if ( ! extension_loaded('eaccelerator'))
-			throw new Kohana_Exception('cache.extension_not_loaded', 'eaccelerator');
-	}
+    public function get($id)
+    {
+        return eaccelerator_get($id);
+    }
 
-	public function get($id)
-	{
-		return eaccelerator_get($id);
-	}
+    public function find($tag)
+    {
+        Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
 
-	public function find($tag)
-	{
-		Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
+        return array();
+    }
 
-		return array();
-	}
+    public function set($id, $data, array $tags = null, $lifetime)
+    {
+        if (! empty($tags)) {
+            Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
+        }
 
-	public function set($id, $data, array $tags = NULL, $lifetime)
-	{
-		if ( ! empty($tags))
-		{
-			Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
-		}
+        return eaccelerator_put($id, $data, $lifetime);
+    }
 
-		return eaccelerator_put($id, $data, $lifetime);
-	}
+    public function delete($id, $tag = false)
+    {
+        if ($tag === true) {
+            Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
+            return false;
+        } elseif ($id === true) {
+            return eaccelerator_clean();
+        } else {
+            return eaccelerator_rm($id);
+        }
+    }
 
-	public function delete($id, $tag = FALSE)
-	{
-		if ($tag === TRUE)
-		{
-			Kohana::log('error', 'tags are unsupported by the eAccelerator driver');
-			return FALSE;
-		}
-		elseif ($id === TRUE)
-		{
-			return eaccelerator_clean();
-		}
-		else
-		{
-			return eaccelerator_rm($id);
-		}
-	}
+    public function delete_expired()
+    {
+        eaccelerator_gc();
 
-	public function delete_expired()
-	{
-		eaccelerator_gc();
-
-		return TRUE;
-	}
-
+        return true;
+    }
 } // End Cache eAccelerator Driver

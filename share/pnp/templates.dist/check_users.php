@@ -1,4 +1,5 @@
 <?php
+
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Template for check_users
@@ -18,7 +19,6 @@ if ($CRIT[1] != "") {
         $def[1] .= "HRULE:$CRIT[1]#FF0000 ";
 }
 
-$def[1] .= "GPRINT:var1:LAST:\"%.0lf $UNIT[1] LAST \" "; 
-$def[1] .= "GPRINT:var1:MAX:\"%.0lf $UNIT[1] MAX \" "; 
-$def[1] .= "GPRINT:var1:AVERAGE:\"%.0lf $UNIT[1] AVERAGE \" "; 
-?>
+$def[1] .= "GPRINT:var1:LAST:\"%.0lf $UNIT[1] LAST \" ";
+$def[1] .= "GPRINT:var1:MAX:\"%.0lf $UNIT[1] MAX \" ";
+$def[1] .= "GPRINT:var1:AVERAGE:\"%.0lf $UNIT[1] AVERAGE \" ";

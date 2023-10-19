@@ -1,6 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 
 $lang = array
 (
-	'general_error' => 'Si è verificato un errore durante l\'invio del messaggio di posta elettronica.'
+    'general_error' => 'Si è verificato un errore durante l\'invio del messaggio di posta elettronica.'
 );

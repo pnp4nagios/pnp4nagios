@@ -1,4 +1,5 @@
 <?php
+
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_snmp_int.pl (COUNTER)
@@ -35,7 +36,6 @@ $def[1] .= "LINE1:var6#dd0000:\"discard out\" " ;
 $def[1] .= "GPRINT:var6:LAST:\"%7.2lf %SB/s last\" " ;
 $def[1] .= "GPRINT:var6:AVERAGE:\"%7.2lf %SB/s avg\" " ;
 $def[1] .= "GPRINT:var6:MAX:\"%7.2lf %SB/s max\\n\" ";
-if($this->MACRO['TIMET'] != ""){
-    $def[1] .= "VRULE:".$this->MACRO['TIMET']."#000000:\"Last Service Check \\n\" ";
+if ($this->MACRO['TIMET'] != "") {
+    $def[1] .= "VRULE:" . $this->MACRO['TIMET'] . "#000000:\"Last Service Check \\n\" ";
 }
-?>

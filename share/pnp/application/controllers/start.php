@@ -1,13 +1,15 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Default controller.
  *
- * @package    pnp4nagios 
+ * @package    pnp4nagios
  * @author     Joerg Linge
  * @license    GPL
  */
-class Start_Controller extends System_Controller  {
-
+class Start_Controller extends System_Controller
+{
     public function __construct()
     {
         parent::__construct();
@@ -17,5 +19,4 @@ class Start_Controller extends System_Controller  {
     {
             url::redirect("graph", 302);
     }
-
 }

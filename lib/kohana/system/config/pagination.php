@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * @package  Pagination
  *
@@ -16,10 +18,10 @@
  */
 $config['default'] = array
 (
-	'directory'      => 'pagination',
-	'style'          => 'classic',
-	'uri_segment'    => 3,
-	'query_string'   => '',
-	'items_per_page' => 20,
-	'auto_hide'      => FALSE,
+    'directory'      => 'pagination',
+    'style'          => 'classic',
+    'uri_segment'    => 3,
+    'query_string'   => '',
+    'items_per_page' => 20,
+    'auto_hide'      => false,
 );
