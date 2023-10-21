@@ -1,6 +1,8 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+
 /**
  * Kohana process control file, loaded by the front controller.
  *

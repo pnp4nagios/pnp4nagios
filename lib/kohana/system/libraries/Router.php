@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Router
  *
@@ -271,4 +277,5 @@ class Router_Core
 
         return trim($routed_uri, '/');
     }
-} // End Router
+}
+// End Router

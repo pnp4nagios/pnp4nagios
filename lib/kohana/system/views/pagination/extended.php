@@ -1,4 +1,6 @@
-<?php defined('SYSPATH') or die('No direct access allowed.');
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
 /**
  * Extended pagination style
  *
@@ -16,7 +18,11 @@
 
     | <?php echo Kohana::lang('pagination.page') ?> <?php echo $current_page ?> <?php echo Kohana::lang('pagination.of') ?> <?php echo $total_pages ?>
 
-    | <?php echo Kohana::lang('pagination.items') ?> <?php echo $current_first_item ?>&ndash;<?php echo $current_last_item ?> <?php echo Kohana::lang('pagination.of') ?> <?php echo $total_items ?>
+    | <?php echo Kohana::lang('pagination.items') ?>
+<?php echo $current_first_item ?>&ndash;
+<?php echo $current_last_item ?>
+<?php echo Kohana::lang('pagination.of') ?>
+<?php echo $total_items ?>
 
     | <?php if ($next_page) : ?>
         <a href="<?php echo str_replace('{page}', $next_page, $url) ?>"><?php echo Kohana::lang('pagination.next') ?>&nbsp;&raquo;</a>

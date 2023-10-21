@@ -57,9 +57,9 @@ $enclosure_id = '';
 $def_title = 'Dell OpenManage';
 
 # Temperature unit
-if (!defined('tempunit_defined')) {
-    define('tempunit_defined', 1);
-
+if (!defined('TEMPUNIT_DEFINED')) {
+    // phpcs:disable PSR1.Files.SideEffects
+    define('TEMPUNIT_DEFINED', 1);
     function tempunit($arg)
     {
         $unit   = 'unknown';
@@ -85,6 +85,8 @@ if (!defined('tempunit_defined')) {
         }
         return array($unit, $vlabel);
     }
+    // phpcs:enable PSR1.Files.SideEffects
+
 }
 
 
@@ -138,9 +140,8 @@ if ($legacy == "yes") {  # --legacy--
                 $def[$count] .= rrd::area("var$KEY", "#" . $PWRcolor, $VAL['NAME']);
                 $def[$count] .= rrd::line1("var$KEY", "#000000");
                 $def[$count] .= rrd::gprint("var$KEY", array("LAST", "MAX", "AVERAGE"), "%6.0lf W");
-            }
+            } elseif (preg_match('/current/', $VAL['NAME']) || preg_match('/^p\d+a$/', $VAL['NAME'])) {
             # Ampere
-            elseif (preg_match('/current/', $VAL['NAME']) || preg_match('/^p\d+a$/', $VAL['NAME'])) {
             # Long label
                 $VAL['NAME'] = preg_replace('/^pwr_mon_\d+_/', '', $VAL['NAME']);
                 $VAL['NAME'] = preg_replace('/_/', ' ', $VAL['NAME']);

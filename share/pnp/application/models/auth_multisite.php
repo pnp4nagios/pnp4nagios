@@ -1,7 +1,10 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
-
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+namespace models;
 
 class Auth_Multisite_Model
 {
@@ -35,7 +38,8 @@ class Auth_Multisite_Model
         if (!file_exists($this->secretPath)) {
             $this->redirectToLogin();
         }
-    }//end __construct()
+    }
+    //end __construct()
 
 
     private function loadAuthFile($path)
@@ -48,20 +52,23 @@ class Auth_Multisite_Model
             }
         }
         return $creds;
-    }//end loadAuthFile()
+    }
+    //end loadAuthFile()
 
 
     private function loadSecret()
     {
         return trim(file_get_contents($this->secretPath));
-    }//end loadSecret()
+    }
+    //end loadSecret()
 
 
     private function generateHash($username, $now, $user_secret)
     {
         $secret = $this->loadSecret();
         return md5($username . $now . $user_secret . $secret);
-    }//end generateHash()
+    }
+    //end generateHash()
 
 
     private function checkAuthCookie($cookieName)
@@ -94,7 +101,8 @@ class Auth_Multisite_Model
 
         // FIXME: Maybe renew the cookie here too
         return $username;
-    }//end checkAuthCookie()
+    }
+    //end checkAuthCookie()
 
 
     private function checkAuth()
@@ -112,13 +120,15 @@ class Auth_Multisite_Model
             }
         }
         return '';
-    }//end checkAuth()
+    }
+    //end checkAuth()
 
 
     private function redirectToLogin()
     {
         header('Location:' . $this->loginUrl . '?_origtarget=' . $_SERVER['REQUEST_URI']);
-    }//end redirectToLogin()
+    }
+    //end redirectToLogin()
 
 
     public function check()
@@ -130,5 +140,7 @@ class Auth_Multisite_Model
         }
 
         return $username;
-    }//end check()
-}//end class
+    }
+    //end check()
+}
+//end class

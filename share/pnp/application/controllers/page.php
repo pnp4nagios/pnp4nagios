@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
+
 /**
  * Graph controller.
  *
@@ -32,7 +38,8 @@ class Page_Controller extends System_Controller
         $this->template->page->search_box = $this->add_view('search_box');
         $this->template->page->logo_box   = $this->add_view('logo_box');
         $this->is_authorized              = true;
-    }//end __construct()
+    }
+    //end __construct()
 
 
     public function index()
@@ -65,7 +72,8 @@ class Page_Controller extends System_Controller
         // Icon Box
         $this->template->page->icon_box           = $this->add_view('icon_box');
         $this->template->page->icon_box->position = 'page';
-    }//end index()
+    }
+    //end index()
 
 
     public function basket()
@@ -89,5 +97,7 @@ class Page_Controller extends System_Controller
         } else {
             url::redirect('start', 302);
         }
-    }//end basket()
-}//end class
+    }
+    //end basket()
+}
+//end class

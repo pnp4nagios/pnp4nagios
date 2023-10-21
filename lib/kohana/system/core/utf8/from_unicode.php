@@ -1,6 +1,9 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
 /**
  * utf8::from_unicode
  *
@@ -20,37 +23,31 @@ function _from_unicode($arr)
         // ASCII range (including control chars)
         if (($arr[$k] >= 0) and ($arr[$k] <= 0x007f)) {
             echo chr($arr[$k]);
-        }
-        // 2 byte sequence
-        elseif ($arr[$k] <= 0x07ff) {
+        } elseif ($arr[$k] <= 0x07ff) {
+          // 2 byte sequence
             echo chr(0xc0 | ($arr[$k] >> 6));
             echo chr(0x80 | ($arr[$k] & 0x003f));
-        }
-        // Byte order mark (skip)
-        elseif ($arr[$k] == 0xFEFF) {
-            // nop -- zap the BOM
-        }
-        // Test for illegal surrogates
-        elseif ($arr[$k] >= 0xD800 and $arr[$k] <= 0xDFFF) {
-            // Found a surrogate
+        } elseif ($arr[$k] == 0xFEFF) {
+          // Byte order mark (skip)
+          // nop -- zap the BOM
+        } elseif ($arr[$k] >= 0xD800 and $arr[$k] <= 0xDFFF) {
+          // Test for illegal surrogates
+          // Found a surrogate
             trigger_error('utf8::from_unicode: Illegal surrogate at index: ' . $k . ', value: ' . $arr[$k], E_USER_WARNING);
             return false;
-        }
-        // 3 byte sequence
-        elseif ($arr[$k] <= 0xffff) {
+        } elseif ($arr[$k] <= 0xffff) {
+          // 3 byte sequence
             echo chr(0xe0 | ($arr[$k] >> 12));
             echo chr(0x80 | (($arr[$k] >> 6) & 0x003f));
             echo chr(0x80 | ($arr[$k] & 0x003f));
-        }
-        // 4 byte sequence
-        elseif ($arr[$k] <= 0x10ffff) {
+        } elseif ($arr[$k] <= 0x10ffff) {
+          //  4 byte sequence
             echo chr(0xf0 | ($arr[$k] >> 18));
             echo chr(0x80 | (($arr[$k] >> 12) & 0x3f));
             echo chr(0x80 | (($arr[$k] >> 6) & 0x3f));
             echo chr(0x80 | ($arr[$k] & 0x3f));
-        }
-        // Out of range
-        else {
+        } else {
+          // Out of range
             trigger_error('utf8::from_unicode: Codepoint out of Unicode range at index: ' . $k . ', value: ' . $arr[$k], E_USER_WARNING);
             return false;
         }

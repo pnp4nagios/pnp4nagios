@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * File-based Cache driver.
  *
@@ -241,4 +247,5 @@ class Cache_File_Driver implements Cache_Driver
         // Expirations of 0 are "never expire"
         return ($expires !== 0 and $expires <= time());
     }
-} // End Cache File Driver
+}
+// End Cache File Driver

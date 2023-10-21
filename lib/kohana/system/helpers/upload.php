@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
+
 /**
  * Upload helper class for working with the global $_FILES
  * array and Validation library.
@@ -165,4 +171,5 @@ class upload_Core
         // Test that the file is under or equal to the max size
         return ($file['size'] <= $size);
     }
-} // End upload
+}
+// End upload

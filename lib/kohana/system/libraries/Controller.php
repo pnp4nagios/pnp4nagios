@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * Kohana Controller class. The controller class must be extended to work
  * properly, so this class is defined as abstract.
@@ -59,7 +64,7 @@ abstract class Controller_Core
      * @param   array   array of view variables
      * @return  string
      */
-    public function _kohana_load_view($kohana_view_filename, $kohana_input_data)
+    public function kohana_load_view($kohana_view_filename, $kohana_input_data)
     {
         if ($kohana_view_filename == '') {
             return;
@@ -84,4 +89,5 @@ abstract class Controller_Core
         // Fetch the output and close the buffer
         return ob_get_clean();
     }
-} // End Controller Class
+}
+// End Controller Class

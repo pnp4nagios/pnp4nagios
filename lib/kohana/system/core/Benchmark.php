@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
+namespace kohana;
+
 /**
  * Simple benchmarking.
  *
@@ -117,4 +122,5 @@ final class Benchmark
 
         return $func ? memory_get_usage() : 0;
     }
-} // End Benchmark
+}
+// End Benchmark

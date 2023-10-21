@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
+
 /**
  * Form helper class.
  *
@@ -495,4 +501,5 @@ class form_Core
         // Combine the sorted and unsorted attributes and create an HTML string
         return html::attributes(array_merge($sorted, $attr));
     }
-} // End form
+}
+// End form

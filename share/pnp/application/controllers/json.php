@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
 /**
  * Json controller.
  *
@@ -30,7 +35,10 @@ class Json_Controller extends System_Controller
             $i = 0;
             $json = array();
             foreach ($this->data->STRUCT as $struct) {
-                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] . "&srv=" . $struct['MACRO']['SERVICEDESC'] . "&source=" . $struct['SOURCE'] . "&view=" . $struct['VIEW'];
+                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] .
+                    "&srv=" . $struct['MACRO']['SERVICEDESC'] .
+                    "&source=" . $struct['SOURCE'] . "&view=" .
+                    $struct['VIEW'];
                 $json[$i]['ds_name']     = $struct['ds_name'];
                 $json[$i]['start']       = $struct['TIMERANGE']['start'];
                 $json[$i]['end']         = $struct['TIMERANGE']['end'];
@@ -53,7 +61,10 @@ class Json_Controller extends System_Controller
             $i = 0;
             $json = array();
             foreach ($this->data->STRUCT as $struct) {
-                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] . "&srv=" . $struct['MACRO']['SERVICEDESC'] . "&source=" . $struct['SOURCE'] . "&view=" . $struct['VIEW'];
+                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] .
+                    "&srv=" . $struct['MACRO']['SERVICEDESC'] .
+                    "&source=" . $struct['SOURCE'] . "&view=" .
+                    $struct['VIEW'];
                 $json[$i]['servicedesc'] = $struct['MACRO']['SERVICEDESC'];
                 $json[$i]['ds_name']     = $struct['ds_name'];
                 $json[$i]['start']       = $struct['TIMERANGE']['start'];

@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Session driver interface
  *
@@ -68,4 +74,5 @@ interface Session_Driver
      * @return  boolean
      */
     public function gc($maxlifetime);
-} // End Session Driver Interface
+}
+// End Session Driver Interface

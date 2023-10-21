@@ -41,7 +41,11 @@ foreach ($this->data->STRUCT as $key => $value) {
     echo "<div style=\"position:relative;\">\n";
     $path = pnp::addToUri(array('tpl' => $this->tpl, 'view' => null ));
     echo "<a href=\"" . $path . "\">\n";
-    echo "<div start=" . $value['TIMERANGE']['start'] . " end=" . $value['TIMERANGE']['end'] . " style=\"width:" . $value['GRAPH_WIDTH'] . "px; height:" . $value['GRAPH_HEIGHT'] . "px; position:absolute; top:33px;\" class=\"graph\" id=\"" . $this->url . "\"></div>\n";
+    echo "<div start=" . $value['TIMERANGE']['start'] . " end=" .
+        $value['TIMERANGE']['end'] . " style=\"width:" .
+        $value['GRAPH_WIDTH'] . "px; height:" .
+        $value['GRAPH_HEIGHT'] . "px; position:absolute; top:33px;\" class=\"graph\" id=\"" .
+        $this->url . "\"></div>\n";
     $path = pnp::addToUri(array('tpl' => $this->tpl,
                 'view' => $value['VIEW'],
                 'source' => $value['SOURCE'],

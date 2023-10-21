@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
+
 /**
  * Allows a template to be automatically loaded and displayed. Display can be
  * dynamically turned off in the controller methods, and the template file
@@ -36,18 +42,19 @@ abstract class Template_Controller extends Controller
 
         if ($this->auto_render == true) {
             // Render the template immediately after the controller method
-            Event::add('system.post_controller', array($this, '_render'));
+            Event::add('system.post_controller', array($this, 'Xrender'));
         }
     }
 
     /**
      * Render the loaded template.
      */
-    public function _render()
+    public function Xrender()
     {
         if ($this->auto_render == true) {
             // Render the template when the class is destroyed
             $this->template->render(true);
         }
     }
-} // End Template_Controller
+}
+// End Template_Controller

@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Captcha driver for "math" style.
  *
@@ -26,14 +32,12 @@ class Captcha_Math_Driver extends Captcha_Driver
         if (Captcha::$config['complexity'] < 4) {
             $numbers[] = mt_rand(1, 5);
             $numbers[] = mt_rand(1, 4);
-        }
-        // Normal
-        elseif (Captcha::$config['complexity'] < 7) {
+        } elseif (Captcha::$config['complexity'] < 7) {
+            // Normal
             $numbers[] = mt_rand(10, 20);
             $numbers[] = mt_rand(1, 10);
-        }
-        // Difficult, well, not really ;)
-        else {
+        } else {
+            // Difficult, well, not really ;)
             $numbers[] = mt_rand(100, 200);
             $numbers[] = mt_rand(10, 20);
             $numbers[] = mt_rand(1, 10);
@@ -56,4 +60,5 @@ class Captcha_Math_Driver extends Captcha_Driver
     {
         return $this->math_exercice;
     }
-} // End Captcha Math Driver Class
+}
+// End Captcha Math Driver Class

@@ -1,6 +1,8 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * utf8::substr
  *
@@ -51,9 +53,8 @@ function _substr($str, $offset, $length = null)
     // Create a length expression
     if ($length === null) {
         $regex .= '(.*)'; // No length set, grab it all
-    }
-    // Find length from the left (positive length)
-    elseif ($length > 0) {
+    } elseif ($length > 0) {
+        // Find length from the left (positive length)
         // Reduce length so that it can't go beyond the end of the string
         $length = min($strlen - $offset, $length);
 
@@ -62,9 +63,8 @@ function _substr($str, $offset, $length = null)
         $regex .= '(';
         $regex .= ($x == 0) ? '' : '(?:.{65535}){' . $x . '}';
         $regex .= '.{' . $y . '})';
-    }
-    // Find length from the right (negative length)
-    else {
+    } else {
+        // Find length from the right (negative length)
         $x = (int) (-$length / 65535);
         $y = (int) (-$length % 65535);
         $regex .= '(.*)';

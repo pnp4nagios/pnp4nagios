@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Captcha driver for "black" style.
  *
@@ -41,7 +47,28 @@ class Captcha_Black_Driver extends Captcha_Driver
         for ($i = 0; $i < $count; $i++) {
             imagesetthickness($this->image, mt_rand(1, 2));
             $color = imagecolorallocatealpha($this->image, 255, 255, 255, mt_rand(0, 120));
-            imagearc($this->image, mt_rand(-Captcha::$config['width'], Captcha::$config['width']), mt_rand(-Captcha::$config['height'], Captcha::$config['height']), mt_rand(-Captcha::$config['width'], Captcha::$config['width']), mt_rand(-Captcha::$config['height'], Captcha::$config['height']), mt_rand(0, 360), mt_rand(0, 360), $color);
+            imagearc(
+                $this->image,
+                mt_rand(
+                    -Captcha::$config['width'],
+                    Captcha::$config['width']
+                ),
+                mt_rand(
+                    -Captcha::$config['height'],
+                    Captcha::$config['height']
+                ),
+                mt_rand(
+                    -Captcha::$config['width'],
+                    Captcha::$config['width']
+                ),
+                mt_rand(
+                    -Captcha::$config['height'],
+                    Captcha::$config['height']
+                ),
+                mt_rand(0, 360),
+                mt_rand(0, 360),
+                $color
+            );
         }
 
         // Use different fonts if available
@@ -69,4 +96,5 @@ class Captcha_Black_Driver extends Captcha_Driver
         // Output
         return $this->image_render($html);
     }
-} // End Captcha Black Driver Class
+}
+// End Captcha Black Driver Class

@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * Captcha library.
  *
@@ -164,9 +169,8 @@ class Captcha_Core
             // Valid response
             if ($result === true) {
                 Captcha::instance()->valid_count(Session::instance()->get('captcha_valid_count') + 1);
-            }
+            } else {
             // Invalid response
-            else {
                 Captcha::instance()->invalid_count(Session::instance()->get('captcha_invalid_count') + 1);
             }
         }
@@ -193,9 +197,8 @@ class Captcha_Core
             // Reset counter = delete session
             if ($new_count < 1) {
                 Session::instance()->delete($session);
-            }
+            } else {
             // Set counter to new value
-            else {
                 Session::instance()->set($session, (int) $new_count);
             }
 
@@ -271,4 +274,5 @@ class Captcha_Core
     {
         return $this->render();
     }
-} // End Captcha Class
+}
+// End Captcha Class

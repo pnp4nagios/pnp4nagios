@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
 /**
  * system controller.
  *
@@ -102,7 +107,8 @@ class System_Controller extends Template_Controller
                     $this->theme = $this->session->get('theme');
                     Kohana::config_set('core.theme', $this->theme);
                 }
-            }//end if
+            }
+            //end if
 
             if ($this->start && $this->end) {
                 if ($this->session->get('timerange-reset', 0) == 0) {
@@ -128,8 +134,10 @@ class System_Controller extends Template_Controller
                     $this->session->set('timerange-reset', 0);
                 }
             }
-        }//end if
-    }//end __construct()
+        }
+        //end if
+    }
+    //end __construct()
 
 
     public function __call($method, $arguments)
@@ -141,7 +149,8 @@ class System_Controller extends Template_Controller
         // that result in 404 errors will be handled by this method, instead of
         // being displayed as "Page Not Found" errors.
         echo $this->_("The requested page doesn't exist") . " ($method)";
-    }//end __call()
+    }
+    //end __call()
 
 
     /**
@@ -158,7 +167,8 @@ class System_Controller extends Template_Controller
         }
         // return new View($this->theme_path.$view);
         return new View($view);
-    }//end add_view()
+    }
+    //end add_view()
 
 
     public function check_mod_rewrite()
@@ -175,7 +185,8 @@ class System_Controller extends Template_Controller
         if ($this->config->conf['use_url_rewriting'] == 0) {
             Kohana::config_set('core.index_page', 'index.php');
         }
-    }//end check_mod_rewrite()
+    }
+    //end check_mod_rewrite()
 
 
     public function isAuthorizedFor($auth)
@@ -229,7 +240,8 @@ class System_Controller extends Template_Controller
                     return 0;
             }
         }
-    }//end isAuthorizedFor()
+    }
+    //end isAuthorizedFor()
 
 
     public function isMobileDevice()
@@ -242,5 +254,7 @@ class System_Controller extends Template_Controller
         } else {
             return false;
         }
-    }//end isMobileDevice()
-}//end class
+    }
+    //end isMobileDevice()
+}
+//end class

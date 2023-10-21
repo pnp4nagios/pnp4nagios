@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Model base class.
  *
@@ -28,4 +34,5 @@ class Model_Core
             $this->db = Database::instance($this->db);
         }
     }
-} // End Model
+}
+// End Model

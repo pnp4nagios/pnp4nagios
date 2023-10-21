@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
+namespace kohana;
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 /**
  * Provides Kohana-specific helper functions. This is where the magic happens!
  *
@@ -533,7 +540,7 @@ final class Kohana
                 $directory = str_replace('\\', '/', $dir) . '/';
             } else {
                 // Log directory is invalid
-                throw new Kohana_Exception('core.log_dir_unwritable', $dir);
+                throw new KohanaException('core.log_dir_unwritable', $dir);
             }
         }
 
@@ -770,14 +777,14 @@ final class Kohana
     /**
      * Displays a 404 page.
      *
-     * @throws  Kohana_404_Exception
+     * @throws  Kohana404Exception
      * @param   string  URI of page
      * @param   string  custom template
      * @return  void
      */
     public static function show_404($page = false, $template = false)
     {
-        throw new Kohana_404_Exception($page, $template);
+        throw new Kohana404Exception($page, $template);
     }
 
     /**
@@ -816,7 +823,7 @@ final class Kohana
                 $message  = $exception->getMessage();
                 $file     = $exception->getFile();
                 $line     = $exception->getLine();
-                $template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
+                $template = ($exception instanceof KohanaException) ? $exception->getTemplate() : 'kohana_error_page';
             }
 
             if (is_numeric($code)) {
@@ -906,7 +913,7 @@ final class Kohana
     /**
      * Provides class auto-loading.
      *
-     * @throws  Kohana_Exception
+     * @throws  KohanaException
      * @param   string  name of class
      * @return  bool
      */
@@ -982,7 +989,7 @@ final class Kohana
      * to the order of the include paths. Configuration and i18n files will be
      * returned in reverse order.
      *
-     * @throws  Kohana_Exception  if file is required and not found
+     * @throws  KohanaException  if file is required and not found
      * @param   string   directory to search in
      * @param   string   filename to look for (without extension)
      * @param   boolean  file required
@@ -1044,7 +1051,7 @@ final class Kohana
                 $directory = 'core.' . inflector::singular($directory);
 
                 // If the file is required, throw an exception
-                throw new Kohana_Exception('core.resource_not_found', self::lang($directory), $filename);
+                throw new KohanaException('core.resource_not_found', self::lang($directory), $filename);
             } else {
                 // Nothing was found, return FALSE
                 $found = false;
@@ -1478,12 +1485,13 @@ final class Kohana
 
         return $written;
     }
-} // End Kohana
+}
+// End Kohana
 
 /**
  * Creates a generic i18n exception.
  */
-class Kohana_Exception extends Exception
+class KohanaException extends Exception
 {
     // Template file
     protected $template = 'kohana_error_page';
@@ -1546,12 +1554,13 @@ class Kohana_Exception extends Exception
         // Send the 500 header
         header('HTTP/1.1 500 Internal Server Error');
     }
-} // End Kohana Exception
+}
+// End Kohana Exception
 
 /**
  * Creates a custom exception.
  */
-class Kohana_User_Exception extends Kohana_Exception
+class KohanaUserException extends KohanaException
 {
     /**
      * Set exception title and message.
@@ -1570,12 +1579,13 @@ class Kohana_User_Exception extends Kohana_Exception
             $this->template = $template;
         }
     }
-} // End Kohana PHP Exception
+}
+// End Kohana PHP Exception
 
 /**
  * Creates a Page Not Found exception.
  */
-class Kohana_404_Exception extends Kohana_Exception
+class Kohana404Exception extends KohanaException
 {
     protected $code = E_PAGE_NOT_FOUND;
 
@@ -1607,4 +1617,5 @@ class Kohana_404_Exception extends Kohana_Exception
         // Send the 404 header
         header('HTTP/1.1 404 File Not Found');
     }
-} // End Kohana 404 Exception
+}
+// End Kohana 404 Exception

@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Pagination library.
  *
@@ -121,10 +127,8 @@ class Pagination_Core
 
             // Reset page number
             $_GET[$this->query_string] = $this->current_page;
-        }
-
-        // Build generic URL with page as URI segment
-        else {
+        } else {
+            // Build generic URL with page as URI segment
             // Use current URI if no base_url set
             $this->url = ($this->base_url === '') ? Router::$segments : explode('/', trim($this->base_url, '/'));
 
@@ -226,4 +230,5 @@ class Pagination_Core
     {
         return $this->__get($func);
     }
-} // End Pagination Class
+}
+// End Pagination Class

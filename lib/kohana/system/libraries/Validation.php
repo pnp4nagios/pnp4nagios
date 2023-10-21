@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Validation library.
  *
@@ -723,4 +729,5 @@ class Validation_Core extends ArrayObject
     {
         return ! preg_match('![^' . implode('', $chars) . ']!u', $value);
     }
-} // End Validation
+}
+// End Validation

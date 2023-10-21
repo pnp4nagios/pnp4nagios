@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace models;
 
 /**
  * Retrieves and manipulates current status of hosts (and services?)
@@ -39,7 +44,8 @@ class Data_Model extends System_Model
         $this->config = new Config_Model();
         $this->config->read_config();
         $this->auth = new Auth_Model();
-    }//end __construct()
+    }
+//end __construct()
 
 
     /*
@@ -69,7 +75,8 @@ class Data_Model extends System_Model
             sort($templates);
             return $templates;
         }
-    }//end getSpecialTemplates()
+    }
+//end getSpecialTemplates()
 
 
     public function getFirstSpecialTemplate()
@@ -80,7 +87,8 @@ class Data_Model extends System_Model
         } else {
             return $templates[0];
         }
-    }//end getFirstSpecialTemplate()
+    }
+//end getFirstSpecialTemplate()
 
 
     public function getHosts()
@@ -113,12 +121,15 @@ class Data_Model extends System_Model
                         $hosts[$i]['state'] = 'inactive';
                     }
                     $i++;
-                }//end while
+                }
+//end while
                 closedir($dh);
             } else {
                 throw new Kohana_User_Exception('Perfdata Dir', "Can not open $path");
-            }//end if
-        }//end if
+            }
+//end if
+        }
+//end if
         if (empty($hosts)) {
             throw new Kohana_Exception('error.perfdata-dir-empty', $conf['rrdbase']);
         } else {
@@ -131,10 +142,11 @@ class Data_Model extends System_Model
             array_multisort($sort, SORT_ASC, $hosts);
         }
         return $hosts;
-    }//end getHosts()
+    }
+//end getHosts()
 
 
-    function getRawServices($hostname)
+    private function getRawServices($hostname)
     {
         $services = [];
         $host     = [];
@@ -164,11 +176,14 @@ class Data_Model extends System_Model
                     $services[$i]['state'] = $state;
                     $services[$i]['name']  = $servicedesc[1];
                     $i++;
-                }//end while
-            }//end if
+                }
+//end while
+            }
+//end if
         } else {
             throw new Kohana_Exception('error.perfdata-dir-for-host', $path, $hostname);
-        }//end if
+        }
+//end if
         if (is_array($services) && (!empty($services))) {
             // Obtain a list of columns
             foreach ($services as $key => $row) {
@@ -181,10 +196,11 @@ class Data_Model extends System_Model
             throw new Kohana_Exception('error.host-perfdata-dir-empty', $path, $hostname);
         }
         return $services;
-    }//end getRawServices()
+    }
+//end getRawServices()
 
 
-    function getServices($hostname)
+    private function getServices($hostname)
     {
         $services     = [];
         $host         = [];
@@ -224,9 +240,11 @@ class Data_Model extends System_Model
                 $services[$i]['hostname']    = (string) $this->XML->NAGIOS_DISP_HOSTNAME;
                 $services[$i]['servicedesc'] = (string) $this->XML->NAGIOS_DISP_SERVICEDESC;
                 $services[$i]['is_multi']    = (string) $this->XML->DATASOURCE[0]->IS_MULTI[0];
-            }//end if
+            }
+//end if
             $i++;
-        }//end foreach
+        }
+//end foreach
         // print Kohana::debug($services);
         if (is_array($services) && (!empty($services))) {
             // Obtain a list of columns
@@ -241,7 +259,8 @@ class Data_Model extends System_Model
             array_unshift($services, $host[0]);
         }
         return $services;
-    }//end getServices()
+    }
+//end getServices()
 
 
     public function getFirstService($hostname)
@@ -257,7 +276,8 @@ class Data_Model extends System_Model
             throw new Kohana_Exception('error.get-first-service', $hostname);
         }
         return $srv['name'];
-    }//end getFirstService()
+    }
+//end getFirstService()
 
 
     public function getFirstHost()
@@ -273,7 +293,8 @@ class Data_Model extends System_Model
             throw new Kohana_Exception('error.get-first-host');
         }
         return $host['name'];
-    }//end getFirstHost()
+    }
+//end getFirstHost()
 
 
     public function readXML($hostname, $servicedesc, $throw_exception = true)
@@ -328,8 +349,10 @@ class Data_Model extends System_Model
             return true;
         } else {
             throw new Kohana_Exception('error.xml-not-found', $xmlfile);
-        }//end if
-    }//end readXML()
+        }
+//end if
+    }
+//end readXML()
 
 
     public function buildDataStruct($host = false, $service = false, $view = null, $source = null)
@@ -384,9 +407,11 @@ class Data_Model extends System_Model
                 }
                 $this->addToDataStruct($tmp_struct);
                 $i++;
-            }//end foreach
+            }
+//end foreach
             return;
-        }//end if
+        }
+//end if
         if ($view === '') {
             $v = 0;
             foreach ($this->config->views as $view_key => $view_val) {
@@ -420,9 +445,11 @@ class Data_Model extends System_Model
                     }
                     $this->addToDataStruct($tmp_struct);
                     $i++;
-                }//end foreach
+                }
+//end foreach
                 $v++;
-            }//end foreach
+            }
+//end foreach
         } else {
             $view = intval($view);
             $i    = 0;
@@ -455,9 +482,12 @@ class Data_Model extends System_Model
                 }
                    $this->addToDataStruct($tmp_struct);
                    $i++;
-            }//end foreach
-        }//end if
-    }//end buildDataStruct()
+            }
+//end foreach
+        }
+//end if
+    }
+//end buildDataStruct()
 
 
     private function addToDataStruct($data = false)
@@ -467,7 +497,8 @@ class Data_Model extends System_Model
         }
 
         array_push($this->STRUCT, $data);
-    }//end addToDataStruct()
+    }
+//end addToDataStruct()
 
 
     private function includeTemplate($template = false, $type = 'normal')
@@ -542,7 +573,8 @@ class Data_Model extends System_Model
             $this->RRD['ds_name'] = $this->array_reindex($ds_name);
         }
         return true;
-    }//end includeTemplate()
+    }
+//end includeTemplate()
 
 
     private function getGraphDimensions($search, $command)
@@ -564,7 +596,8 @@ class Data_Model extends System_Model
             }
         }
         return false;
-    }//end getGraphDimensions()
+    }
+//end getGraphDimensions()
 
 
     private function array_reindex($data)
@@ -575,7 +608,8 @@ class Data_Model extends System_Model
             $i++;
         }
         return $tmp;
-    }//end array_reindex()
+    }
+//end array_reindex()
 
 
     public function findTemplate($template, $type = 'normal')
@@ -612,7 +646,8 @@ class Data_Model extends System_Model
                 }
             }
             return false;
-        }//end if
+        }
+//end if
         /*
          * Special Templates
          */
@@ -624,10 +659,11 @@ class Data_Model extends System_Model
             }
             return $template_file;
         }
-    }//end findTemplate()
+    }
+//end findTemplate()
 
 
-    function findRecursiveTemplate($template, $dir)
+    private function findRecursiveTemplate($template, $dir)
     {
         if (!is_readable($dir)) {
             return false;
@@ -662,8 +698,10 @@ class Data_Model extends System_Model
             } else {
                 return false;
             }
-        }//end if
-    }//end findRecursiveTemplate()
+        }
+//end if
+    }
+//end findRecursiveTemplate()
 
 
     public function getTimeRange($start = false, $end = false, $view = '')
@@ -757,7 +795,8 @@ class Data_Model extends System_Model
             $timerange[$i]['type']    = 'views';
         }
            $this->TIMERANGE = $timerange;
-    }//end getTimeRange()
+    }
+//end getTimeRange()
 
 
     public function buildViewCmd($view = false, $start = false, $end = false)
@@ -785,7 +824,8 @@ class Data_Model extends System_Model
         }
 
         return "$cmd ";
-    }//end buildViewCmd()
+    }
+//end buildViewCmd()
 
 
     public function buildBasketStruct($basket, $view = null)
@@ -812,8 +852,10 @@ class Data_Model extends System_Model
                     break;
                 }
             }
-        }//end if
-    }//end buildBasketStruct()
+        }
+//end if
+    }
+//end buildBasketStruct()
 
 
     public function buildPageStruct($page, $view)
@@ -858,7 +900,8 @@ class Data_Model extends System_Model
                     }
                 }
             }
-        }//end if
+        }
+//end if
         // print Kohana::debug($servicelist);
         if (empty($servicelist)) {
             $this->ERROR = 'ERROR: ' . Kohana::lang('error.no-data-for-page', $page . '.cfg');
@@ -867,7 +910,8 @@ class Data_Model extends System_Model
                 $this->buildDataStruct($s['host'], $s['service'], $view, $s['source']);
             }
         }
-    }//end buildPageStruct()
+    }
+//end buildPageStruct()
 
 
     public function parse_page_cfg($page)
@@ -915,8 +959,10 @@ class Data_Model extends System_Model
                 $t      = '';
                 continue;
             }
-        }//end foreach
-    }//end parse_page_cfg()
+        }
+//end foreach
+    }
+//end parse_page_cfg()
 
 
     public function getHostsByPage()
@@ -932,7 +978,8 @@ class Data_Model extends System_Model
             }
         }
         return $new_hosts;
-    }//end getHostsByPage()
+    }
+//end getHostsByPage()
 
 
     private function filterHostByPage($host)
@@ -953,7 +1000,8 @@ class Data_Model extends System_Model
             }
         }
         return false;
-    }//end filterHostByPage()
+    }
+//end filterHostByPage()
 
 
     private function filterServiceByPage($g, $host, $service)
@@ -1000,9 +1048,11 @@ class Data_Model extends System_Model
                     return $data;
                 }
             }
-        }//end if
+        }
+//end if
         return false;
-    }//end filterServiceByPage()
+    }
+//end filterServiceByPage()
 
 
     public function getPages()
@@ -1026,7 +1076,8 @@ class Data_Model extends System_Model
             natsort($pages);
         }
         return $pages;
-    }//end getPages()
+    }
+//end getPages()
 
 
     public function getFirstPage()
@@ -1037,14 +1088,16 @@ class Data_Model extends System_Model
         } else {
             return urldecode($pages[0]);
         }
-    }//end getFirstPage()
+    }
+//end getFirstPage()
 
 
     public function getPageDetails($page)
     {
         $this->parse_page_cfg($page);
         return $this->PAGE_DEF['page_name'];
-    }//end getPageDetails()
+    }
+//end getPageDetails()
 
 
     public function buildXport($host, $service)
@@ -1066,7 +1119,8 @@ class Data_Model extends System_Model
             }
             $count++;
         }
-    }//end buildXport()
+    }
+//end buildXport()
 
 
     public function xml2csv($string)
@@ -1095,7 +1149,8 @@ class Data_Model extends System_Model
             $timestamp2 = ($timestamp2 + $step);
         }
         return $csv;
-    }//end xml2csv()
+    }
+//end xml2csv()
 
 
     /*
@@ -1132,8 +1187,10 @@ class Data_Model extends System_Model
             return $data;
         } else {
             throw new Kohana_Exception('error.xml-not-found', $xmlfile);
-        }//end if
-    }//end tplGetData()
+        }
+//end if
+    }
+//end tplGetData()
 
 
     /*
@@ -1182,5 +1239,7 @@ class Data_Model extends System_Model
         }
 
         return $new_services;
-    }//end tplGetServices()
-}//end class
+    }
+//end tplGetServices()
+}
+//end class

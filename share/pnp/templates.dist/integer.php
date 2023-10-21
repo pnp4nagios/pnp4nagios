@@ -29,6 +29,7 @@ foreach ($DS as $KEY => $VAL) {
 }
 
 # thanks to: http://stackoverflow.com/questions/10708965/generate-random-colors
+// phpcs:disable PSR1.Files.SideEffects
 function getRandomColor()
 {
     $rand = array('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');

@@ -25,7 +25,10 @@ include 'arrayfix.pnp';
 #    #define SERVER_NUM_STATUS 11    /* number of status settings */
 
 # perfdata example:
-# Performance Data: 'Waiting for Connection'=90 'Starting Up'=0 'Reading Request'=10 'Sending Reply'=196 'Keepalive (read)'=360 'DNS Lookup'=0 'Closing Connection'=77 'Logging'=0 'Gracefully finishing'=0 'Idle cleanup'=0 'Open slot'=547 'Requests/sec'=119.0 'kB per sec'=8294.4KB 'kB per Request'=69.9KB
+# Performance Data: 'Waiting for Connection'=90 'Starting Up'=0 'Reading Request'=10
+#    'Sending Reply'=196 'Keepalive (read)'=360 'DNS Lookup'=0 'Closing Connection'=77
+#    'Logging'=0 'Gracefully finishing'=0 'Idle cleanup'=0 'Open slot'=547 'Requests/sec'=119.0
+#    'kB per sec'=8294.4KB 'kB per Request'=69.9KB
 #
 
 

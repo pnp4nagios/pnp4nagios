@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Object Relational Mapping (ORM) "tree" extension. Allows ORM objects to act
  * as trees, with parents and children.
@@ -65,4 +71,5 @@ class ORM_Tree_Core extends ORM
 
         return parent::__get($column);
     }
-} // End ORM Tree
+}
+// End ORM Tree

@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * MySQL Database Driver
  *
@@ -309,7 +316,8 @@ class Database_Mysql_Driver extends Database_Driver
 
         return $result->result_array(true);
     }
-} // End Database_Mysql_Driver Class
+}
+// End Database_Mysql_Driver Class
 
 /**
  * MySQL Result
@@ -328,7 +336,7 @@ class Mysql_Result extends Database_Result
      * @param  boolean   return objects or arrays
      * @param  string    SQL query that was run
      */
-    public function __construct($result, $link, $object = true, $sql)
+    public function __construct($result, $link, $object = true, $sql = '')
     {
         $this->result = $result;
 
@@ -443,4 +451,5 @@ class Mysql_Result extends Database_Result
             return false;
         }
     }
-} // End Mysql_Result Class
+}
+// End Mysql_Result Class

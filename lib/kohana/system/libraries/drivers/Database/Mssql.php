@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * MSSQL Database Driver
  *
@@ -280,7 +287,11 @@ class Database_Mssql_Driver extends Database_Driver
 
     public function field_data($table)
     {
-        $query = $this->query("SELECT COLUMN_NAME AS Field, DATA_TYPE as Type  FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME = '" . $this->escape_table($table) . "'", $this->link);
+        $query = $this->query(
+            "SELECT COLUMN_NAME AS Field, DATA_TYPE as Type  FROM INFORMATION_SCHEMA.Columns WHERE TABLE_NAME = '" .
+                $this->escape_table($table) . "'",
+            $this->link
+        );
 
         return $query->result_array(true);
     }
@@ -303,7 +314,7 @@ class Mssql_Result extends Database_Result
      * @param  boolean   return objects or arrays
      * @param  string    SQL query that was run
      */
-    public function __construct($result, $link, $object = true, $sql)
+    public function __construct($result, $link, $object = true, $sql = '')
     {
         $this->result = $result;
 
@@ -419,4 +430,5 @@ class Mssql_Result extends Database_Result
 
         return mssql_data_seek($this->result, $offset);
     }
-} // End mssql_Result Class
+}
+// End mssql_Result Class

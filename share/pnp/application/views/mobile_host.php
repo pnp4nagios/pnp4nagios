@@ -20,7 +20,10 @@ foreach ($services as $key => $service) {
     }
 
      printf(
-         "<li><a href=\"" . url::base(true) . "mobile/graph/%s/%s\" data-transition=\"pop\"><img src=\"" . url::base(true) . "image?host=%s&srv=%s&h=80&w=80&view=1\">%s</a></li>",
+         "<li><a href=\"" . url::base(true) .
+             "mobile/graph/%s/%s\" data-transition=\"pop\"><img src=\"" .
+             url::base(true) .
+             "image?host=%s&srv=%s&h=80&w=80&view=1\">%s</a></li>",
          urlencode($service['hostname']),
          urlencode($service['name']),
          urlencode($service['hostname']),

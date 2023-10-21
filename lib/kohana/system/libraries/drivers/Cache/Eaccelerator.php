@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Eaccelerator-based Cache driver.
  *
@@ -59,4 +65,5 @@ class Cache_Eaccelerator_Driver implements Cache_Driver
 
         return true;
     }
-} // End Cache eAccelerator Driver
+}
+// End Cache eAccelerator Driver

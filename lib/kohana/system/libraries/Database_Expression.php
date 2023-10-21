@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * Database expression class to allow for explicit joins and where expressions.
  *
@@ -24,4 +29,5 @@ class Database_Expression_Core
     {
         return (string) $this->expression;
     }
-} // End Database Expr Class
+}
+// End Database Expr Class

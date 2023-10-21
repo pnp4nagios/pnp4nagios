@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
+
 /**
  * Text helper class.
  *
@@ -356,9 +362,8 @@ class text_Core
         if ($si == false or strpos($force_unit, 'i') !== false) {
             $units = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB');
             $mod   = 1024;
-        }
+        } else {
         // SI prefixes (decimal)
-        else {
             $units = array('B', 'kB', 'MB', 'GB', 'TB', 'PB');
             $mod   = 1000;
         }
@@ -389,4 +394,5 @@ class text_Core
 
         return $str;
     }
-} // End text
+}
+// End text

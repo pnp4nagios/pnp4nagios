@@ -1,6 +1,10 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
+namespace controller;
 /**
  * Ajax controller.
  *
@@ -8,6 +12,9 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 class Ajax_Controller extends System_Controller
 {
     public function __construct()

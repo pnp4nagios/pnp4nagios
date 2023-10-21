@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
 * Object Relational Mapping (ORM) result iterator.
 *
@@ -216,4 +221,5 @@ class ORM_Iterator_Core implements Iterator, ArrayAccess, Countable
     {
         throw new Kohana_Database_Exception('database.result_read_only');
     }
-} // End ORM Iterator
+}
+// End ORM Iterator

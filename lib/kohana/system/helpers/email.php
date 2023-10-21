@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
 /**
  * Email helper class.
  *
@@ -162,4 +167,5 @@ class email_Core
 
         return email::$mail->send($message, $recipients, $from);
     }
-} // End email
+}
+// End email

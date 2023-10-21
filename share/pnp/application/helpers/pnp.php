@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helper;
 /**
 *
 *
@@ -51,7 +56,10 @@ class pnp_Core
     {
         $service = urlencode(urlencode($service));
         $host = urlencode(urlencode($host));
-        print "<a href=\"javascript:Gzoom('" . url::base(true) . "zoom?host=$host&srv=$service&view=$view&source=$source&end=$end&start=$start&graph_width=$graph_width&graph_height=$graph_height');\" title=\"Zoom into the Graph\"><img src=\"" . url::base() . "media/images/zoom.png\"></a>\n";
+        print "<a href=\"javascript:Gzoom('" . url::base(true) .
+            "zoom?host=$host&srv=$service&view=$view&source=$source&end=$end&start=$start" .
+            "&graph_width=$graph_width&graph_height=$graph_height');\" title=\"Zoom into the Graph\"><img src=\"" .
+            url::base() . "media/images/zoom.png\"></a>\n";
     }
 
     /*
@@ -59,7 +67,10 @@ class pnp_Core
     */
     public static function zoom_icon_special($tpl, $start, $end, $source, $view, $graph_width, $graph_height)
     {
-        print "<a href=\"javascript:Gzoom('" . url::base(true) . "zoom?tpl=$tpl&view=$view&source=$source&end=$end&start=$start&graph_width=$graph_width&graph_height=$graph_height');\" title=\"Zoom into the Graph\"><img src=\"" . url::base() . "media/images/zoom.png\"></a>\n";
+        print "<a href=\"javascript:Gzoom('" . url::base(true) .
+            "zoom?tpl=$tpl&view=$view&source=$source&end=$end&start=$start" .
+            "&graph_width=$graph_width&graph_height=$graph_height');\" title=\"Zoom into the Graph\">" .
+            "<img src=\"" . url::base() . "media/images/zoom.png\"></a>\n";
     }
 
     /*
@@ -68,9 +79,17 @@ class pnp_Core
     public static function add_to_basket_icon($host, $service, $source = false)
     {
         if ($source === false) {
-            print "<span id=\"basket_action_add\"><a title=\"" . Kohana::lang('common.basket-add-service') . "\" id=\"" . $host . "::" . $service . "\"><img width=12px height=12px src=\"" . url::base() . "media/images/add.png\"></a></span>\n";
+            print "<span id=\"basket_action_add\"><a title=\"" .
+                Kohana::lang('common.basket-add-service') .
+                "\" id=\"" . $host . "::" . $service .
+                "\"><img width=12px height=12px src=\"" .
+                url::base() . "media/images/add.png\"></a></span>\n";
         } else {
-            print "<span id=\"basket_action_add\"><a title=\"" . Kohana::lang('common.basket-add-item') . "\" id=\"" . $host . "::" . $service . "::" . $source . "\"><img width=16px height=16px src=\"" . url::base() . "media/images/add.png\"></a></span>\n";
+            print "<span id=\"basket_action_add\"><a title=\"" .
+                Kohana::lang('common.basket-add-item') .
+                "\" id=\"" . $host . "::" . $service . "::" .
+                $source . "\"><img width=16px height=16px src=\"" .
+                url::base() . "media/images/add.png\"></a></span>\n";
         }
     }
 

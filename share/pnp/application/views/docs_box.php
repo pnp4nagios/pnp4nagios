@@ -5,9 +5,15 @@
 </div>
 <div class="p4 ui-widget-content ui-corner-bottom" >
 <?php
-echo "<a title=\"" . Kohana::lang('common.title-home-link') . "\" href=\"" . url::base(true) . "graph\"><img class=\"icon\" src=\"" . url::base() . "media/images/home.png\"></a>\n";
-echo "<a title=\"" . Kohana::lang('common.title-docs-link') . "\" href=\"" . url::base(true) . "docs\"><img class=\"icon\" src=\"" . url::base() . "media/images/docs.png\"></a>\n";
-echo "<a title=\"" . Kohana::lang('common.title-color-link') . "\" href=\"" . url::base(true) . "color\"><img class=\"icon\" src=\"" . url::base() . "media/images/color.png\"></a>\n";
+echo "<a title=\"" . Kohana::lang('common.title-home-link') .
+     "\" href=\"" . url::base(true) . "graph\"><img class=\"icon\" src=\"" .
+     url::base() . "media/images/home.png\"></a>\n";
+echo "<a title=\"" . Kohana::lang('common.title-docs-link') .
+    "\" href=\"" . url::base(true) . "docs\"><img class=\"icon\" src=\"" .
+    url::base() . "media/images/docs.png\"></a>\n";
+echo "<a title=\"" . Kohana::lang('common.title-color-link') .
+    "\" href=\"" . url::base(true) . "color\"><img class=\"icon\" src=\"" .
+    url::base() . "media/images/color.png\"></a>\n";
 foreach ($this->doc_language as $lang) {
     echo "<a href=\"" . url::base(true) . "docs/view/" . $lang . "/start\"><img class=\"icon\" src=\"" . url::base() . "media/images/" . $lang . ".png\"></a> \n";
 }

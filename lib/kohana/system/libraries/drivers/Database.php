@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
+namespace library;
 /**
  * Database API driver
  *
@@ -329,7 +335,7 @@ abstract class Database_Driver
      * @param   string  table name
      * @return  array
      */
-    abstract function list_fields($table);
+    abstract public function list_fields($table);
 
     /**
      * Returns the last database error.
@@ -426,7 +432,8 @@ abstract class Database_Driver
     {
         return sha1(str_replace("\n", ' ', trim($sql)));
     }
-} // End Database Driver Interface
+}
+// End Database Driver Interface
 
 /**
  * Database_Result
@@ -474,7 +481,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
      * @param   mixed     type
      * @return  Database_Result
      */
-    abstract function result($object = true, $type = false);
+    abstract public function result($object = true, $type = false);
 
     /**
      * Builds an array of query results.
@@ -483,7 +490,7 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
      * @param   mixed     type
      * @return  array
      */
-    abstract function result_array($object = null, $type = false);
+    abstract public function result_array($object = null, $type = false);
 
     /**
      * Gets the fields of an already run query.
@@ -605,4 +612,5 @@ abstract class Database_Result implements ArrayAccess, Iterator, Countable
     {
         return $this->offsetExists($this->current_row);
     }
-} // End Database Result Interface
+}
+// End Database Result Interface

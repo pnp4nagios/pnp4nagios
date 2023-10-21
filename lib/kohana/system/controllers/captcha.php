@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace kohana;
 /**
  * Outputs the dynamic Captcha resource.
  * Usage: Call the Captcha controller from a view, e.g.
@@ -21,4 +26,5 @@ class Captcha_Controller extends Controller
         // Pull the config group name from the URL
         Captcha::factory($this->uri->segment(2))->render(false);
     }
-} // End Captcha_Controller
+}
+// End Captcha_Controller

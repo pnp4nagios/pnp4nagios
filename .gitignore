@@ -5,6 +5,7 @@ summary
 config.log
 config.status
 ci/pnp4nagios.spec
+ci/outputs
 scripts/rc.npcd
 scripts/rc.pnp_gearman_worker
 scripts/check_pnp_rrds.pl
@@ -14,6 +15,7 @@ src/*.o
 src/npcd
 include/config.h
 include/stamp-h
+work
 *~
 
 sample-config/pnp/config.php

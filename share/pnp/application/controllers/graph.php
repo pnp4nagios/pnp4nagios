@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
 /**
  * Graph controller.
  *
@@ -31,7 +36,8 @@ class Graph_Controller extends System_Controller
         $this->template->graph->icon_box->position = 'graph';
         $this->template->graph->icon_box->xml_icon = true;
         $this->template->graph->icon_box->pdf_icon = true;
-    }//end __construct()
+    }
+    //end __construct()
 
 
     public function index()
@@ -132,8 +138,11 @@ class Graph_Controller extends System_Controller
             } else {
                 throw new Kohana_Exception('error.not_authorized_for_host_overview');
             }
-        }//end if
+        }
+        //end if
         $this->template->graph->logo_box      = $this->add_view('logo_box');
         $this->template->graph->header->title = $this->title;
-    }//end index()
-}//end class
+    }
+    //end index()
+}
+//end class

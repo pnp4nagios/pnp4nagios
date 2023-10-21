@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
+namespace controller;
+
 /**
  * Debug controller.
  *
@@ -8,6 +13,9 @@ defined('SYSPATH') or die('No direct access allowed.');
  * @author     Joerg Linge
  * @license    GPL
  */
+
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
 class Color_Controller extends System_Controller
 {
     public $scheme = array();

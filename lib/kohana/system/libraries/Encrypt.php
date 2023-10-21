@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * The Encrypt library provides two-way encryption of text and binary strings
  * using the MCrypt extension.
@@ -150,4 +155,5 @@ class Encrypt_Core
         // Return the decrypted data, trimming the \0 padding bytes from the end of the data
         return rtrim(mcrypt_decrypt($this->config['cipher'], $this->config['key'], $data, $this->config['mode'], $iv), "\0");
     }
-} // End Encrypt
+}
+// End Encrypt

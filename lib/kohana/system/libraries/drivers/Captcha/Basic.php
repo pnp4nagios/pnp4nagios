@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Captcha driver for "basic" style.
  *
@@ -76,4 +82,5 @@ class Captcha_Basic_Driver extends Captcha_Driver
         // Output
         return $this->image_render($html);
     }
-} // End Captcha Basic Driver Class
+}
+// End Captcha Basic Driver Class

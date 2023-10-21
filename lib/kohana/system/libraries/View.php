@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Loads and displays Kohana view files. Can also handle output of some binary
  * files, such as image, Javascript, and CSS files.
@@ -254,7 +260,7 @@ class View_Core
             $data = array_merge(View::$kohana_global_data, $this->kohana_local_data);
 
             // Load the view in the controller for access to $this
-            $output = Kohana::$instance->_kohana_load_view($this->kohana_filename, $data);
+            $output = Kohana::$instance->kohana_load_view($this->kohana_filename, $data);
 
             if ($renderer !== false and is_callable($renderer, true)) {
                 // Pass the output through the user defined renderer
@@ -285,4 +291,5 @@ class View_Core
 
         return $output;
     }
-} // End View
+}
+// End View

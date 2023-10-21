@@ -1,7 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
+namespace models;
 /**
  * Retrieves the PNP config files
  */
@@ -59,7 +63,8 @@ class Auth_Model extends System_Model
         if ($this->AUTH_ENABLED === true && $this->REMOTE_USER === null) {
             throw new Kohana_exception('error.remote_user_missing');
         }
-    }//end __construct()
+    }
+    //end __construct()
 
 
     public function __destruct()
@@ -68,7 +73,8 @@ class Auth_Model extends System_Model
             socket_close($this->SOCKET);
             $this->SOCKET = null;
         }
-    }//end __destruct()
+    }
+    //end __destruct()
 
 
     public function connect()
@@ -86,7 +92,8 @@ class Auth_Model extends System_Model
         if (!$result) {
             throw new Kohana_exception('error.livestatus_socket_error', socket_strerror(socket_last_error($this->SOCKET)), $this->socketPath);
         }
-    }//end connect()
+    }
+    //end connect()
 
 
     private function queryLivestatus($query)
@@ -111,7 +118,8 @@ class Auth_Model extends System_Model
         socket_close($this->SOCKET);
         $this->SOCKET = null;
         return $obj;
-    }//end queryLivestatus()
+    }
+    //end queryLivestatus()
 
 
     public function is_authorized($host = false, $service = null)
@@ -141,7 +149,8 @@ class Auth_Model extends System_Model
         }
 
         return (!empty($result));
-    }//end is_authorized()
+    }
+    //end is_authorized()
 
 
     public function getSocketDetails($string = false)
@@ -170,5 +179,7 @@ class Auth_Model extends System_Model
             return;
         }
         return false;
-    }//end getSocketDetails()
-}//end class
+    }
+    //end getSocketDetails()
+}
+//end class

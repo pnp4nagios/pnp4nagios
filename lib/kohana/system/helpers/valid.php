@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
+
 /**
  * Validation helper class.
  *
@@ -21,7 +27,10 @@ class valid_Core
      */
     public static function email($email)
     {
-        return (bool) preg_match('/^[-_a-z0-9\'+*$^&%=~!?{}]++(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*+@(?:(?![-.])[-a-z0-9.]+(?<![-.])\.[a-z]{2,6}|\d{1,3}(?:\.\d{1,3}){3})(?::\d++)?$/iD', (string) $email);
+        return (bool) preg_match('/^[-_a-z0-9\'+*$^&%=~!?{}]++' .
+                                 '(?:\.[-_a-z0-9\'+*$^&%=~!?{}]+)*+' .
+                                 '@(?:(?![-.])[-a-z0-9.]+(?<![-.])' .
+                                 '\.[a-z]{2,6}|\d{1,3}(?:\.\d{1,3}){3})(?::\d++)?$/iD', (string) $email);
     }
 
     /**
@@ -322,4 +331,5 @@ class valid_Core
 
         return (bool) preg_match($pattern, (string) $str);
     }
-} // End valid
+}
+// End valid

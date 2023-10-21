@@ -1,6 +1,9 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+
+namespace kohana;
 /**
  * A port of phputf8 to a unified file/class. Checks PHP status to ensure that
  * UTF-8 support is available and normalize global variables to UTF-8. It also
@@ -80,10 +83,12 @@ if (PHP_SAPI == 'cli') {
     $_SERVER['argv'] = utf8::clean($_SERVER['argv']);
 }
 
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 final class utf8
 {
     // Called methods
-    static $called = array();
+    private static $called = array();
 
     /**
      * Recursively cleans arrays, objects, and strings. Removes ASCII control
@@ -702,4 +707,5 @@ final class utf8
 
         return _from_unicode($arr);
     }
-} // End utf8
+}
+// End utf8

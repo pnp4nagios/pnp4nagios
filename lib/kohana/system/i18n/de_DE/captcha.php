@@ -1,11 +1,16 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 
 $lang = array
 (
-    'file_not_found'        => 'Die eingestellte Datei %s konnte nicht gefunden werden. Kontrollieren Sie bitte, bevor Sie Dateien benutzen, ob diese existieren. Sie können dafür die Funktion file_exists() benutzen.',
-    'requires_GD2'          => 'Die Captcha-Bibliothek erfordert GD2 mit FreeType-Unterstützung. Sehen Sie sich die Seite http://php.net/gd_info an, um weitere Informationen zu erhalten.',
+    'file_not_found'        => 'Die eingestellte Datei %s konnte nicht gefunden werden.' .
+        ' Kontrollieren Sie bitte, bevor Sie Dateien benutzen, ob diese existieren.' .
+        ' Sie können dafür die Funktion file_exists() benutzen.',
+    'requires_GD2'          => 'Die Captcha-Bibliothek erfordert GD2 mit FreeType-Unterstützung.' .
+        ' Sehen Sie sich die Seite http://php.net/gd_info an, um weitere Informationen zu erhalten.',
 
     // Words of varying length for the Captcha_Word_Driver to pick from
     // Note: use only alphanumeric characters

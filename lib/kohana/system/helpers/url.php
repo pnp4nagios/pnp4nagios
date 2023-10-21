@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
+
 /**
  * URL helper class.
  *
@@ -223,4 +229,5 @@ class url_Core
 
         exit('<h1>' . $method . ' - ' . $codes[$method] . '</h1>' . $output);
     }
-} // End url
+}
+// End url

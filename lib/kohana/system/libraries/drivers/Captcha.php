@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * Captcha driver class.
  *
@@ -213,7 +218,10 @@ abstract class Captcha_Driver
     {
         // Output html element
         if ($html) {
-            return '<img alt="Captcha" src="' . url::site('captcha/' . Captcha::$config['group']) . '" width="' . Captcha::$config['width'] . '" height="' . Captcha::$config['height'] . '" />';
+            return '<img alt="Captcha" src="' .
+                url::site('captcha/' . Captcha::$config['group']) .
+                '" width="' . Captcha::$config['width'] .
+                '" height="' . Captcha::$config['height'] . '" />';
         }
 
         // Send the correct HTTP header
@@ -226,4 +234,5 @@ abstract class Captcha_Driver
         // Free up resources
         imagedestroy($this->image);
     }
-} // End Captcha Driver
+}
+// End Captcha Driver

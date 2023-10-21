@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
 /**
  * Cookie helper class.
  *
@@ -82,4 +87,5 @@ class cookie_Core
         // Sets the cookie value to an empty string, and the expiration to 24 hours ago
         return cookie::set($name, '', -86400, $path, $domain, false, false);
     }
-} // End cookie
+}
+// End cookie

@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace controller;
 /**
  * Docs controller.
  *
@@ -32,13 +37,15 @@ class Docs_Controller extends System_Controller
         $this->template->docs->docs_box   = $this->add_view('docs_box');
         $this->template->docs->logo_box   = $this->add_view('logo_box');
         $this->doc_language               = $this->config->conf['doc_language'];
-    }//end __construct()
+    }
+    //end __construct()
 
 
     public function index()
     {
         url::redirect('docs/view/');
-    }//end index()
+    }
+    //end index()
 
 
     public function view($lang = false, $page = false)
@@ -86,14 +93,16 @@ class Docs_Controller extends System_Controller
         #
         $this->toc         = str_replace("/de/pnp-0.6/", "", $this->toc);
         $this->toc         = str_replace("/pnp-0.6/", "", $this->toc);
-        $this->toc         = preg_replace("/<h2>.*<\/h2>/", "" , $this->toc);
-        $this->content     = str_replace("/templates/", url::base()."documents/templates/", $this->content);
+        $this->toc         = preg_replace("/<h2>.*<\/h2>/", "", $this->toc);
+        $this->content     = str_replace("/templates/", url::base() . "documents/templates/", $this->content);
         $this->content     = str_replace("/de/pnp-0.6/", "", $this->content);
         $this->content     = str_replace("/pnp-0.6/", "", $this->content);
-        $this->content     = str_replace("/_media", url::base()."documents/_media", $this->content);
+        $this->content     = str_replace("/_media", url::base() . "documents/_media", $this->content);
         $this->content     = str_replace("gallery", "", $this->content);
-        $this->content     = str_replace("/_detail", url::base()."documents/_media", $this->content);
-        $this->content     = str_replace("/lib/images", url::base()."documents/images", $this->content);
+        $this->content     = str_replace("/_detail", url::base() . "documents/_media", $this->content);
+        $this->content     = str_replace("/lib/images", url::base() . "documents/images", $this->content);
         $this->graph_width = ($this->config->conf['graph_width'] + 140);
-    }//end view()
-}//end class
+    }
+    //end view()
+}
+//end class

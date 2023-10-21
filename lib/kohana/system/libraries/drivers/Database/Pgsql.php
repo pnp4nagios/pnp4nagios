@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * PostgreSQL 8.1+ Database Driver
  *
@@ -277,7 +284,8 @@ class Database_Pgsql_Driver extends Database_Driver
 
         return $result->result_array(true);
     }
-} // End Database_Pgsql_Driver Class
+}
+// End Database_Pgsql_Driver Class
 
 /**
  * PostgreSQL Result
@@ -296,7 +304,7 @@ class Pgsql_Result extends Database_Result
      * @param  boolean   return objects or arrays
      * @param  string    SQL query that was run
      */
-    public function __construct($result, $link, $object = true, $sql)
+    public function __construct($result, $link, $object = true, $sql = '')
     {
         $this->link = $link;
         $this->result = $result;
@@ -449,7 +457,8 @@ class Pgsql_Result extends Database_Result
         $fetch = $this->fetch_type;
         return $fetch($this->result, null, $this->return_type);
     }
-} // End Pgsql_Result Class
+}
+// End Pgsql_Result Class
 
 /**
  * PostgreSQL Prepared Statement (experimental)

@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /*
  * Class: Database_PdoSqlite_Driver
  *  Provides specific database items for Sqlite.
@@ -256,11 +263,12 @@ class Database_Pdosqlite_Driver extends Database_Driver
      * @access  public
      * @return  string
      */
-    function version()
+    public function version()
     {
         return $this->link->getAttribute(constant("PDO::ATTR_SERVER_VERSION"));
     }
-} // End Database_PdoSqlite_Driver Class
+}
+// End Database_PdoSqlite_Driver Class
 
 /*
  * PDO-sqlite Result
@@ -279,7 +287,7 @@ class Pdosqlite_Result extends Database_Result
      * @param  boolean   return objects or arrays
      * @param  string    SQL query that was run
      */
-    public function __construct($result, $link, $object = true, $sql)
+    public function __construct($result, $link, $object = true, $sql = '')
     {
         if (is_object($result) or $result = $link->prepare($sql)) {
             // run the query. Return true if success, false otherwise
@@ -425,4 +433,5 @@ class Pdosqlite_Result extends Database_Result
         // Same problem that seek() has, see above.
         return $this->seek(0);
     }
-} // End PdoSqlite_Result Class
+}
+// End PdoSqlite_Result Class

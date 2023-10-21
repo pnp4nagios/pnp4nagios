@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
 /**
  * Download helper class.
  *
@@ -94,4 +99,5 @@ class download_Core
             echo $data;
         }
     }
-} // End download
+}
+// End download

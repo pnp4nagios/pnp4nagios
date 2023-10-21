@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
+namespace controller;
+
 /**
  * PDF controller.
  *
@@ -276,19 +283,23 @@ class Pdf_Controller extends System_Controller
 +
 *
 */
+// phpcs:disable PSR1.Files.SideEffects
 require Kohana::find_file('vendor/fpdf', 'fpdf');
 require Kohana::find_file('vendor/fpdf', 'fpdi');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
 class PDF extends FPDI
 {
         //Page header
-    function Header()
+    public function Header()
     {
         //Arial bold 10
         $this->SetFont('Arial', 'B', 10);
     }
 
         //Page footer
-    function Footer()
+    public function Footer()
     {
         //Position at 1.5 cm from bottom
         $this->SetY(-20);

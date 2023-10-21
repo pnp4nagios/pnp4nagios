@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Session cache driver.
  *
@@ -99,4 +105,5 @@ class Session_Cache_Driver implements Session_Driver
         // Just return, caches are automatically cleaned up
         return true;
     }
-} // End Session Cache Driver
+}
+// End Session Cache Driver

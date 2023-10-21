@@ -19,7 +19,11 @@
     foreach ($pages as $page) {
         echo '<span id="page-' . $page . '">';
         $this->data->getPageDetails($page);
-        echo '<a class="multi0" href="' . url::base(true) . 'page?page=' . $page . '" title="' . $this->data->PAGE_DEF['page_name'] . '">' . pnp::shorten($this->data->PAGE_DEF['page_name']) . "</a><br>\n";
+        echo '<a class="multi0" href="' . url::base(true) .
+            'page?page=' . $page . '" title="' .
+            $this->data->PAGE_DEF['page_name'] . '">' .
+            pnp::shorten($this->data->PAGE_DEF['page_name']) .
+            "</a><br>\n";
         echo "</span>\n";
     }
     ?>
@@ -28,4 +32,3 @@
 <p>
     <?php
 }//end if
-

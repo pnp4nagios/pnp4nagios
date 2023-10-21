@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * MySQLi Database Driver
  *
@@ -109,7 +116,8 @@ class Database_Mysqli_Driver extends Database_Mysql_Driver
     {
         return $this->link->error;
     }
-} // End Database_Mysqli_Driver Class
+}
+// End Database_Mysqli_Driver Class
 
 /**
  * MySQLi Result
@@ -130,7 +138,7 @@ class Kohana_Mysqli_Result extends Database_Result
      * @param  boolean   return objects or arrays
      * @param  string    SQL query that was run
      */
-    public function __construct($link, $object = true, $sql)
+    public function __construct($link, $object = true, $sql = '')
     {
         $this->link = $link;
 
@@ -274,7 +282,8 @@ class Kohana_Mysqli_Result extends Database_Result
         $fetch = $this->fetch_type;
         return $this->result->$fetch($this->return_type);
     }
-} // End Mysqli_Result Class
+}
+// End Mysqli_Result Class
 
 /**
  * MySQLi Prepared Statement (experimental)

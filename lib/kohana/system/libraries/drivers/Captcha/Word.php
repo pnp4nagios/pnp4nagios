@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Captcha driver for "word" style.
  *
@@ -35,4 +41,5 @@ class Captcha_Word_Driver extends Captcha_Basic_Driver
         // Return any random word as final fallback
         return strtoupper($words[array_rand($words)]);
     }
-} // End Captcha Word Driver Class
+}
+// End Captcha Word Driver Class

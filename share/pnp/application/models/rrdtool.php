@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace models;
 /**
  * Retrieves and manipulates current status of hosts (and services?)
  */
@@ -16,7 +21,8 @@ class Rrdtool_Model extends System_Model
         $this->config = new Config_Model();
         $this->config->read_config();
         // print Kohana::debug($this->config->views);
-    }//end __construct()
+    }
+//end __construct()
 
 
     private function rrdtool_execute()
@@ -102,9 +108,11 @@ class Rrdtool_Model extends System_Model
             }
         } else {
             $data = 'ERROR: proc_open(' . $rrdtool . ' ... failed';
-        }//end if
+        }
+//end if
         return $data;
-    }//end rrdtool_execute()
+    }
+//end rrdtool_execute()
 
 
     public function doImage($RRD_CMD, $out = 'STDOUT')
@@ -139,7 +147,8 @@ class Rrdtool_Model extends System_Model
             if (is_numeric($conf['graph_height'])) {
                 $height = abs($conf['graph_height']);
             }
-        }//end if
+        }
+//end if
 
         if ($width > 0) {
             $command .= " --width=$width";
@@ -167,7 +176,8 @@ class Rrdtool_Model extends System_Model
         } else {
             return false;
         }
-    }//end doImage()
+    }
+//end doImage()
 
 
     public function doXport($RRD_CMD)
@@ -187,7 +197,8 @@ class Rrdtool_Model extends System_Model
         } else {
             return false;
         }
-    }//end doXport()
+    }
+//end doXport()
 
 
     public function streamImage($data = false)
@@ -260,8 +271,10 @@ class Rrdtool_Model extends System_Model
         } else {
             header('Content-type: image/png');
             echo $data;
-        }//end if
-    }//end streamImage()
+        }
+//end if
+    }
+//end streamImage()
 
 
     public function saveImage($data = false)
@@ -281,12 +294,15 @@ class Rrdtool_Model extends System_Model
             throw new Kohana_Exception('error.gd-missing');
         }
         return $img;
-    }//end saveImage()
+    }
+//end saveImage()
 
 
     private function format_rrd_debug($data)
     {
         $data = preg_replace('/(HRULE|VDEF|DEF|CDEF|GPRINT|LINE|AREA|COMMENT)/', "\n\${1}", $data);
         return $data;
-    }//end format_rrd_debug()
-}//end class
+    }
+//end format_rrd_debug()
+}
+//end class

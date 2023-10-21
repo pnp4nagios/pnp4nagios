@@ -1,6 +1,10 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects 
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+
+namespace kohana;
 /**
  * Process queuing/execution class. Allows an unlimited number of callbacks
  * to be added to 'events'. Events can be run multiple times, and can also
@@ -212,4 +216,5 @@ final class Event
     {
         return isset(self::$has_run[$name]);
     }
-} // End Event
+}
+// End Event

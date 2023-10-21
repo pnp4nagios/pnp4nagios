@@ -12,7 +12,7 @@
 jQuery.noConflict();
     jQuery(window).load(
         function() {
-    
+
         jQuery('div.graph').each(function(){
             var img_width = jQuery(this).next('img').width();
             var rrd_width = parseInt(jQuery(this).css('width'));
@@ -21,11 +21,11 @@ jQuery.noConflict();
             jQuery(this).css('cursor', 'e-resize');
             jQuery(this).attr('title', 'Click to zoom in');
         });
-    
+
     jQuery('img.goto').css('visibility', 'visible');
         jQuery('div.graph').imgAreaSelect({ handles: false, autoHide: true,
             fadeSpeed: 500, onSelectEnd: redirect, minHeight: '<?php echo $this->config->conf['zgraph_height']; ?>' });
-    
+
         function redirect(img, selection) {
             if (!selection.width || !selection.height)
                     return;
@@ -39,9 +39,9 @@ jQuery.noConflict();
             if( delta < 600 )
                 delta = 600;
             var sec_per_px = parseInt( delta / graph_width);
-            var start = ostart + Math.ceil( selection.x1 * sec_per_px );  
-            var end   = ostart + ( selection.x2 * sec_per_px );  
-            window.location = link + '&source=' + source + '&start=' + start + '&end=' + end ; 
+            var start = ostart + Math.ceil( selection.x1 * sec_per_px );
+            var end   = ostart + ( selection.x2 * sec_per_px );
+            window.location = link + '&source=' + source + '&start=' + start + '&end=' + end ;
         }
     });
 </script>
@@ -56,12 +56,22 @@ jQuery.noConflict();
 <h3> <?php echo $this->data->TIMERANGE['f_start']; ?> --- <?php echo $this->data->TIMERANGE['f_end']; ?> </h3>
 <div style="position:relative;">
 <?php
-echo "<div start=$start end=$end style=\"width:" . $graph_width . 'px; height:' . $graph_height . 'px; position:absolute; top:33px" class="graph" id="' . $this->url . '" ></div>';
+echo "<div start=$start end=$end style=\"width:" . $graph_width .
+        'px; height:' . $graph_height .
+        'px; position:absolute; top:33px" class="graph" id="' .
+        $this->url . '" ></div>';
 if (!empty($tpl)) {
-    echo "<img class=\"graph\" src=\"image?source=$source" . "&tpl=$tpl" . "&view=$view" . "&start=$start" . "&end=$end" . "&graph_height=$graph_height" . "&graph_width=$graph_width\">";
+    echo "<img class=\"graph\" src=\"image?source=$source" .
+        "&tpl=$tpl" . "&view=$view" . "&start=$start" .
+        "&end=$end" . "&graph_height=$graph_height" .
+        "&graph_width=$graph_width\">";
 } else {
     $srv = urlencode($srv);
-    echo "<img src=\"image?source=$source" . "&host=$host" . '&srv=' . urlencode($srv) . "&view=$view" . "&start=$start" . "&end=$end" . "&graph_height=$graph_height" . "&graph_width=$graph_width\">";
+    echo "<img src=\"image?source=$source" . "&host=$host" .
+        '&srv=' . urlencode($srv) . "&view=$view" .
+        "&start=$start" . "&end=$end" .
+        "&graph_height=$graph_height" .
+        "&graph_width=$graph_width\">";
 }
 $start_down = ($this->data->TIMERANGE['start'] - intval(($this->data->TIMERANGE['end'] - $this->data->TIMERANGE['start']) / 2));
 $path       = pnp::addToUri(['start' => $start_down]);
@@ -119,4 +129,3 @@ printf(
 </div>
 </body>
 </html>
-

@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Image API driver.
  *
@@ -104,7 +110,7 @@ abstract class Image_Driver
      * @param   integer   direction to flip
      * @return  boolean
      */
-    abstract function flip($direction);
+    abstract public function flip($direction);
 
     /**
      * Crop an image. Valid properties are: width, height, top, left.
@@ -112,7 +118,7 @@ abstract class Image_Driver
      * @param   array     new properties
      * @return  boolean
      */
-    abstract function crop($properties);
+    abstract public function crop($properties);
 
     /**
      * Resize an image. Valid properties are: width, height, and master.
@@ -137,4 +143,5 @@ abstract class Image_Driver
      * @return  boolean
      */
     abstract public function sharpen($amount);
-} // End Image Driver
+}
+// End Image Driver

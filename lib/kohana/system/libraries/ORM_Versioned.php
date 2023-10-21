@@ -1,5 +1,8 @@
 <?php
 
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+namespace library;
+
 /**
  * Object Relational Mapping (ORM) "versioned" extension. Allows ORM objects to
  * be revisioned instead of updated.

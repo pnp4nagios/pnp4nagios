@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * GD Image Driver.
  *
@@ -353,4 +359,5 @@ class Image_GD_Driver extends Image_Driver
 
         return $img;
     }
-} // End Image GD Driver
+}
+// End Image GD Driver

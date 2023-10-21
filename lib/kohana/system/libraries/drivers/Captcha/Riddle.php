@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Captcha driver for "riddle" style.
  *
@@ -45,4 +51,5 @@ class Captcha_Riddle_Driver extends Captcha_Driver
     {
         return $this->riddle;
     }
-} // End Captcha Riddle Driver Class
+}
+// End Captcha Riddle Driver Class

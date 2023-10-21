@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * GraphicsMagick Image Driver.
  *
@@ -167,7 +173,13 @@ class Image_GraphicsMagick_Driver extends Image_Driver
 
     public function rotate($amt)
     {
-        if ($error = exec(escapeshellcmd($this->dir . 'gm' . $this->ext . ' convert') . ' -rotate ' . escapeshellarg($amt) . ' -background transparent ' . $this->cmd_image . ' ' . $this->cmd_image)) {
+        if (
+            $error = exec(escapeshellcmd($this->dir . 'gm' . $this->ext . ' convert') .
+                          ' -rotate ' . escapeshellarg($amt) .
+                          ' -background transparent ' .
+                          $this->cmd_image .
+                          ' ' . $this->cmd_image)
+        ) {
             $this->errors[] = $error;
             return false;
         }
@@ -198,4 +210,5 @@ class Image_GraphicsMagick_Driver extends Image_Driver
     {
         return array_slice(getimagesize($this->tmp_image), 0, 2, false);
     }
-} // End Image GraphicsMagick Driver
+}
+// End Image GraphicsMagick Driver

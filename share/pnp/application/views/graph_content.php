@@ -102,7 +102,11 @@ foreach ($this->data->STRUCT as $key => $value) {
                   'source' => $value['SOURCE']);
     $gid = htmlentities("?host=" . urlencode($path["host"]) . "&srv=" . urlencode($path["srv"]));
 
-    echo "<div start=" . $value['TIMERANGE']['start'] . " end=" . $value['TIMERANGE']['end'] . " style=\"width:" . $value['GRAPH_WIDTH'] . "px; height:" . $value['GRAPH_HEIGHT'] . "px; position:absolute; top:33px\" class=\"graph\" id=\"" . $gid . "\" ></div>";
+    echo "<div start=" . $value['TIMERANGE']['start'] . " end=" .
+        $value['TIMERANGE']['end'] . " style=\"width:" .
+        $value['GRAPH_WIDTH'] . "px; height:" .
+        $value['GRAPH_HEIGHT'] . "px; position:absolute; top:33px\" class=\"graph\" id=\"" .
+        $gid . "\" ></div>";
 
     // only include `view` in the querystring if we are in a preset view; likewise, only
     // include timerange start/end if we are not in a preset view; this will help later

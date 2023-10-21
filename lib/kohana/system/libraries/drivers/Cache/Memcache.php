@@ -1,6 +1,12 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
+
 /**
  * Memcache-based Cache driver.
  *
@@ -167,4 +173,5 @@ class Cache_Memcache_Driver implements Cache_Driver
         // Memcache handles garbage collection internally
         return true;
     }
-} // End Cache Memcache Driver
+}
+// End Cache Memcache Driver

@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace helpers;
 /**
  * Controls headers that effect client caching of pages
  *
@@ -103,4 +108,5 @@ class expires_Core
     {
         Kohana::$output = '';
     }
-} // End expires
+}
+// End expires

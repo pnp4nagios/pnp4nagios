@@ -1,6 +1,11 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+namespace library;
 /**
  * Calendar event observer class.
  *
@@ -161,9 +166,8 @@ class Calendar_Event_Core extends Event_Observer
                 if ($this->conditions['timestamp'] < $timestamp or $this->conditions['timestamp'] > $next_day) {
                     return false;
                 }
-            }
+            } elseif (isset($this->conditions[$key]) and $this->conditions[$key] !== $value) {
             // Test basic conditions first
-            elseif (isset($this->conditions[$key]) and $this->conditions[$key] !== $value) {
                 return false;
             }
 
@@ -284,4 +288,5 @@ class Calendar_Event_Core extends Event_Observer
             $occurrence++;
         }
     }
-} // End Calendar Event
+}
+// End Calendar Event

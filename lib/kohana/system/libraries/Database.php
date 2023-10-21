@@ -1,6 +1,13 @@
 <?php
 
+// phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+// phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
+
+namespace library;
+
 /**
  * Provides database access in a platform agnostic way, using simple query building blocks.
  *
@@ -99,9 +106,8 @@ class Database_Core
             // The config is a DSN string
             if (strpos($config, '://') !== false) {
                 $config = array('connection' => $config);
-            }
+            } else {
             // The config is a group name
-            else {
                 $name = $config;
 
                 // Test the config group name
@@ -905,7 +911,9 @@ class Database_Core
             $values = implode(",", $escaped_values);
         }
 
-        $where = $this->driver->escape_column(((strpos($field, '.') !== false) ? $this->config['table_prefix'] : '') . $field) . ' ' . ($not === true ? 'NOT ' : '') . 'IN (' . $values . ')';
+        $where = $this->driver->escape_column(((strpos($field, '.') !== false) ?
+                                               $this->config['table_prefix'] : '') . $field) . ' ' .
+            ($not === true ? 'NOT ' : '') . 'IN (' . $values . ')';
         $this->where[] = $this->driver->where($where, '', 'AND ', count($this->where), -1);
 
         return $this;
@@ -1333,7 +1341,8 @@ class Database_Core
 
         return false;
     }
-} // End Database Class
+}
+// End Database Class
 
 
 /**
@@ -1342,4 +1351,5 @@ class Database_Core
 class Kohana_Database_Exception extends Kohana_Exception
 {
     protected $code = E_DATABASE_ERROR;
-} // End Kohana Database Exception
+}
+// End Kohana Database Exception
