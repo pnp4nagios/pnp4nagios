@@ -1,10 +1,11 @@
 <?php
 
+namespace php;
+
 // phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct script access.');
 // phpcs:enable PSR1.Files.SideEffects
 
-namespace kohana;
 /**
  * Security helper class.
  *

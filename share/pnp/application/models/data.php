@@ -1,11 +1,13 @@
 <?php
 
+namespace php;
+
+
 // phpcs:disable PSR1.Files.SideEffects
 defined('SYSPATH') or die('No direct access allowed.');
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
-namespace models;
 
 /**
  * Retrieves and manipulates current status of hosts (and services?)
