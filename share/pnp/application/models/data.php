@@ -200,7 +200,7 @@ class Data_Model extends System_Model
 //end getRawServices()
 
 
-    private function getServices($hostname)
+    public function getServices($hostname)
     {
         $services     = [];
         $host         = [];
