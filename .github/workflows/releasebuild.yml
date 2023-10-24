@@ -23,6 +23,7 @@ jobs:
           echo "VERSION=${TAG%-*}" >> $GITHUB_ENV
           echo "RELEASE=${TAG#*-}" >> $GITHUB_ENV
           echo "RELDATE=`date -I`" >> $GITHUB_ENV
+          cat $GITHUB_ENV
 
       - name: Set the git source location
         id: source_loc
