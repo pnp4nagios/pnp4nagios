@@ -1,7 +1,6 @@
 <?php
 
-namespace php;
-
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
 // phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
