@@ -41,7 +41,7 @@ PERL=@PERL@
 
 none:
 	@echo "Please supply a command line argument (i.e. 'make all').  Other targets are:"
-	@echo "   clean"
+	@echo "   clean distclean dist"
 	@echo "   install install-init install-config install-processperfdata install-html fullinstall"
 	@echo "   install-plugins"
 
@@ -58,7 +58,7 @@ all:
 	@echo "     - This installs the main program and HTML files"
 	@echo ""
 	@echo "  make fullinstall"
-	@echo "     - This installs the main program, runlevel scripts, config and HTML files"
+	@echo "     - This installs the main program, init scripts, config and HTML files"
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -140,7 +140,7 @@ install-config:
 	@echo "*** PNP4Nagios sample config files installed ***"
 	@echo ""
 	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
+	@echo "BULK Mode with NPCD or Gearman mode"
 	@echo ""
 	@echo ""
 	@echo ""
@@ -209,6 +209,8 @@ fullinstall: install install-webconf install-config install-init
 
 dist:
 	ci/maketar.sh $(VERSION)
+	mv ci/pnp4nagios*.tgz .
+	mv ci/pnp4nagios*.zip .
 
 
 

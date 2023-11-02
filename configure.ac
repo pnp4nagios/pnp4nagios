@@ -5,7 +5,6 @@ AC_PREREQ([2.61])
 AC_INIT([pnp4nagios],[0.6.27],[pnp4nagios-devel@lists.sourceforge.net],[],[https://github.com/pnp4nagios/pnp4nagios])
 AC_CONFIG_SRCDIR(src/)
 AC_CONFIG_HEADERS(include/config.h:include/config.h.in)
-AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
 
 AC_DEFINE([DEFAULT_NAGIOS_USER], [nagios], [Default Nagios User])
 AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
@@ -18,6 +17,8 @@ PKG_REL_DATE="2023-10-15"
 AC_SUBST(PACKAGE_RELEASE)
 AC_SUBST(PKG_REL_DATE)
 #
+#AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
+#AC_PREFIX_DEFAULT()
 #
 #
 AC_SUBST(ac_configure_args)
@@ -83,42 +84,73 @@ AC_FUNC_STAT
 
 AC_C_CONST
 
+
+if test "${prefix}" = "NONE" ; then prefix='' ; fi
+exec_prefix=$prefix
+bindir="$prefix/usr/bin"
+sbindir="$prefix/usr/sbin"
+
 dnl Layout Methods
+
 layout="default"
 AC_ARG_WITH(layout,[  --with-layout=\[default,debian\] sets directory layout],layout=$withval)
 
 case $layout in
 	debian)
-		prefix="/"
-		sysconfdir="/etc/${PACKAGE_NAME}"
-		localstatedir="/var/log/${PACKAGE_NAME}"
-		libexecdir="/usr/lib/${PACKAGE_NAME}/libexec"
-		libdir="/usr/lib/${PACKAGE_NAME}"
-		datarootdir="/usr/share/${PACKAGE_NAME}/html"
-		PERFDATA_LOG="/var/log/${PACKAGE_NAME}/perfdata.log"
-		PERFDATA_DIR="/var/lib/${PACKAGE_NAME}/perfdata"
-		PERFDATA_SPOOL_DIR="/var/spool/${PACKAGE_NAME}"
-		bindir="/usr/bin"
-		sbindir="/usr/sbin"
+		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
+		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
+		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
+		PERFDATA_LOG="${prefix}/var/log/${PACKAGE_NAME}/perfdata.log"
+		PERFDATA_DIR="${prefix}/var/lib/${PACKAGE_NAME}/perfdata"
+		PERFDATA_SPOOL_DIR="${prefix}/var/spool/${PACKAGE_NAME}"
 	;;
 	default-0.4)
 		prefix="/usr/local/nagios"
-		sysconfdir="\${prefix}/etc/pnp"
-		localstatedir="\${prefix}/var"
-		libexecdir="\${prefix}/libexec"
-		datarootdir="\${prefix}/share/pnp"
-		libdir="\${prefix}/lib/pnp"
-		PERFDATA_LOG="\${prefix}/var/perfdata.log"
-		PERFDATA_DIR="\${prefix}/share/perfdata"
-		PERFDATA_SPOOL_DIR="\${prefix}/var/spool/perfdata"
+		sysconfdir="${prefix}/etc/pnp"
+		localstatedir="${prefix}/var"
+		libexecdir="${prefix}/libexec"
+		datarootdir="${prefix}/share/pnp"
+		libdir="${prefix}/lib/pnp"
+		PERFDATA_LOG="${prefix}/var/perfdata.log"
+		PERFDATA_DIR="${prefix}/share/perfdata"
+		PERFDATA_SPOOL_DIR="${prefix}/var/spool/perfdata"
 	;;
 	default)
+		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
+		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
+		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
 		PERFDATA_LOG="${localstatedir}/perfdata.log"
 		PERFDATA_DIR="${localstatedir}/perfdata"
 		PERFDATA_SPOOL_DIR="${localstatedir}/spool"
-		mandir="\${prefix}/man"
+		mandir="${prefix}/man"
 	;;
 esac
+
+AC_ARG_WITH(sysconfdir,[  --with-sysconfdir=<$sysconfdir> Tell me where I should keep the 'pnp4nagios.cfg' config file],
+        sysconfdir=$withval
+	   )
+SYSCONFDIR="$sysconfdir"
+AC_SUBST(SYSCONFDIR)
+
+AC_ARG_WITH(bindir,[ --with-bindir=<$bindir> where most executables are kept],
+        bindir=$withval
+        )
+BINDIR="$bindir"
+AC_SUBST(BINDIR)
+
+AC_ARG_WITH(sbindir,[ --with-sbindir=<$sbindir> where system executables are kept],
+        sbindir=$withval
+        )
+SBINDIR="$sbindir"
+AC_SUBST(SBINDIR)
+
+#AC_SUBST(prefix)
+#PREFIX="$prefix"
+#AC_SUBST(PREFIX)
 
 AC_ARG_WITH(kohana,[  --without-kohana does not install the kohana framework],KOHANA=no,KOHANA=yes)
 AC_SUBST(KOHANA)
@@ -200,6 +232,23 @@ if test x$HTTPD_CONF = xno; then
 fi
 AC_SUBST(HTTPD_CONF)
 
+
+# Find the right directory to put the root-mode PID file in
+AC_MSG_CHECKING([pid file location])
+if test -d "/run"
+then
+	piddir="/run"
+elif test -d "/var/run"; then
+        piddir="/var/run"
+elif test -d "/etc"; then
+        piddir="/etc"
+fi
+PIDDIR="$piddir"
+#AC_DEFINE_UNQUOTED([PIDDIR], "$piddir",
+#	  [Define to the pid storage directory.])
+AC_SUBST(PIDDIR)
+
+
 dnl Check for location of init scripts
 init_dir=/etc/rc.d/init.d
 if test -d /etc/rc.d/init.d; then
@@ -217,6 +266,29 @@ fi
 BASE_URL=${PACKAGE_NAME}
 AC_ARG_WITH(base-url,[  --with-base-url=/${PACKAGE_NAME} ],BASE_URL=$withval,BASE_URL=/${PACKAGE_NAME})
 AC_SUBST(BASE_URL)
+
+
+
+dnl from man 7 daemon to check for systemd stuff
+PKG_PROG_PKG_CONFIG()
+AC_ARG_WITH([systemdsystemunitdir],
+     [AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [Directory for systemd service files])],,
+     [with_systemdsystemunitdir=auto])
+AS_IF([test "x$with_systemdsystemunitdir" = "xyes" -o "x$with_systemdsystemunitdir" = "xauto"], [
+     def_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)
+
+     AS_IF([test "x$def_systemdsystemunitdir" = "x"],
+          [AS_IF([test "x$with_systemdsystemunitdir" = "xyes"],
+          [AC_MSG_ERROR([systemd support requested but pkg-config unable to query systemd package])])
+              with_systemdsystemunitdir=no],
+              [with_systemdsystemunitdir="$def_systemdsystemunitdir"])])
+AS_IF([test "x$with_systemdsystemunitdir" != "xno"],
+    [AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])])
+
+AM_CONDITIONAL([HAVE_SYSTEMD], [test "x$with_systemdsystemunitdir" != "xno"])
+
+
+
 
 dnl User can override init script location
 AC_ARG_WITH(init_dir,[  --with-init-dir=<path> sets directory to place init script into],init_dir=$withval) 
@@ -303,6 +375,7 @@ AC_SUBST(RRDS)
 AC_CONFIG_FILES( subst Makefile share/Makefile lib/Makefile scripts/Makefile src/Makefile sample-config/Makefile man/Makefile )
 AC_CONFIG_FILES([include/stamp-h], [date -Is > include/stamp-h])
 AC_CONFIG_FILES(scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker)
+AC_CONFIG_FILES(scripts/npcd.service scripts/pnp_gearman_worker.service)
 AC_CONFIG_FILES(scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php)
 AC_CONFIG_FILES(sample-config/httpd.conf sample-config/lighttpd.pnp4nagios.conf)
 AC_CONFIG_FILES(sample-config/nginx.pnp4nagios.conf sample-config/nagios.cfg-sample)

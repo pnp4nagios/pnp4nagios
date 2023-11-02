@@ -617,7 +617,6 @@ PACKAGE_BUGREPORT='pnp4nagios-devel@lists.sourceforge.net'
 PACKAGE_URL='https://github.com/pnp4nagios/pnp4nagios'
 
 ac_unique_file="src/"
-ac_default_prefix=/usr/local/pnp4nagios
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stddef.h>
@@ -659,7 +658,14 @@ pp_pl_name
 npcd_name
 pnpsender_name
 init_dir
+HAVE_SYSTEMD_FALSE
+HAVE_SYSTEMD_TRUE
+systemdsystemunitdir
+PKG_CONFIG_LIBDIR
+PKG_CONFIG_PATH
+PKG_CONFIG
 BASE_URL
+PIDDIR
 HTTPD_CONF
 DEBUG
 PERFDATA_SPOOL_DIR
@@ -673,6 +679,9 @@ nagios_grp
 nagios_user
 KOHANA_SYSTEM
 KOHANA
+SBINDIR
+BINDIR
+SYSCONFDIR
 LIBOBJS
 EGREP
 GREP
@@ -746,6 +755,9 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_layout
+with_sysconfdir
+with_bindir
+with_sbindir
 with_kohana
 with_kohana_system
 with_nagios_user
@@ -758,6 +770,7 @@ with_perfdata_spool_dir
 with_debug
 with_httpd_conf
 with_base_url
+with_systemdsystemunitdir
 with_init_dir
 '
       ac_precious_vars='build_alias
@@ -768,7 +781,10 @@ CFLAGS
 LDFLAGS
 LIBS
 CPPFLAGS
-CPP'
+CPP
+PKG_CONFIG
+PKG_CONFIG_PATH
+PKG_CONFIG_LIBDIR'
 
 
 # Initialize some variables set by options.
@@ -1391,6 +1407,9 @@ Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-layout=\default,debian\ sets directory layout
+  --with-sysconfdir=<$sysconfdir> Tell me where I should keep the 'pnp4nagios.cfg' config file
+ --with-bindir=<$bindir> where most executables are kept
+ --with-sbindir=<$sbindir> where system executables are kept
   --without-kohana does not install the kohana framework
   --with-kohana_system=<existing kohana system dir> Points to an already installed kohana framework
   --with-nagios-user=<user> sets user name to run nagios
@@ -1403,6 +1422,8 @@ Optional Packages:
   --with-debug Enable debuging for process_perfdata.pl
   --with-httpd-conf=<path_to_conf> sets path to Apache conf.d directory
   --with-base-url=/${PACKAGE_NAME}
+  --with-systemdsystemunitdir=DIR
+                          Directory for systemd service files
   --with-init-dir=<path> sets directory to place init script into
 
 Some influential environment variables:
@@ -1414,6 +1435,11 @@ Some influential environment variables:
   CPPFLAGS    (Objective) C/C++ preprocessor flags, e.g. -I<include dir> if
               you have headers in a nonstandard directory <include dir>
   CPP         C preprocessor
+  PKG_CONFIG  path to pkg-config utility
+  PKG_CONFIG_PATH
+              directories to add to pkg-config's search path
+  PKG_CONFIG_LIBDIR
+              path overriding pkg-config's built-in search path
 
 Use these variables to override the choices made by `configure' or to help
 it to find libraries and programs with nonstandard names/locations.
@@ -2662,7 +2688,6 @@ ac_config_headers="$ac_config_headers include/config.h:include/config.h.in"
 
 
 
-
 printf "%s\n" "#define DEFAULT_NAGIOS_USER nagios" >>confdefs.h
 
 
@@ -2677,6 +2702,8 @@ PKG_REL_DATE="2023-10-15"
 
 
 #
+#AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
+#AC_PREFIX_DEFAULT()
 #
 #
 
@@ -5290,6 +5317,13 @@ printf "%s\n" "#define const /**/" >>confdefs.h
 fi
 
 
+
+if test "${prefix}" = "NONE" ; then prefix='' ; fi
+exec_prefix=$prefix
+bindir="$prefix/usr/bin"
+sbindir="$prefix/usr/sbin"
+
+
 layout="default"
 
 # Check whether --with-layout was given.
@@ -5301,36 +5335,75 @@ fi
 
 case $layout in
 	debian)
-		prefix="/"
-		sysconfdir="/etc/${PACKAGE_NAME}"
-		localstatedir="/var/log/${PACKAGE_NAME}"
-		libexecdir="/usr/lib/${PACKAGE_NAME}/libexec"
-		libdir="/usr/lib/${PACKAGE_NAME}"
-		datarootdir="/usr/share/${PACKAGE_NAME}/html"
-		PERFDATA_LOG="/var/log/${PACKAGE_NAME}/perfdata.log"
-		PERFDATA_DIR="/var/lib/${PACKAGE_NAME}/perfdata"
-		PERFDATA_SPOOL_DIR="/var/spool/${PACKAGE_NAME}"
-		bindir="/usr/bin"
-		sbindir="/usr/sbin"
+		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
+		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
+		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
+		PERFDATA_LOG="${prefix}/var/log/${PACKAGE_NAME}/perfdata.log"
+		PERFDATA_DIR="${prefix}/var/lib/${PACKAGE_NAME}/perfdata"
+		PERFDATA_SPOOL_DIR="${prefix}/var/spool/${PACKAGE_NAME}"
 	;;
 	default-0.4)
 		prefix="/usr/local/nagios"
-		sysconfdir="\${prefix}/etc/pnp"
-		localstatedir="\${prefix}/var"
-		libexecdir="\${prefix}/libexec"
-		datarootdir="\${prefix}/share/pnp"
-		libdir="\${prefix}/lib/pnp"
-		PERFDATA_LOG="\${prefix}/var/perfdata.log"
-		PERFDATA_DIR="\${prefix}/share/perfdata"
-		PERFDATA_SPOOL_DIR="\${prefix}/var/spool/perfdata"
+		sysconfdir="${prefix}/etc/pnp"
+		localstatedir="${prefix}/var"
+		libexecdir="${prefix}/libexec"
+		datarootdir="${prefix}/share/pnp"
+		libdir="${prefix}/lib/pnp"
+		PERFDATA_LOG="${prefix}/var/perfdata.log"
+		PERFDATA_DIR="${prefix}/share/perfdata"
+		PERFDATA_SPOOL_DIR="${prefix}/var/spool/perfdata"
 	;;
 	default)
+		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
+		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
+		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
 		PERFDATA_LOG="${localstatedir}/perfdata.log"
 		PERFDATA_DIR="${localstatedir}/perfdata"
 		PERFDATA_SPOOL_DIR="${localstatedir}/spool"
-		mandir="\${prefix}/man"
+		mandir="${prefix}/man"
 	;;
 esac
+
+
+# Check whether --with-sysconfdir was given.
+if test ${with_sysconfdir+y}
+then :
+  withval=$with_sysconfdir; sysconfdir=$withval
+
+fi
+
+SYSCONFDIR="$sysconfdir"
+
+
+
+# Check whether --with-bindir was given.
+if test ${with_bindir+y}
+then :
+  withval=$with_bindir; bindir=$withval
+
+fi
+
+BINDIR="$bindir"
+
+
+
+# Check whether --with-sbindir was given.
+if test ${with_sbindir+y}
+then :
+  withval=$with_sbindir; sbindir=$withval
+
+fi
+
+SBINDIR="$sbindir"
+
+
+#AC_SUBST(prefix)
+#PREFIX="$prefix"
+#AC_SUBST(PREFIX)
 
 
 # Check whether --with-kohana was given.
@@ -5584,6 +5657,24 @@ if test x$HTTPD_CONF = xno; then
 fi
 
 
+
+# Find the right directory to put the root-mode PID file in
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking pid file location" >&5
+printf %s "checking pid file location... " >&6; }
+if test -d "/run"
+then
+	piddir="/run"
+elif test -d "/var/run"; then
+        piddir="/var/run"
+elif test -d "/etc"; then
+        piddir="/etc"
+fi
+PIDDIR="$piddir"
+#AC_DEFINE_UNQUOTED([PIDDIR], "$piddir",
+#	  [Define to the pid storage directory.])
+
+
+
 init_dir=/etc/rc.d/init.d
 if test -d /etc/rc.d/init.d; then
     init_dir="/etc/rc.d/init.d"
@@ -5606,6 +5697,181 @@ then :
 else $as_nop
   BASE_URL=/${PACKAGE_NAME}
 fi
+
+
+
+
+
+
+
+
+
+
+
+
+if test "x$ac_cv_env_PKG_CONFIG_set" != "xset"; then
+	if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_PKG_CONFIG+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_PKG_CONFIG="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_path_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+printf "%s\n" "$PKG_CONFIG" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_path_PKG_CONFIG"; then
+  ac_pt_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_ac_pt_PKG_CONFIG+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $ac_pt_PKG_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_ac_pt_PKG_CONFIG="$ac_pt_PKG_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_ac_pt_PKG_CONFIG="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+ac_pt_PKG_CONFIG=$ac_cv_path_ac_pt_PKG_CONFIG
+if test -n "$ac_pt_PKG_CONFIG"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_pt_PKG_CONFIG" >&5
+printf "%s\n" "$ac_pt_PKG_CONFIG" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_pt_PKG_CONFIG" = x; then
+    PKG_CONFIG=""
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_pt_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_path_PKG_CONFIG"
+fi
+
+fi
+if test -n "$PKG_CONFIG"; then
+	_pkg_min_version=0.9.0
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking pkg-config is at least version $_pkg_min_version" >&5
+printf %s "checking pkg-config is at least version $_pkg_min_version... " >&6; }
+	if $PKG_CONFIG --atleast-pkgconfig-version $_pkg_min_version; then
+		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+	else
+		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+		PKG_CONFIG=""
+	fi
+fi
+
+# Check whether --with-systemdsystemunitdir was given.
+if test ${with_systemdsystemunitdir+y}
+then :
+  withval=$with_systemdsystemunitdir;
+else $as_nop
+  with_systemdsystemunitdir=auto
+fi
+
+if test "x$with_systemdsystemunitdir" = "xyes" -o "x$with_systemdsystemunitdir" = "xauto"
+then :
+
+     def_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)
+
+     if test "x$def_systemdsystemunitdir" = "x"
+then :
+  if test "x$with_systemdsystemunitdir" = "xyes"
+then :
+  as_fn_error $? "systemd support requested but pkg-config unable to query systemd package" "$LINENO" 5
+fi
+              with_systemdsystemunitdir=no
+else $as_nop
+  with_systemdsystemunitdir="$def_systemdsystemunitdir"
+fi
+fi
+if test "x$with_systemdsystemunitdir" != "xno"
+then :
+  systemdsystemunitdir=$with_systemdsystemunitdir
+
+fi
+
+ if test "x$with_systemdsystemunitdir" != "xno"; then
+  HAVE_SYSTEMD_TRUE=
+  HAVE_SYSTEMD_FALSE='#'
+else
+  HAVE_SYSTEMD_TRUE='#'
+  HAVE_SYSTEMD_FALSE=
+fi
+
+
 
 
 
@@ -5711,6 +5977,8 @@ ac_config_files="$ac_config_files subst Makefile share/Makefile lib/Makefile scr
 ac_config_files="$ac_config_files include/stamp-h"
 
 ac_config_files="$ac_config_files scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker"
+
+ac_config_files="$ac_config_files scripts/npcd.service scripts/pnp_gearman_worker.service"
 
 ac_config_files="$ac_config_files scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php"
 
@@ -5838,6 +6106,10 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
+if test -z "${HAVE_SYSTEMD_TRUE}" && test -z "${HAVE_SYSTEMD_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_SYSTEMD\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 
 : "${CONFIG_STATUS=./config.status}"
 ac_write_fail=0
@@ -6428,6 +6700,8 @@ do
     "scripts/rrd_modify.pl") CONFIG_FILES="$CONFIG_FILES scripts/rrd_modify.pl" ;;
     "scripts/rc.npcd") CONFIG_FILES="$CONFIG_FILES scripts/rc.npcd" ;;
     "scripts/rc.pnp_gearman_worker") CONFIG_FILES="$CONFIG_FILES scripts/rc.pnp_gearman_worker" ;;
+    "scripts/npcd.service") CONFIG_FILES="$CONFIG_FILES scripts/npcd.service" ;;
+    "scripts/pnp_gearman_worker.service") CONFIG_FILES="$CONFIG_FILES scripts/pnp_gearman_worker.service" ;;
     "scripts/check_pnp_rrds.pl") CONFIG_FILES="$CONFIG_FILES scripts/check_pnp_rrds.pl" ;;
     "share/pnp/index.php") CONFIG_FILES="$CONFIG_FILES share/pnp/index.php" ;;
     "share/pnp/install.php") CONFIG_FILES="$CONFIG_FILES share/pnp/install.php" ;;

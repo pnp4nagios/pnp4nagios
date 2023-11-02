@@ -1,5 +1,5 @@
 prefix=@prefix@
-SYSCONFDIR=@sysconfdir@
+SYSCONFDIR=@sysconfdir@/pnp4nagios
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 LIBDIR=@libdir@
@@ -15,6 +15,7 @@ HTTPD_CONF=@HTTPD_CONF@
 CP=@CP@
 
 all html:
+
 
 clean:
 	-rm -f pnp/config.php
@@ -32,43 +33,44 @@ distclean: clean
 
 devclean: distclean
 
-install:
-	-rm -f $(DESTDIR)$(HTMLDIR)/conf/config.php
 
+install: 
+	-rm -f $(DESTDIR)$(HTMLDIR)/conf/config.php
+	
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config.d
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/background.pdf $(DESTDIR)$(SYSCONFDIR)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION); \
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR); \
+	
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION)
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)
 
 install-config: 
-
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION); \
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR); \
-		
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION)
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)
+	
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/config_local.php ] ;then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config_local.php; \
 	fi
-		
+	
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg ] ;then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg.$(PACKAGE_VERSION); \
 	else\
 		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg; \
 	fi
-		
+	
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/npcd.cfg ] ;then \
 		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg.$(PACKAGE_VERSION); \
 	else\
 		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg; \
 	fi
-		
+	
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/rra.cfg-sample $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  misccommands.cfg-sample $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  nagios.cfg-sample $(DESTDIR)$(SYSCONFDIR)
@@ -78,7 +80,6 @@ install-config:
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/pages/web_traffic.cfg-sample $(DESTDIR)$(SYSCONFDIR)/pages
 
 install-webconf: 
-
 	$(INSTALL) -m 755 -d $(DESTDIR)$(HTTPD_CONF)
 	$(INSTALL) -m 644 httpd.conf $(DESTDIR)$(HTTPD_CONF)/$(PACKAGE_NAME).conf
-	
+

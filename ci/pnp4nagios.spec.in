@@ -37,7 +37,7 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 %build
 
-
+autoconf
 %configure --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
@@ -87,10 +87,10 @@ mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
    sample-config/httpd.conf \
    > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
-install -Dp -m 0644 contrib/fedora/npcd.sysconfig \
-        $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/npcd
-install -Dp -m 0644 contrib/fedora/npcd.service \
-        $RPM_BUILD_ROOT%{_unitdir}/npcd.service
+#install -Dp -m 0644 contrib/fedora/npcd.sysconfig \
+#        $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/npcd
+#install -Dp -m 0644 contrib/fedora/npcd.service \
+#        $RPM_BUILD_ROOT%{_unitdir}/npcd.service
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/nagios/brokers
 mv $RPM_BUILD_ROOT%{_libdir}/npcdmod.o \
    $RPM_BUILD_ROOT%{_libdir}/nagios/brokers/npcdmod.o
@@ -138,9 +138,10 @@ files for errors, and flagging them for attention.
 %dir %{_sysconfdir}/pnp4nagios
 %config(noreplace) %{_sysconfdir}/pnp4nagios/*
 %config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
-%config(noreplace) %{_sysconfdir}/sysconfig/npcd
+#%config(noreplace) %{_sysconfdir}/sysconfig/npcd
 %attr(755,root,root) %{_sbindir}/npcd
 %{_unitdir}/npcd.service
+%{_unitdir}/pnp_gearman_worker.service
 %{_libdir}/nagios/brokers/npcdmod.o
 %dir %{_libexecdir}/%{name}
 %attr(755,root,root) %{_libexecdir}/%{name}/*
@@ -166,9 +167,10 @@ files for errors, and flagging them for attention.
 
 
 %post
-# since npcd.service file changed, need reload, maybe
+# since service files changed, need reload, maybe
 systemctl daemon-reload
 systemctl try-restart npcd
+systemctl try-restart pnp_gearman_worker
 
 %changelog
 * Mon Sep 11 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-5

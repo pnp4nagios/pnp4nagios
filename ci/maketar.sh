@@ -55,7 +55,7 @@ pushd pnp4nagios-${VERSION} >/dev/null
 #echo "in tar base dir " `pwd`
 
 for f in AUTHORS ChangeLog ci config.guess config.sub contrib \
-                 configure \
+                 configure aclocal.m4 \
                  COPYING helpers include INSTALL install-sh lib \
                  Makefile.in man README.md sample-config scripts \
                  share src subst.in summary.in THANKS ; 
@@ -66,6 +66,7 @@ done
 
 # update version/release/release_date 
 cp $basedir/configure.ac .
+touch configure.ac
 rm ci/pnp4nagios.spec
 cp ci/pnp4nagios.spec.in ci/pnp4nagios.spec
 sed -i "s/@PACKAGE_VERSION@/${VERSION}/" ci/pnp4nagios.spec

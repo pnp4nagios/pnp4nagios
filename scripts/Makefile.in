@@ -11,6 +11,7 @@ HTMLDIR=@datarootdir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
 PERFDATADIR=@PERFDATA_DIR@
+SYSTEMD_DIR=@systemdsystemunitdir@
 
 CP=@CP@
 
@@ -24,10 +25,17 @@ distclean: clean
 
 devclean: distclean
 
-install-init: 
-	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(INIT_DIR)
-	$(INSTALL) -m 755 $(INIT_OPTS) rc.npcd $(DESTDIR)$(INIT_DIR)/npcd
-	$(INSTALL) -m 755 $(INIT_OPTS) rc.pnp_gearman_worker $(DESTDIR)$(INIT_DIR)/pnp_gearman_worker
+##### init files for scriptinit style
+@HAVE_SYSTEMD_FALSE@install-init: 
+@HAVE_SYSTEMD_FALSE@	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(INIT_DIR)
+@HAVE_SYSTEMD_FALSE@	$(INSTALL) -m 755 $(INIT_OPTS) rc.npcd $(DESTDIR)$(INIT_DIR)/npcd
+@HAVE_SYSTEMD_FALSE@	$(INSTALL) -m 755 $(INIT_OPTS) rc.pnp_gearman_worker $(DESTDIR)$(INIT_DIR)/pnp_gearman_worker
+
+##### init files for systemd style
+@HAVE_SYSTEMD_TRUE@install-init:
+@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(SYSTEMD_DIR)
+@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) npcd.service $(DESTDIR)$(SYSTEMD_DIR)/npcd.service
+@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) pnp_gearman_worker.service $(DESTDIR)$(SYSTEMD_DIR)/pnp_gearman_worker.service
 
 install-processperfdata: 
 	$(INSTALL) -m 755 $(INSTALL_OPTS) process_perfdata.pl $(DESTDIR)$(LIBEXECDIR)
@@ -49,4 +57,4 @@ install:
 	$(MAKE) install-plugins
 	$(MAKE) install-rrdconvert
 	$(MAKE) install-rrdmodify
-	
+

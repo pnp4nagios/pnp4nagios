@@ -1,3 +1,6 @@
+work
+*~
+
 autom4te.cache
 subst
 summary
@@ -11,12 +14,16 @@ scripts/rc.pnp_gearman_worker
 scripts/check_pnp_rrds.pl
 scripts/process_perfdata.pl
 scripts/rrd_modify.pl
+scripts/rrd_convert.pl
+scripts/rrd_converter.pl
+scripts/npcd.service
+scripts/pnp_gearman_worker.service
+scripts/verify_pnp_config.pl
+
 src/*.o
 src/npcd
 include/config.h
 include/stamp-h
-work
-*~
 
 sample-config/pnp/config.php
 sample-config/pnp/pnp4nagios_release
@@ -24,20 +31,18 @@ sample-config/pnp/process_perfdata.cfg-sample
 sample-config/pnp/npcd.cfg-sample
 sample-config/misccommands.cfg-sample
 sample-config/nagios.cfg-sample
+sample-config/httpd.conf
+sample-config/lighttpd.pnp4nagios.conf
+sample-config/nginx.pnp4nagios.conf
 
 share/pnp/application/config/config.php
 share/pnp/index.php
 share/pnp/install.php
-sample-config/httpd.conf
 share/pnp/application/logs/*
+share/pnp/media/js/basket.js
+
 contrib/ssi/status-header.ssi
 helpers/w2h.pl
-scripts/verify_pnp_config.pl
-sample-config/lighttpd.pnp4nagios.conf
-sample-config/nginx.pnp4nagios.conf
-share/pnp/media/js/basket.js
-scripts/rrd_convert.pl
-scripts/rrd_converter.pl
 
 man/npcd.8
 
