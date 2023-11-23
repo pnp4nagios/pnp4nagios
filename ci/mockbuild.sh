@@ -19,14 +19,18 @@ mkdir outputs
 BREL="${RELEASE}.alma%{?dist}"
 sed "/^Release:/c\
 Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
-config='almalinux-8-x86_64'
+config='alma+epel-8-x86_64'
 mock -r $config  \
+     --additional-package=selinux-policy-targeted \
+     --additional-package=selinux-policy-devel \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
 
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
 mock -v -r $config \
+     --additional-package=selinux-policy-targeted \
+     --additional-package=selinux-policy-devel \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
 
