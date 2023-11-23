@@ -1,7 +1,7 @@
 ###############################
 # Makefile for PNP
 #
-# Last Modified: 10-05-2023
+# Last Modified: 11-13-2023
 ###############################
 
 VERSION=@PACKAGE_VERSION@
@@ -34,6 +34,10 @@ INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
 DATAROOTDIR=@datarootdir@
 
+SELINUX=@SELINUX@
+SELINUX_POLICY=@SELINUX_POLICY@
+DATADIR=@datadir@
+
 CP=@CP@
 PERL=@PERL@
 
@@ -50,6 +54,10 @@ all:
 	cd $(SRC_SHARE) && $(MAKE)
 	cd $(SRC_SCRIPTS) && $(MAKE)
 	chmod a+r $(SRC_CONTRIB)/ssi/status-header.ssi
+        ifeq ($(SELINUX),yes)
+	$(MAKE) -f $(DATADIR)/selinux/devel/Makefile pnp4nagios.pp
+	bzip2 -9 pnp4nagios.pp
+        endif
 
 	@echo ""
 	@echo "*** Compile finished ***"
@@ -91,6 +99,7 @@ scripts:
 share:
 	cd $(SRC_SHARE) && $(MAKE)
 
+
 clean:
 	cd $(SRC_BASE) && $(MAKE) $@
 	cd $(SRC_MAN) && $(MAKE) $@
@@ -101,6 +110,9 @@ clean:
 	-rm -f *.cfg core
 	-rm -f *~ *.*~ */*~ */*.*~
 	-rm -f config.log config.status config.cache
+        ifeq ($(SELINUX),yes)
+	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
+        endif
 
 distclean: 
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -115,6 +127,9 @@ distclean:
 	rm -f Makefile include/stamp-h1 include/config.h config.status config.log
 	rm -f subst summary
 	rm -f $(SRC_CONTRIB)/ssi/status-header.ssi
+        ifeq ($SELINUX,yes)
+	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
+        endif
 
 devclean: distclean
 
@@ -192,13 +207,27 @@ install:
 	@echo ""
 	@echo ""
 
+install-selinux:
+	# to update previous selinux policy, how???
+        ifeq ($(SELINUX),yes)
+	$(INSTALL) -D -m 0644 pnp4nagios.pp.bz2 $(prefix)$(DESTDIR)$(DATADIR)/selinux/packages/$(SELINUX_POLICY)/pnp4nagios.pp.bz2
+	$(exec_prefix)/sbin/semodule -n -s $(SELINUX_POLICY) -i $(prefix)$(DATADIR)/selinux/packages/$(SELINUX_POLICY)/pnp4nagios.pp.bz2 
+	$(exec_prefix)/sbin/selinuxenabled && $(exec_prefix)/sbin/load_policy
+	# $(exec_prefix)/sbin/semodule --refresh 
+        endif
+
+
 install-unstripped:
 	cd $(SRC_BASE) && $(MAKE) $@
 	cd $(SRC_SHARE) && $(MAKE) $@
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	$(MAKE) install-basic
 
-fullinstall: install install-webconf install-config install-init
+install-post:
+	cd $(SRC_CONFIG) && $(MAKE) $@
+
+
+fullinstall: install install-webconf install-config install-init install-post install-selinux
 
 	$(PERL) summary fullinstall
 	@echo ""

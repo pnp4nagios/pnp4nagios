@@ -4,7 +4,7 @@
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Template for check_disk
 #
-include 'arrayfix.pnp';
+include 'arrayfix.php';
 # RRDtool Options
 
 foreach ($this->DS as $KEY => $VAL) {

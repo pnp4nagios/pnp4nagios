@@ -15,11 +15,11 @@ Alias @BASE_URL@ "@datarootdir@"
    	   	Allow from all
    	</IfVersion>
    	#
-   	# Use the same value as defined in nagios.conf
+   	# Use the same value as defined in nagios.cfg
    	#
    	AuthName "Nagios Access"
    	AuthType Basic
-   	AuthUserFile /usr/local/nagios/etc/htpasswd.users
+   	AuthUserFile @NAGIOS_PWD@
    	Require valid-user
 	<IfModule mod_rewrite.c>
 		# Turn on URL rewriting

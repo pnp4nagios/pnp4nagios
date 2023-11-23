@@ -34,6 +34,10 @@ sample-config/nagios.cfg-sample
 sample-config/httpd.conf
 sample-config/lighttpd.pnp4nagios.conf
 sample-config/nginx.pnp4nagios.conf
+sample-config/NagiosCfgMod.pl
+sample-config/README_config.md
+sample-config/SuggestInstall
+
 
 share/pnp/application/config/config.php
 share/pnp/index.php

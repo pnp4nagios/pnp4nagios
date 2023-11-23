@@ -658,6 +658,7 @@ pp_pl_name
 npcd_name
 pnpsender_name
 init_dir
+PAPERSIZE
 HAVE_SYSTEMD_FALSE
 HAVE_SYSTEMD_TRUE
 systemdsystemunitdir
@@ -666,6 +667,10 @@ PKG_CONFIG_PATH
 PKG_CONFIG
 BASE_URL
 PIDDIR
+NAGIOS_VER
+NAGIOS_OBJ
+NAGIOS_PWD
+NAGIOS_CFG
 HTTPD_CONF
 DEBUG
 PERFDATA_SPOOL_DIR
@@ -674,11 +679,16 @@ PERFDATA_LOG
 RRDTOOL
 PERL_LIB_PATH
 PERL
+COMMAND_OPTS
+http_grp
+http_user
 INSTALL_OPTS
 nagios_grp
 nagios_user
 KOHANA_SYSTEM
 KOHANA
+SELINUX_POLICY
+SELINUX
 SBINDIR
 BINDIR
 SYSCONFDIR
@@ -755,13 +765,18 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 with_layout
+with_cpusize
 with_sysconfdir
 with_bindir
 with_sbindir
+enable_selinux
+with_selinux_policy
 with_kohana
 with_kohana_system
 with_nagios_user
 with_nagios_group
+with_http_user
+with_http_group
 with_perl_lib_path
 with_rrdtool
 with_perfdata_logfile
@@ -769,8 +784,13 @@ with_perfdata_dir
 with_perfdata_spool_dir
 with_debug
 with_httpd_conf
+with_nagios_cfg
+with_nagios_pwd
+with_nagios_objects
+with_nagios_version
 with_base_url
 with_systemdsystemunitdir
+with_papersize
 with_init_dir
 '
       ac_precious_vars='build_alias
@@ -1403,17 +1423,27 @@ if test -n "$ac_init_help"; then
    esac
   cat <<\_ACEOF
 
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --disable-selinux       Disable selinux build
+
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-layout=\default,debian\ sets directory layout
+ --with-cpusize=\32,64\ sets cpu size for library name either /usr/lib or /usr/lib64
   --with-sysconfdir=<$sysconfdir> Tell me where I should keep the 'pnp4nagios.cfg' config file
  --with-bindir=<$bindir> where most executables are kept
  --with-sbindir=<$sbindir> where system executables are kept
+ --with-selinux_policy=<selinux policy> selinux policy
   --without-kohana does not install the kohana framework
   --with-kohana_system=<existing kohana system dir> Points to an already installed kohana framework
   --with-nagios-user=<user> sets user name to run nagios
   --with-nagios-group=<grp> sets group name to run nagios
+  --with-http-user=<user> sets user name for http server
+  --with-http-group=<grp> sets group name for http server
   --with-perl_lib_path=<path_to_perl_libs> sets path to rrdtool RRDs perl modules.
   --with-rrdtool=<path_to_rrdtool> sets path to rrdtool
   --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile
@@ -1421,9 +1451,14 @@ Optional Packages:
   --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd
   --with-debug Enable debuging for process_perfdata.pl
   --with-httpd-conf=<path_to_conf> sets path to Apache conf.d directory
+ --with-nagios-cfg=<nagios_cfg_dir> sets path to nagios.cfg file
+ --with-nagios-pwd=<nagios_pwd_file> sets path to Nagios password file
+ --with-nagios-objects=<nagios_objects_directory> location of nagios object config files
+ --with-nagios-version=<nagios_version> nagios version string, like 3.1 etc
   --with-base-url=/${PACKAGE_NAME}
   --with-systemdsystemunitdir=DIR
                           Directory for systemd service files
+  --with-papersize=<paper_size>  paper size to use A4 or letter
   --with-init-dir=<path> sets directory to place init script into
 
 Some influential environment variables:
@@ -2692,6 +2727,13 @@ printf "%s\n" "#define DEFAULT_NAGIOS_USER nagios" >>confdefs.h
 
 
 printf "%s\n" "#define DEFAULT_NAGIOS_GROUP nagios" >>confdefs.h
+
+
+printf "%s\n" "#define DEFAULT_HTTPSERVER_USER apache" >>confdefs.h
+
+
+printf "%s\n" "#define DEFAULT_HTTPSERVER_GROUP apache" >>confdefs.h
+
 
 #
 # release and release_date
@@ -5317,11 +5359,7 @@ printf "%s\n" "#define const /**/" >>confdefs.h
 fi
 
 
-
-if test "${prefix}" = "NONE" ; then prefix='' ; fi
-exec_prefix=$prefix
-bindir="$prefix/usr/bin"
-sbindir="$prefix/usr/sbin"
+default_prefix=''
 
 
 layout="default"
@@ -5334,18 +5372,43 @@ fi
 
 
 case $layout in
+	default-0.4)
+		default_prefix="/usr/local/nagios"
+	;;
+esac
+
+if test -e /sys/kernel/address_bits ; then cpusize=`cat /sys/kernel/address_bits` ; fi
+
+
+# Check whether --with-cpusize was given.
+if test ${with_cpusize+y}
+then :
+  withval=$with_cpusize; cpusize=$withval
+fi
+
+
+x64=""
+if test "${cpusize}" = "64" ; then x64="64" ; fi
+
+
+if test "${prefix}" = "NONE" ; then prefix="$default_prefix" ; fi
+exec_prefix=$prefix
+bindir="$prefix/usr/bin"
+sbindir="$prefix/usr/sbin"
+datadir="$prefix/usr/share"
+
+case $layout in
 	debian)
 		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
 		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
 		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
-		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
-		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
+		libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/nagios/html/${PACKAGE_NAME}"
 		PERFDATA_LOG="${prefix}/var/log/${PACKAGE_NAME}/perfdata.log"
 		PERFDATA_DIR="${prefix}/var/lib/${PACKAGE_NAME}/perfdata"
 		PERFDATA_SPOOL_DIR="${prefix}/var/spool/${PACKAGE_NAME}"
 	;;
 	default-0.4)
-		prefix="/usr/local/nagios"
 		sysconfdir="${prefix}/etc/pnp"
 		localstatedir="${prefix}/var"
 		libexecdir="${prefix}/libexec"
@@ -5358,9 +5421,9 @@ case $layout in
 	default)
 		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
 		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
-		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
-		libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
-		datarootdir="${prefix}/usr/share/${PACKAGE_NAME}/html"
+		libexecdir="${prefix}/usr/libexec/${PACKAGE_NAME}"
+		libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+		datarootdir="${prefix}/usr/share/nagios/html/${PACKAGE_NAME}"
 		PERFDATA_LOG="${localstatedir}/perfdata.log"
 		PERFDATA_DIR="${localstatedir}/perfdata"
 		PERFDATA_SPOOL_DIR="${localstatedir}/spool"
@@ -5401,9 +5464,49 @@ fi
 SBINDIR="$sbindir"
 
 
-#AC_SUBST(prefix)
-#PREFIX="$prefix"
-#AC_SUBST(PREFIX)
+if test -e /etc/selinux/config  ;
+then
+    source /etc/selinux/config
+    CAN_SELINUX="yes"
+    SELINUX_POLICY="$SELINUXTYPE"
+else
+    CAN_SELINUX="no"
+fi
+
+SELINUX="no"
+# Check whether --enable-selinux was given.
+if test ${enable_selinux+y}
+then :
+  enableval=$enable_selinux;
+fi
+
+
+if test "x$enable_selinux" != "xno"
+then :
+
+  SELINUX=$CAN_SELINUX
+
+fi
+
+
+
+
+
+
+# Check whether --with-selinux_policy was given.
+if test ${with_selinux_policy+y}
+then :
+  withval=$with_selinux_policy; SELINUX_POLICY=$withval
+else $as_nop
+  SELINUX_POLICY=$SELINUX_POLICY
+fi
+
+
+
+
+
+
+
 
 
 # Check whether --with-kohana was given.
@@ -5423,6 +5526,7 @@ then :
 else $as_nop
   KOHANA_SYSTEM=$libdir/kohana/system
 fi
+
 
 
 
@@ -5450,6 +5554,31 @@ printf "%s\n" "#define DEFAULT_NAGIOS_USER \"$nagios_user\"" >>confdefs.h
 printf "%s\n" "#define DEFAULT_NAGIOS_GROUP \"$nagios_grp\"" >>confdefs.h
 
 INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
+
+
+
+
+# Check whether --with-http_user was given.
+if test ${with_http_user+y}
+then :
+  withval=$with_http_user; http_user=$withval
+else $as_nop
+  http_user=apache
+fi
+
+
+# Check whether --with-http_group was given.
+if test ${with_http_group+y}
+then :
+  withval=$with_http_group; http_grp=$withval
+else $as_nop
+  http_grp=apache
+fi
+
+
+
+COMMAND_OPTS="-o $http_user -g $http_grp"
+
 
 
 # Checks for programs.
@@ -5655,6 +5784,96 @@ if test x$HTTPD_CONF = xno; then
                 HTTPD_CONF="/etc/httpd/conf.d"
         fi
 fi
+
+
+
+NAGIOS_CFG=no
+
+# Check whether --with-nagios_cfg was given.
+if test ${with_nagios_cfg+y}
+then :
+  withval=$with_nagios_cfg; NAGIOS_CFG=$withval
+else $as_nop
+  NAGIOS_CFG=no
+fi
+
+if test x$NAGIOS_CFG = xno; then
+   if test -e /etc/nagios/nagios.cfg ; then
+      NAGIOS_CFG=/etc/nagios/nagios.cfg
+   elif test -e /usr/local/etc/nagios/nagios.cfg ; then
+      NAGIOS_CFG=/usr/local/etc/nagios/nagios.cfg
+   else
+      NAGIOS_CFG=/etc/nagios/nagios.cfg
+   fi
+fi
+
+
+nagios_dir=`dirname $NAGIOS_CFG`
+
+
+NAGIOS_PWD=no
+
+# Check whether --with-nagios_pwd was given.
+if test ${with_nagios_pwd+y}
+then :
+  withval=$with_nagios_pwd; NAGIOS_PWD=$withval
+else $as_nop
+  NAGIOS_PWD=no
+fi
+
+if test x$NAGIOS_PWD = xno; then
+   if test -e "${nagios_dir}/passwd" ; then
+      NAGIOS_PWD="${nagios_dir}/passwd"
+   elif test -e "${nagios_dir}/htpasswd.users" ; then
+      NAGIOS_PWD="${nagios_dir}/htpasswd.users"
+   else
+      NAGIOS_PWD="${nagios_dir}/passwd"
+   fi
+fi
+
+
+NAGIOS_OBJ=no
+
+# Check whether --with-nagios_objects was given.
+if test ${with_nagios_objects+y}
+then :
+  withval=$with_nagios_objects; NAGIOS_OBJ=$withval
+else $as_nop
+  NAGIOS_OBJ=no
+fi
+
+if test x$NAGIOS_OBJ = xno; then
+   NAGIOS_OBJ="${nagios_dir}/objects"
+fi
+
+
+NAGIOS_VER=no
+
+# Check whether --with-nagios_version was given.
+if test ${with_nagios_version+y}
+then :
+  withval=$with_nagios_version; NAGIOS_VER=$withval
+else $as_nop
+  NAGIOS_VER=no
+fi
+
+if test x$NAGIOS_VER = xno; then
+   if which rpm 2>/dev/null ; then
+      if rpm -q nagios 2>/dev/null ; then
+         NAGIOS_VER=`rpm -q --queryformat='%{VERSION}' nagios`
+      fi
+   fi
+fi
+# if nagios not installed yet, probably will install a new version
+# so just pick a recent version
+if test x$NAGIOS_VER = xno; then
+   if which nagios 2>/dev/null ; then
+      NAGIOS_VER=`nagios --version | gawk '/^Nagios /'  | gawk -v RS=' ' '/^0-9/'`
+   else
+      NAGIOS_VER=4.4.6
+   fi
+fi
+
 
 
 
@@ -5872,6 +6091,41 @@ else
 fi
 
 
+PAPERSIZE=no
+
+# Check whether --with-papersize was given.
+if test ${with_papersize+y}
+then :
+  withval=$with_papersize; PAPERSIZE=$withval
+else $as_nop
+  PAPERSIZE=no
+fi
+
+if test x${PAPERSIZE} = xno ; then
+   if locale|grep LANG|grep -q en_US ; then
+      PAPERSIZE=letter
+   else
+      PAPERSIZE=A4
+   fi
+fi
+
+
+
+NAGIOS_OBJ=no
+
+# Check whether --with-nagios_objects was given.
+if test ${with_nagios_objects+y}
+then :
+  withval=$with_nagios_objects; NAGIOS_OBJ=$withval
+else $as_nop
+  NAGIOS_OBJ=no
+fi
+
+if test x$NAGIOS_OBJ = xno; then
+   NAGIOS_OBJ="${nagios_dir}/objects"
+fi
+
+
 
 
 
@@ -5984,15 +6238,29 @@ ac_config_files="$ac_config_files scripts/check_pnp_rrds.pl share/pnp/index.php 
 
 ac_config_files="$ac_config_files sample-config/httpd.conf sample-config/lighttpd.pnp4nagios.conf"
 
-ac_config_files="$ac_config_files sample-config/nginx.pnp4nagios.conf sample-config/nagios.cfg-sample"
+ac_config_files="$ac_config_files sample-config/nagios.cfg-sample"
 
-ac_config_files="$ac_config_files sample-config/misccommands.cfg-sample sample-config/pnp/config.php"
+ac_config_files="$ac_config_files sample-config/nginx.pnp4nagios.conf"
+
+ac_config_files="$ac_config_files sample-config/README_config.md"
+
+ac_config_files="$ac_config_files sample-config/pnp/config.php"
+
+ac_config_files="$ac_config_files sample-config/pnp-synchronous.cfg-sample"
+
+ac_config_files="$ac_config_files sample-config/pnp-bulk.cfg-sample"
+
+ac_config_files="$ac_config_files sample-config/pnp-npcd.cfg-sample"
 
 ac_config_files="$ac_config_files sample-config/pnp/npcd.cfg-sample"
 
 ac_config_files="$ac_config_files sample-config/pnp/process_perfdata.cfg-sample"
 
 ac_config_files="$ac_config_files sample-config/pnp/pnp4nagios_release contrib/ssi/status-header.ssi"
+
+ac_config_files="$ac_config_files sample-config/NagiosCfgMod.pl"
+
+ac_config_files="$ac_config_files sample-config/SuggestInstall"
 
 ac_config_files="$ac_config_files man/npcd.8 ci/pnp4nagios.spec"
 
@@ -6707,14 +6975,19 @@ do
     "share/pnp/install.php") CONFIG_FILES="$CONFIG_FILES share/pnp/install.php" ;;
     "sample-config/httpd.conf") CONFIG_FILES="$CONFIG_FILES sample-config/httpd.conf" ;;
     "sample-config/lighttpd.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/lighttpd.pnp4nagios.conf" ;;
-    "sample-config/nginx.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/nginx.pnp4nagios.conf" ;;
     "sample-config/nagios.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/nagios.cfg-sample" ;;
-    "sample-config/misccommands.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/misccommands.cfg-sample" ;;
+    "sample-config/nginx.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/nginx.pnp4nagios.conf" ;;
+    "sample-config/README_config.md") CONFIG_FILES="$CONFIG_FILES sample-config/README_config.md" ;;
     "sample-config/pnp/config.php") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/config.php" ;;
+    "sample-config/pnp-synchronous.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp-synchronous.cfg-sample" ;;
+    "sample-config/pnp-bulk.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp-bulk.cfg-sample" ;;
+    "sample-config/pnp-npcd.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp-npcd.cfg-sample" ;;
     "sample-config/pnp/npcd.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/npcd.cfg-sample" ;;
     "sample-config/pnp/process_perfdata.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/process_perfdata.cfg-sample" ;;
     "sample-config/pnp/pnp4nagios_release") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/pnp4nagios_release" ;;
     "contrib/ssi/status-header.ssi") CONFIG_FILES="$CONFIG_FILES contrib/ssi/status-header.ssi" ;;
+    "sample-config/NagiosCfgMod.pl") CONFIG_FILES="$CONFIG_FILES sample-config/NagiosCfgMod.pl" ;;
+    "sample-config/SuggestInstall") CONFIG_FILES="$CONFIG_FILES sample-config/SuggestInstall" ;;
     "man/npcd.8") CONFIG_FILES="$CONFIG_FILES man/npcd.8" ;;
     "ci/pnp4nagios.spec") CONFIG_FILES="$CONFIG_FILES ci/pnp4nagios.spec" ;;
 

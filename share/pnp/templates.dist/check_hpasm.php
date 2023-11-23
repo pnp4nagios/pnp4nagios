@@ -5,7 +5,7 @@
 # Plugin: check_hpasm
 # http://labs.consol.de/lang/en/nagios/check_hpasm/
 #
-include 'arrayfix.pnp';
+include 'arrayfix.php';
 $colors = array("CC3300","CC3333","CC3366","CC3399","CC33CC","CC33FF","336600","336633","336666","336699","3366CC","3366FF","33CC33","33CC66" );
 $max_rpm = 5400;
 $col_f = 0;

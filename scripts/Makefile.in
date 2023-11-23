@@ -10,8 +10,16 @@ INIT_OPTS=-o root -g root
 HTMLDIR=@datarootdir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
+COMMAND_OPTS=@COMMAND_OPTS@
+
 PERFDATADIR=@PERFDATA_DIR@
 SYSTEMD_DIR=@systemdsystemunitdir@
+
+HTTP_USER=@http_user@
+HTTP_GRP=@http_grp@
+NAGIOS_USER=@nagios_user@
+NAGIOS_GRP=@nagios_grp@
+MIX_OPTS=-o ${NAGIOS_USER} -g ${HTTP_GRP} 
 
 CP=@CP@
 
@@ -34,8 +42,8 @@ devclean: distclean
 ##### init files for systemd style
 @HAVE_SYSTEMD_TRUE@install-init:
 @HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(SYSTEMD_DIR)
-@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) npcd.service $(DESTDIR)$(SYSTEMD_DIR)/npcd.service
-@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 755 $(INIT_OPTS) pnp_gearman_worker.service $(DESTDIR)$(SYSTEMD_DIR)/pnp_gearman_worker.service
+@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 644 $(INIT_OPTS) npcd.service $(DESTDIR)$(SYSTEMD_DIR)/npcd.service
+@HAVE_SYSTEMD_TRUE@	$(INSTALL) -m 644 $(INIT_OPTS) pnp_gearman_worker.service $(DESTDIR)$(SYSTEMD_DIR)/pnp_gearman_worker.service
 
 install-processperfdata: 
 	$(INSTALL) -m 755 $(INSTALL_OPTS) process_perfdata.pl $(DESTDIR)$(LIBEXECDIR)
@@ -50,7 +58,7 @@ install-rrdmodify:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_modify.pl $(DESTDIR)$(LIBEXECDIR)
 
 install: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(PERFDATADIR)
+	$(INSTALL) -m 2755 $(MIX_OPTS) -d $(DESTDIR)$(PERFDATADIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/stats
 	$(MAKE) install-processperfdata

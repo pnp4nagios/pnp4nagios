@@ -1403,8 +1403,8 @@ sub check_internals {
     while ( defined ( my $file = readdir STATS) ){
         next if $file =~ /^\.\.?$/; # skip . and ..
         next if $file =~ /-PID-/;   # skip temporary files
-        next if $file == (int $stats{timet} / 60); # skip our current file
 	next if $file =~ /stats_lockfile/;
+        next if $file =~ /^\d+$/ && $file == (int $stats{timet} / 60); # skip our current file
         push @files, $file;
     }
     read_internals(@files);

@@ -200,7 +200,8 @@ $conf['use_fpdf'] = 1;
 #
 # Use this file as PDF background.
 #
-$conf['background_pdf'] = '@sysconfdir@/background.pdf' ;
+$conf['background_pdf'] = '@sysconfdir@/background-A4.pdf' ;
+#$conf['background_pdf'] = '@sysconfdir@/background-letter.pdf' ;
 
 #
 # Enable Calendar

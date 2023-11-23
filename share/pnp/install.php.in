@@ -204,6 +204,8 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <td class="fail">The <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/i5.txt">iconv</a> extension is not loaded.</td>
 <?php endif ?>
 <tr>
+<?php if (version_compare(PHP_VERSION, '8.0', '>=')) : define("MB_OVERLOAD_STRING", 0) ?>
+    <?php endif ?>
 <?php if (extension_loaded('mbstring')) : ?>
 <th>Mbstring Not Overloaded</th>
     <?php if (ini_get('mbstring.func_overload') & MB_OVERLOAD_STRING) :
@@ -232,7 +234,7 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <?php else : ?>
 <p class="pass">Your environment passed all requirements. Remove or rename the <code>
     <?php echo __FILE__ ?>
-</code> file now.</p>
+     </code> file now, or create a file named <code>install.ignore</code></p>
 <?php endif ?>
 </div>
 

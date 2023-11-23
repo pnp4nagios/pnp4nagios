@@ -28,7 +28,7 @@ Requires:
   check_esx3.pl from http://git.op5.org/git/?p=nagios/op5plugins.git;a=summary
 */
 
-include 'arrayfix.pnp';
+include 'arrayfix.php';
 
 $color_list = array(
                     1 => "#ff77ee", // Purple

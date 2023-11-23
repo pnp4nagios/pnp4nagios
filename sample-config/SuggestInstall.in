@@ -1,0 +1,38 @@
+#!/bin/bash
+# install config files in current directory to Nagios
+# note: the main configuration options are separated
+# into different directories
+INSTALL='@INSTALL@'
+INSTALL_OPTS='@INSTALL_OPTS@'
+DATAROOTDIR='@datarootdir@'
+${INSTALL} -b -S .orig ${INSTALL_OPTS} nagios.cfg @NAGIOS_CFG@
+${INSTALL} -b -S .orig ${INSTALL_OPTS} templates.cfg @NAGIOS_OBJ@
+${INSTALL} -b -S .orig ${INSTALL_OPTS} pnp.cfg @NAGIOS_OBJ@
+me=`realpath $0`
+here=`dirname $me`
+thisdir=`basename $here`
+echo "Commands for you to start nagios with new config:"
+if [ "$thisdir" == "npcd" ] ;
+then
+    echo "Start npcd: "
+    @HAVE_SYSTEMD_TRUE@    echo "    systemctl enable npcd"
+    @HAVE_SYSTEMD_FALSE@   echo "    chkconfig --add npcd"
+    echo "    service npcd restart"    
+fi
+echo "Restart nagios:"
+echo "    service nagios restart"
+echo "Restart httpd:"
+echo "    service httpd restart"
+if [ -e "${DATAROOTDIR}/install.php" ] ;
+then
+    if [ ! -e "${DATAROOTDIR}/install.ignore" ] ;
+    then
+        echo ""
+        echo "Right now, the pnp4nagios graphs will show an installation status summary."
+        echo "To get actual graphs, do"
+        echo "   touch  ${DATAROOTDIR}/install.ignore"
+        echo "no restarts needed."
+    fi
+fi
+
+

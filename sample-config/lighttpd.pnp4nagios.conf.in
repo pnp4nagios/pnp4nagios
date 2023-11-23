@@ -10,7 +10,7 @@ alias.url += (
 
 $HTTP["url"] =~ "(^@BASE_URL@)" {
                     auth.backend = "htpasswd" 
-                    auth.backend.htpasswd.userfile = "/usr/local/nagios/etc/htpasswd.users" 
+                    auth.backend.htpasswd.userfile = "@NAGIOS_PWD@" 
                     auth.require = ( "" => (
                         "method" => "basic",
                         "realm" => "Nagios Access",

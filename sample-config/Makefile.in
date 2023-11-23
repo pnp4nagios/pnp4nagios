@@ -1,68 +1,95 @@
 prefix=@prefix@
-SYSCONFDIR=@sysconfdir@/pnp4nagios
+SYSCONFDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 LIBDIR=@libdir@
 CGIDIR=@sbindir@
-HTMLDIR=@datadir@
+HTMLDIR=@datarootdir@
 INSTALL=@INSTALL@
-INSTALL_OPTS=@INSTALL_OPTS@
+INSTALL_OPTS=@INSTALL_OPTS@ -b
+INSTALL_BACKUP=-b -S .orig
 PERFDATADIR=@PERFDATA_DIR@
 DATAROOTDIR=@datarootdir@
 PACKAGE_NAME=@PACKAGE_NAME@
 PACKAGE_VERSION=@PACKAGE_VERSION@
+NAG_OBJ=@NAGIOS_OBJ@
+NAG_CFG=@NAGIOS_CFG@
+NAG_PWD=@NAGIOS_PWD@
+NAG_VER=@NAGIOS_VER@
 HTTPD_CONF=@HTTPD_CONF@
 CP=@CP@
+PERL=@PERL@
+PAPERSIZE=@PAPERSIZE@
 
 all html:
-
 
 clean:
 	-rm -f pnp/config.php
 	-rm -f pnp/process_perfdata.cfg-sample
 	-rm -f pnp/npcd.cfg-sample
-	-rm -f misccommands.cfg-sample 
+	-rm -f pnp-*.cfg-sample 
 	-rm -f nagios.cfg-sample 
 	-rm -f httpd.conf 
 	-rm -f pnp/pnp4nagios_release
 	-rm -f lighttpd.pnp4nagios.conf
 	-rm -f nginx.pnp4nagios.conf
+	-rm -f NagiosCfgMod.pl
+	-rm -f SuggestInstall
+	-rm -f README_config.md
 
 distclean: clean
 	-rm -f Makefile
 
 devclean: distclean
 
-
 install: 
-	-rm -f $(DESTDIR)$(HTMLDIR)/conf/config.php
-	
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config.d
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/background.pdf $(DESTDIR)$(SYSCONFDIR)
+	if ! diff -q pnp/background-A4.pdf $(DESTDIR)$(SYSCONFDIR) >/dev/null 2>&1 ; then \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) $(INSTALL_BACKUP) pnp/background-A4.pdf $(DESTDIR)$(SYSCONFDIR) ; \
+	fi
+	if ! diff -q pnp/background-letter.pdf $(DESTDIR)$(SYSCONFDIR) >/dev/null 2>&1 ; then \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) $(INSTALL_BACKUP) pnp/background-letter.pdf $(DESTDIR)$(SYSCONFDIR) ; \
+	fi
+	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/background.pdf ] ; then \
+		ln -rs $(DESTDIR)$(SYSCONFDIR)/background-$(PAPERSIZE).pdf $(DESTDIR)$(SYSCONFDIR)/background.pdf ;\
+	fi
 	
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)
+	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION)
+	$(INSTALL) -m 644 $(INSTALL_OPTS) $(INSTALL_BACKUP) pnp/config.php $(DESTDIR)$(SYSCONFDIR)
+	ln -rs $(DESTDIR)$(HTMLDIR)/application/config/config.php $(DESTDIR)$(SYSCONFDIR)/cgi_config.php
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_suggestions
+	$(INSTALL) -m 755 $(INSTALL_OPTS) NagiosCfgMod.pl $(DESTDIR)$(SYSCONFDIR)/config_suggestions
+	$(INSTALL) -m 755 $(INSTALL_OPTS) TemplateMod.pl $(DESTDIR)$(SYSCONFDIR)/config_suggestions
 
-install-config: 
+
+install-config:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/samples
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_suggestions
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_suggestions/sync
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_suggestions/bulk
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_suggestions/npcd
 	
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)
+	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/config.php ] ; then \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/config.php $(DESTDIR)$(SYSCONFDIR); \
+	else \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config.php.$(PACKAGE_VERSION); \
+	fi
 	
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/config_local.php ] ;then \
-		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/config.php $(DESTDIR)$(SYSCONFDIR)/config_local.php; \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/config_local.php $(DESTDIR)$(SYSCONFDIR)/config_local.php; \
 	fi
 	
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg ] ;then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg.$(PACKAGE_VERSION); \
 	else\
-		$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg; \
+		$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/process_perfdata.cfg-sample $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg; \
 	fi
 	
 	if [ -e $(DESTDIR)$(SYSCONFDIR)/npcd.cfg ] ;then \
@@ -71,15 +98,44 @@ install-config:
 		$(INSTALL) -m 644  pnp/npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/npcd.cfg; \
 	fi
 	
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/rra.cfg-sample $(DESTDIR)$(SYSCONFDIR)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  misccommands.cfg-sample $(DESTDIR)$(SYSCONFDIR)
-	$(INSTALL) -m 644 $(INSTALL_OPTS)  nagios.cfg-sample $(DESTDIR)$(SYSCONFDIR)
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  nagios.cfg-sample $(DESTDIR)$(SYSCONFDIR)/samples
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  templates.cfg-sample $(DESTDIR)$(SYSCONFDIR)/samples
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/rra.cfg-sample $(DESTDIR)$(SYSCONFDIR)/samples
+	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp-*.cfg-sample $(DESTDIR)$(SYSCONFDIR)/samples
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/check_commands/check_nwstat.cfg-sample $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/check_commands/check_nrpe.cfg-sample $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/check_commands/check_all_local_disks.cfg-sample $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 644 $(INSTALL_OPTS)  pnp/pages/web_traffic.cfg-sample $(DESTDIR)$(SYSCONFDIR)/pages
+	
+	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp-synchronous.cfg-sample $(DESTDIR)$(SYSCONFDIR)/config_suggestions/sync/pnp.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp-bulk.cfg-sample $(DESTDIR)$(SYSCONFDIR)/config_suggestions/bulk/pnp.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp-npcd.cfg-sample $(DESTDIR)$(SYSCONFDIR)/config_suggestions/npcd/pnp.cfg
+	$(INSTALL) -m 755 $(INSTALL_OPTS) SuggestInstall $(DESTDIR)$(SYSCONFDIR)/config_suggestions/sync/
+	$(INSTALL) -m 755 $(INSTALL_OPTS) SuggestInstall $(DESTDIR)$(SYSCONFDIR)/config_suggestions/bulk/
+	$(INSTALL) -m 755 $(INSTALL_OPTS) SuggestInstall $(DESTDIR)$(SYSCONFDIR)/config_suggestions/npcd/
+	$(INSTALL) -m 755 $(INSTALL_OPTS) README_config.md $(DESTDIR)$(SYSCONFDIR)
+
+
+install-post:
+	$(PERL) TemplateMod.pl $(NAG_OBJ)/templates.cfg >templates.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/sync/
+	$(INSTALL) -m 644 $(INSTALL_OPTS) templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/bulk/
+	$(INSTALL) -m 644 $(INSTALL_OPTS) templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/npcd/
+	rm -f templates.cfg
+	$(PERL) NagiosCfgMod.pl -m sync -i $(NAG_CFG) -n $(NAG_VER) -o nagios.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) nagios.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/sync/
+	$(PERL) NagiosCfgMod.pl -m bulk -i $(NAG_CFG) -n $(NAG_VER) -o nagios.cfg 
+	$(INSTALL) -m 644 $(INSTALL_OPTS) nagios.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/bulk/
+	$(PERL) NagiosCfgMod.pl -m npcd -i $(NAG_CFG) -n $(NAG_VER) -o nagios.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) nagios.cfg $(DESTDIR)$(SYSCONFDIR)/config_suggestions/npcd/
+	rm -f nagios.cfg
+
 
 install-webconf: 
 	$(INSTALL) -m 755 -d $(DESTDIR)$(HTTPD_CONF)
-	$(INSTALL) -m 644 httpd.conf $(DESTDIR)$(HTTPD_CONF)/$(PACKAGE_NAME).conf
-
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/samples
+	$(INSTALL) -m 644 httpd.conf $(INSTALL_BACKUP) $(DESTDIR)$(HTTPD_CONF)/$(PACKAGE_NAME).conf
+	$(INSTALL) -m 755 httpd.conf $(DESTDIR)$(SYSCONFDIR)/samples/apache.pnp4nagios.conf
+	$(INSTALL) -m 755 lighttpd.pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/samples/
+	$(INSTALL) -m 755 nginx.pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/samples/

@@ -9,7 +9,7 @@ User=@nagios_user@
 Group=@nagios_grp@
 PIDFile=@PIDDIR@/gearman_worker.pid
 Environment="CONFIG_FILE=@SYSCONFDIR@/process_perfdata.cfg"
-ExecStart="@libexecdir@/process_perfdata.pl  --config=${CONFIG_FILE} --gearman --daemon --pidfile=@PIDDIR@/gearman_worker.pid"
+ExecStart="@libexecdir@/process_perfdata.pl  --config=${CONFIG_FILE} --gearman --pidfile=@PIDDIR@/gearman_worker.pid"
 ExecStop=/bin/kill -s QUIT "$MAINPID"
 
 [Install]

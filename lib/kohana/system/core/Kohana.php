@@ -540,7 +540,7 @@ final class Kohana
                 $directory = str_replace('\\', '/', $dir) . '/';
             } else {
                 // Log directory is invalid
-                throw new KohanaException('core.log_dir_unwritable', $dir);
+                throw new Kohana_Exception('core.log_dir_unwritable', $dir);
             }
         }
 
@@ -823,7 +823,7 @@ final class Kohana
                 $message  = $exception->getMessage();
                 $file     = $exception->getFile();
                 $line     = $exception->getLine();
-                $template = ($exception instanceof KohanaException) ? $exception->getTemplate() : 'kohana_error_page';
+                $template = ($exception instanceof Kohana_Exception) ? $exception->getTemplate() : 'kohana_error_page';
             }
 
             if (is_numeric($code)) {
@@ -913,7 +913,7 @@ final class Kohana
     /**
      * Provides class auto-loading.
      *
-     * @throws  KohanaException
+     * @throws  Kohana_Exception
      * @param   string  name of class
      * @return  bool
      */
@@ -989,7 +989,7 @@ final class Kohana
      * to the order of the include paths. Configuration and i18n files will be
      * returned in reverse order.
      *
-     * @throws  KohanaException  if file is required and not found
+     * @throws  Kohana_Exception  if file is required and not found
      * @param   string   directory to search in
      * @param   string   filename to look for (without extension)
      * @param   boolean  file required
@@ -1051,7 +1051,7 @@ final class Kohana
                 $directory = 'core.' . inflector::singular($directory);
 
                 // If the file is required, throw an exception
-                throw new KohanaException('core.resource_not_found', self::lang($directory), $filename);
+                throw new Kohana_Exception('core.resource_not_found', self::lang($directory), $filename);
             } else {
                 // Nothing was found, return FALSE
                 $found = false;
@@ -1491,7 +1491,7 @@ final class Kohana
 /**
  * Creates a generic i18n exception.
  */
-class KohanaException extends Exception
+class Kohana_Exception extends Exception
 {
     // Template file
     protected $template = 'kohana_error_page';
@@ -1560,7 +1560,7 @@ class KohanaException extends Exception
 /**
  * Creates a custom exception.
  */
-class KohanaUserException extends KohanaException
+class KohanaUserException extends Kohana_Exception
 {
     /**
      * Set exception title and message.
@@ -1585,7 +1585,7 @@ class KohanaUserException extends KohanaException
 /**
  * Creates a Page Not Found exception.
  */
-class Kohana404Exception extends KohanaException
+class Kohana404Exception extends Kohana_Exception
 {
     protected $code = E_PAGE_NOT_FOUND;
 

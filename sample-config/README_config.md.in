@@ -1,0 +1,102 @@
+Here are some steps to get your pnp4nagios working
+with Nagios and your webserver; it is intended primarily
+for the "new user". If you already have pnp4nagios
+working with your Nagios and httpd server, you can
+skip this, except perhaps as a source of tips. 
+
+
+In summary:
+
+  * [A] get the Nagios data to pnp4nagios
+  * [B] make pnp4nagios links on Nagios pages
+  * [C] make pnp4nagios available on webserver
+
+**[A] get the Nagios data to pnp4nagios**
+
+There are several options for feeding Nagios data to
+pnp4nagios, and you need to choose one:
+
+  * **sync**: gets executed on each update,
+     best choice for a "low activity" Nagios
+
+  * **bulk**: batches updates, but otherwise like
+     the synchronous option in how the updates are
+     processed into the RRD database.
+
+  * **npcd**: bulk output, npcd server grabs the updates on
+    a regular schedule and deals with them; best for a 
+    "high activity" Nagios.
+
+Choose one of these options **MODE**=(sync, bulk, or npcd), then
+change directory to @SYSCONFDIR@/config_suggestions/**MODE**
+and do ./SuggestInstall 
+
+This will install a modified @NAGIOS_CFG@, 
+a modified @NAGIOS_OBJ@/objects/templates.cfg, 
+a new @NAGIOS_OBJ@/objects/pnp.cfg
+
+**[B] make pnp4nagios links on Nagios pages**
+
+The one easy way to do this is to add a pair of new 
+definitions to the Nagios "templates.cfg" file to
+make host and service templates that just contain a
+action_url link to pnp4nagios code.  Then add
+a "use" line in the "generic-host" and "generic-service"
+definitions so that they'll include the pnp4nagios templates.
+
+You can also edit the generic-* templates directly to add the
+action urls. 
+
+**[C] make pnp4nagios available on webserver**
+
+This is done by a "pnp4nagios.conf" file that 
+(for Apache) is placed in /etc/httpd/conf.d/ 
+It defines urls like /pnp4nagios/... to get handled
+by the pnp4nagios code.  Most of what is needed is
+to make sure that the pnp4nagios code is in the
+same "security domain" as your Nagios server, so
+that you don't have to enter passwords twice, once
+for a Nagios page and again for a pnp4nagios graph.
+
+For password authentication, that is done by adjusting the
+**AuthName** and **AuthType** to be the same as your 
+Nagios server, and pointing the **AuthUserFile** to the 
+Nagios file. An attempt at doing the "default setup" is
+what is in the pnp4nagios.conf file.
+
+For more complicated authentication schemes (user certificates,
+etc) the general rule is "copy what you use for Nagios". 
+
+
+** Where to find configuration settings **
+
+Where to find config info: 
+
+    @SYSCONFDIR@
+        config.php
+        config_local.php (not present by default)
+        config.d/*.php   (not present by default)
+        npcd.cfg
+        process_perfdata.cfg
+        rra.cfg (not present by default, check in @SYSCONFDIR@/samples)
+        
+    @datarootdir@/application/config/config.php
+    (linked to @SYSCONFDIR@/cgi_config.php    
+    
+When things go wrong, it's useful to increase the logging level
+and see more.  Logging of the Nagios to RRD steps can be
+found in npcd.cfg (for NPCD mode processing) or 
+process_perfdata.cfg for all processing modes.
+
+For the problems that show up when displaying graphs, the 
+logging level in cgi_config.php is
+most helpful; the log file (if you're not using the system
+log) is in @localstatedir@/kohana/
+
+When it's a "selinux problem", then you need to check in
+/var/log/message or journalctl. The messages generally give
+information about how to work around the security violations,
+which can be extremely useful for updating the selinux 
+configuration for pnp4nagios. 
+
+

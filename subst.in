@@ -24,6 +24,7 @@ if($INSTALL =~ /^\.\//){
 }
 my $INSTALL_OPTS="@INSTALL_OPTS@";
 my $DEBUG="@DEBUG@";
+my $SELINUX="@SELINUX@";
 my $PERFDATA_DIR="@PERFDATA_DIR@";
 my $PERFDATA_LOG="@PERFDATA_LOG@";
 my $PERFDATA_SPOOL_DIR="@PERFDATA_SPOOL_DIR@";
@@ -34,6 +35,8 @@ my $PKG_REL_DATE="@PKG_REL_DATE@";
 my $PACKAGE_VERSION="@PACKAGE_VERSION@";
 my $PACKAGE_NAME="@PACKAGE_NAME@";
 my $BASE_URL="@BASE_URL@";
+my $NAGIOS_CFG="@NAGIOS_CFG@";
+my $NAGIOS_VER="@NAGIOS_VER@";
 my $HTTPD_CONF="@HTTPD_CONF@";
 my $init_dir="@init_dir@";
 my $npcd_name="@npcd_name@";
@@ -87,6 +90,7 @@ while ($f = shift @ARGV) {
 		s|\@INSTALL\@|$INSTALL|g;
 		s|\@INSTALL_OPTS\@|$INSTALL_OPTS|g;
 		s|\@DEBUG\@|$DEBUG|g;
+                s|\@SELINUX\@|$SELINUX|g;
 		s|\@PERFDATA_DIR\@|$PERFDATA_DIR|g;
 		s|\@PERFDATA_LOG\@|$PERFDATA_LOG|g;
 		s|\@PERFDATA_SPOOL_DIR\@|$PERFDATA_SPOOL_DIR|g;
@@ -97,6 +101,8 @@ while ($f = shift @ARGV) {
 		s|\@PACKAGE_VERSION\@|$PACKAGE_VERSION|g;
 		s|\@PACKAGE_NAME\@|$PACKAGE_NAME|g;
 		s|\@BASE_URL\@|$BASE_URL|g;
+                s|\@NAGIOS_CFG\@|$NAGIOS_CFG|g;
+                s|\@NAGIOS_VER\@|$NAGIOS_VER|g;
 		s|\@HTTPD_CONF\@|$HTTPD_CONF|g;
 		s|\@npcd_name\@|$npcd_name|g;
 		s|\@pp_pl_name\@|$pp_pl_name|g;
