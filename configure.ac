@@ -113,6 +113,7 @@ exec_prefix=$prefix
 bindir="$prefix/usr/bin"
 sbindir="$prefix/usr/sbin"
 datadir="$prefix/usr/share"
+libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
 
 case $layout in
 	debian)
@@ -165,6 +166,12 @@ AC_ARG_WITH(sbindir,[ --with-sbindir=<$sbindir> where system executables are kep
         )
 SBINDIR="$sbindir"
 AC_SUBST(SBINDIR)
+
+AC_ARG_WITH(libdir,[ --with-libdir=<$libdir> pnp4nagios libs are kept ],
+        libdir=$withval
+        )
+AC_SUBST(libdir)
+
 
 if test -e /etc/selinux/config  ; 
 then

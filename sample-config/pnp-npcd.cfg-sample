@@ -19,10 +19,10 @@
 #
 define command {
        command_name    process-service-perfdata-file
-       command_line    /bin/mv /var/log/pnp4nagios/service-perfdata /var/log/pnp4nagios/spool/service-perfdata.$TIMET$
+       command_line    /bin/mv /var/log/pnp4nagios/service-perfdata /var/spool/pnp4nagios/service-perfdata.$TIMET$
 }
 
 define command {
        command_name    process-host-perfdata-file
-       command_line    /bin/mv /var/log/pnp4nagios/host-perfdata /var/log/pnp4nagios/spool/host-perfdata.$TIMET$
+       command_line    /bin/mv /var/log/pnp4nagios/host-perfdata /var/spool/pnp4nagios/host-perfdata.$TIMET$
 }

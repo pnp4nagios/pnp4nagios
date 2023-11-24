@@ -769,6 +769,7 @@ with_cpusize
 with_sysconfdir
 with_bindir
 with_sbindir
+with_libdir
 enable_selinux
 with_selinux_policy
 with_kohana
@@ -1437,6 +1438,7 @@ Optional Packages:
   --with-sysconfdir=<$sysconfdir> Tell me where I should keep the 'pnp4nagios.cfg' config file
  --with-bindir=<$bindir> where most executables are kept
  --with-sbindir=<$sbindir> where system executables are kept
+ --with-libdir=<$libdir> pnp4nagios libs are kept
  --with-selinux_policy=<selinux policy> selinux policy
   --without-kohana does not install the kohana framework
   --with-kohana_system=<existing kohana system dir> Points to an already installed kohana framework
@@ -5396,6 +5398,7 @@ exec_prefix=$prefix
 bindir="$prefix/usr/bin"
 sbindir="$prefix/usr/sbin"
 datadir="$prefix/usr/share"
+libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
 
 case $layout in
 	debian)
@@ -5462,6 +5465,17 @@ then :
 fi
 
 SBINDIR="$sbindir"
+
+
+
+# Check whether --with-libdir was given.
+if test ${with_libdir+y}
+then :
+  withval=$with_libdir; libdir=$withval
+
+fi
+
+
 
 
 if test -e /etc/selinux/config  ;

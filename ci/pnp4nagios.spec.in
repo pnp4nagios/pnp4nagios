@@ -1,6 +1,7 @@
 %global debug_package %{nil}
 %global with_selinux 1
 %global selinuxtype  targeted
+%global _libdir      %{_prefix}/lib64
 
 Name:           pnp4nagios
 Version:        @PACKAGE_VERSION@
@@ -74,6 +75,7 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 autoconf
 %configure --prefix='' \
+           --with-cpusize=64 \
            --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
@@ -145,9 +147,9 @@ mv $RPM_BUILD_ROOT/man $RPM_BUILD_ROOT%{_datadir}/
 
 # Move kohana to pnp4nagios, there is another kohana in fedore/EPEL,
 # which can be installed.
-mv $RPM_BUILD_ROOT%{_libdir}/%{name}/kohana \
+mv $RPM_BUILD_ROOT%{_libdir}/pnp4nagios/kohana \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/kohana
-sed -i 's|%{_libdir}/%{name}/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
+sed -i 's|%{_libdir}/pnp4nagios/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
 
 
@@ -280,7 +282,10 @@ fi
 
 
 %changelog
-* Mon Sep 11 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-5
+* Thu Nov 23 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-5
+- add selinux info, improved packaging
+
+* Mon Sep 11 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-4
 - change to defining XDG_CACHE_HOME in php, many links in docs fixed
 
 * Mon Aug 28 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-3
