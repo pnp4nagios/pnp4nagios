@@ -63,8 +63,7 @@ void process_configfile(char *config_file) {
 		while (feof(fh_config_file) == 0) {
 			line_number++;
 			temp = fgets(current_config_line, 1024, fh_config_file);
-			temp = NULL;
-			if (current_config_line == NULL) {
+			if (temp == NULL) {
 				printf("Error reading config\n");
 				exit(1);
 			}

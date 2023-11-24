@@ -193,7 +193,7 @@ files for errors, and flagging them for attention.
 %{_sysconfdir}/%{name}/cgi_config.php
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/config.php
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/*.cfg
-%{_sysconfdir}/%{name}/README_config.md
+%attr(644,root,root) %{_sysconfdir}/%{name}/README_config.md
 %{_sysconfdir}/%{name}/check_commands/*
 %dir %{_sysconfdir}/%{name}/config.d
 %attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/NagiosCfgMod.pl
