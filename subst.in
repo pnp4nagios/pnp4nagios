@@ -23,6 +23,7 @@ if($INSTALL =~ /^\.\//){
     $INSTALL =~ s/^\.\//\.\.\//;
 }
 my $INSTALL_OPTS="@INSTALL_OPTS@";
+my $layout="@layout@";
 my $DEBUG="@DEBUG@";
 my $SELINUX="@SELINUX@";
 my $PERFDATA_DIR="@PERFDATA_DIR@";
@@ -89,6 +90,7 @@ while ($f = shift @ARGV) {
 		s|\@STRIP\@|$STRIP|g;
 		s|\@INSTALL\@|$INSTALL|g;
 		s|\@INSTALL_OPTS\@|$INSTALL_OPTS|g;
+                s|\@layout\@|$layout|g;
 		s|\@DEBUG\@|$DEBUG|g;
                 s|\@SELINUX\@|$SELINUX|g;
 		s|\@PERFDATA_DIR\@|$PERFDATA_DIR|g;

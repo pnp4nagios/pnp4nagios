@@ -37,6 +37,7 @@ printf ("\n\n");
 printf ("  General Options:\n");
 printf ("  -------------------------         -------------------\n");
 printf ("  Nagios user/group:                %s %s\n","@nagios_user@","@nagios_grp@");
+printf ("  directory layout:                 %s\n","@layout@");
 printf ("  Install directory:                %s\n","@prefix@");
 printf ("  SELINUX enabled:                  %s\n","@SELINUX@");
 printf ("  Nagios cfg file:                  %s\n","@NAGIOS_CFG@");

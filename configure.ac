@@ -35,14 +35,16 @@ AC_SUBST(INSTALL)
 
 #dnl What OS are we running?
 AC_CANONICAL_HOST
+#dnl kinda doubt much cross-compiling, but just in case...
+AC_CANONICAL_TARGET
+
+AS_IF([test "q$target_cpu" = "qx86_64"],[x64="64"],[x64=""])
 
 dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PATH_PROG([STRIP],[strip],[true])
-
-
-
+AC_PROG_GREP
 AC_PATH_PROG(CP,cp)
 
 # Checks for libraries.
@@ -51,82 +53,120 @@ AC_PATH_PROG(CP,cp)
 
 AC_HEADER_DIRENT
 AC_HEADER_SYS_WAIT
-#AC_CHECK_HEADERS(netinet/in.h string.h sys/socket.h unistd.h stdio.h stdlib.h getopt.h signal.h)
 AC_CHECK_HEADERS(dirent.h stdio.h errno.h unistd.h syslog.h signal.h stdlib.h dirent.h string.h pthread.h getopt.h grp.h pwd.h sys/mman.h sys/types.h sys/wait.h sys/stat.h sys/socket.h sys/loadavg.h netinet/in.h fcntl.h limits.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_TYPE_PID_T
-#m4_warn([obsolete],
-#[your code may safely assume C89 semantics that RETSIGTYPE is void.
-#Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
-#AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
-#[AC_LANG_PROGRAM([#include <sys/types.h>
-#include <signal.h>
-#],
-#		 [return *(signal (0, 0)) (0) == 1;])],
-#		   [ac_cv_type_signal=int],
-#		   [ac_cv_type_signal=void])])
-#AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
-#		    (`int' or `void').])
-
 AC_TYPE_UID_T
-
-# Checks for structure members
-#AC_CHECK_MEMBER([struct dirent.d_type], [AC_MSG_RESULT([We successfully have a `dirent_d_type'!])],
-#		[AC_MSG_ERROR([We need `dirent.d_type'!])],
-#		[#include <dirent.h>])
-
 AC_STRUCT_DIRENT_D_TYPE
 
 # Checks for library functions.
 AC_FUNC_FORK
 AC_CHECK_FUNCS([bzero socket alarm strerror strspn getloadavg])
-
 AC_FUNC_MALLOC
 AC_FUNC_STAT
-
 AC_C_CONST
 
-default_prefix=''
+
+
+#dnl get the linux variant, to set "layout" default
+
+osrelfile="/etc/os-release"
+if test -e "/etc/os-release" 
+then
+   osrelfile="/etc/os-release"
+elif test -e "/usr/lib/os-release"
+then
+   osrelfile="usr/lib/os-release"
+else
+   osrelfile=""
+fi      
+if test "x${osrelfile}" != "x" 
+then
+    OSID=$(grep -oP '(?<=^ID=).+' $osrelfile | tr -d '"')
+    OSLIKE=$(grep -oP '(?<=^ID_LIKE=).+' $osrelfile | tr -d '"')
+    if test "${OSLIKE}" != "" ;
+    then
+        OSLIKE="${OSID} ${OSLIKE}"
+    else
+        OSLIKE=${OSID}
+    fi
+else
+    OSLIKE=linux
+    rfiles=( /etc/redhat-release \
+                 /etc/lsb-release \
+                 /etc/SuSE-release \
+                 /etc/debian_version \
+                 /etc/arch-release \
+                 /etc/gentoo-release \
+                 /etc/slackware-version \
+                 /etc/frugalware-release \
+                 /etc/altlinux-release \
+                 /etc/mandriva-release \
+                 /etc/meego-release \
+                 /etc/angstrom-version \
+           )
+    rnames=( fedora debian suse debian arch gentoo slack frugal \
+                    alt mandriva meego angstrom )
+    
+    jrel=0
+    while test "${rfiles[$jrel]}" != ""
+    do
+        if test -e "${rfiles[$jrel]}"
+        then
+            OSLIKE=${rnames[$jrel]}
+            break
+        fi
+        let jrel++  
+    done
+fi
+
+layout=default
+for dist in $OSLIKE
+do
+    case "$dist" in
+        "rhel" | "redhat" | "fedora" | "centos" )
+            layout=rhel
+            break
+            ;;
+        "debian" )
+            layout=debian
+            break
+            ;;
+    esac
+done
+
+#dnl echo " decided on: layout=$layout"
 
 dnl Layout Methods
 
-layout="default"
-AC_ARG_WITH(layout,[  --with-layout=\[default,debian\] sets directory layout],layout=$withval)
-
-case $layout in
-	default-0.4)
-		default_prefix="/usr/local/nagios"
-	;;
-esac
-
-if test -e /sys/kernel/address_bits ; then cpusize=`cat /sys/kernel/address_bits` ; fi
-
-AC_ARG_WITH(cpusize,[ --with-cpusize=\[32,64\] sets cpu size for library name either /usr/lib or /usr/lib64], cpusize=$withval)
-
-x64=""
-if test "${cpusize}" = "64" ; then x64="64" ; fi
-
-
-if test "${prefix}" = "NONE" ; then prefix="$default_prefix" ; fi
-exec_prefix=$prefix
-bindir="$prefix/usr/bin"
-sbindir="$prefix/usr/sbin"
-datadir="$prefix/usr/share"
-libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+AC_ARG_WITH(layout,[  --with-layout=\[default,rhel,debian,old\] sets directory layout],layout=$withval)
 
 case $layout in
 	debian)
-		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+                prefix="/usr/local"
+                exec_prefix=$prefix
+                bindir="$prefix/bin"
+                sbindir="$prefix/sbin"
+                datadir="$prefix/usr/share"
+                libdir="${prefix}/lib${x64}/${PACKAGE_NAME}"
+		sysconfdir="${prefix}/${PACKAGE_NAME}/etc"
 		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
 		libexecdir="${prefix}/usr/lib/${PACKAGE_NAME}/libexec"
 		libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
-		datarootdir="${prefix}/usr/share/nagios/html/${PACKAGE_NAME}"
-		PERFDATA_LOG="${prefix}/var/log/${PACKAGE_NAME}/perfdata.log"
-		PERFDATA_DIR="${prefix}/var/lib/${PACKAGE_NAME}/perfdata"
-		PERFDATA_SPOOL_DIR="${prefix}/var/spool/${PACKAGE_NAME}"
+		datarootdir="${prefix}/${PACKAGE_NAME}/share"
+		PERFDATA_LOG="${prefix}/${PACKAGE_NAME}/var/perfdata.log"
+		PERFDATA_DIR="${prefix}/${PACKAGE_NAME}/var/perfdata"
+		PERFDATA_SPOOL_DIR="${prefix}/${PACKAGE_NAME}/var/spool"
+                mandir="${prefix}/man"
 	;;
-	default-0.4)
+	old)
+		prefix="/usr/local/nagios"
+                exec_prefix=$prefix
+                bindir="$prefix/bin"
+                sbindir="$prefix/sbin"
+                datadir="$prefix/share"
+                libdir="${prefix}/lib${x64}/${PACKAGE_NAME}"
 		sysconfdir="${prefix}/etc/pnp"
 		localstatedir="${prefix}/var"
 		libexecdir="${prefix}/libexec"
@@ -136,18 +176,28 @@ case $layout in
 		PERFDATA_DIR="${prefix}/share/perfdata"
 		PERFDATA_SPOOL_DIR="${prefix}/var/spool/perfdata"
 	;;
-	default)
-		sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
-		localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
-		libexecdir="${prefix}/usr/libexec/${PACKAGE_NAME}"
-		libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
-		datarootdir="${prefix}/usr/share/nagios/html/${PACKAGE_NAME}"
-		PERFDATA_LOG="${localstatedir}/perfdata.log"
-		PERFDATA_DIR="${localstatedir}/perfdata"
-		PERFDATA_SPOOL_DIR="${localstatedir}/spool"
-		mandir="${prefix}/man"
+	"rhel" | "default" )
+               prefix=""
+               exec_prefix=$prefix
+               bindir="$prefix/usr/bin"
+               sbindir="$prefix/usr/sbin"
+               datadir="$prefix/usr/share"
+               libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+               sysconfdir="${prefix}/etc/${PACKAGE_NAME}"
+	       localstatedir="${prefix}/var/log/${PACKAGE_NAME}"
+               libexecdir="${prefix}/usr/libexec/${PACKAGE_NAME}"
+               libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+	       datarootdir="${prefix}/usr/share/nagios/html/${PACKAGE_NAME}"
+	       PERFDATA_LOG="${localstatedir}/perfdata.log"
+	       PERFDATA_DIR="${localstatedir}/perfdata"
+	       PERFDATA_SPOOL_DIR="${localstatedir}/spool"
+	       mandir="${prefix}/man"
 	;;
+
+#dnl other layouts? netbsd? suse? 
 esac
+AC_SUBST(layout)
+
 
 AC_ARG_WITH(sysconfdir,[  --with-sysconfdir=<$sysconfdir> Tell me where I should keep the 'pnp4nagios.cfg' config file],
         sysconfdir=$withval
@@ -190,10 +240,6 @@ AS_IF([test "x$enable_selinux" != "xno"], [
   SELINUX=$CAN_SELINUX
 ])
 
-
-
-
-dnl AC_ARG_WITH(selinux, [ --without-selinux does not install the selinux info], SELINUX=$SELINUX, SELINUX=no)
 
 AC_ARG_WITH(selinux_policy, [ --with-selinux_policy=<selinux policy> selinux policy], SELINUX_POLICY=$withval,SELINUX_POLICY=$SELINUX_POLICY)
 

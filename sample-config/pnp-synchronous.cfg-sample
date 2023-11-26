@@ -21,11 +21,11 @@
 
 define command {
        command_name    process-service-perfdata-pnp
-       command_line    /usr/bin/perl /usr/libexec/pnp4nagios/process_perfdata.pl
+       command_line    /usr/bin/perl /usr/local/usr/lib/pnp4nagios/libexec/process_perfdata.pl
 }
 
 define command {
        command_name    process-host-perfdata-pnp
-       command_line    /usr/bin/perl /usr/libexec/pnp4nagios/process_perfdata.pl -d HOSTPERFDATA
+       command_line    /usr/bin/perl /usr/local/usr/lib/pnp4nagios/libexec/process_perfdata.pl -d HOSTPERFDATA
 }
 
