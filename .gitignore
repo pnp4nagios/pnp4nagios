@@ -1,5 +1,6 @@
 work
 *~
+#*
 
 autom4te.cache
 subst
@@ -26,18 +27,21 @@ include/config.h
 include/stamp-h
 
 sample-config/pnp/config.php
-sample-config/pnp/pnp4nagios_release
-sample-config/pnp/process_perfdata.cfg-sample
-sample-config/pnp/npcd.cfg-sample
-sample-config/misccommands.cfg-sample
-sample-config/nagios.cfg-sample
-sample-config/httpd.conf
-sample-config/lighttpd.pnp4nagios.conf
-sample-config/nginx.pnp4nagios.conf
-sample-config/NagiosCfgMod.pl
 sample-config/README_config.md
-sample-config/SuggestInstall
-
+sample-config/SetLogLevels
+sample-config/pnp4nagios_release
+sample-config/config_tools/NagiosCfgMod.pl
+sample-config/config_tools/verify_pnp_config
+sample-config/config_samples/nagios.cfg
+sample-config/config_samples/npcd.cfg
+sample-config/config_samples/pnp-bulk.cfg
+sample-config/config_samples/pnp-npcd.cfg
+sample-config/config_samples/pnp-sync.cfg
+sample-config/config_samples/process_perfdata.cfg
+sample-config/config_samples/lighttpd.pnp4nagios.conf
+sample-config/config_samples/nginx.pnp4nagios.conf
+sample-config/config_samples/apache.pnp4nagios.conf
+sample-config/config_samples/config.php
 
 share/pnp/application/config/config.php
 share/pnp/index.php
@@ -57,3 +61,4 @@ pnp4nagios*.rpm
 pnp4nagios*.tgz
 pnp4nagios*.tar.gz
 pnp4nagios*.zip
+pnp4nagios.fc

@@ -27,9 +27,10 @@ pnp4nagios, and you need to choose one:
     a regular schedule and deals with them; best for a 
     "high activity" Nagios.
 
-Choose one of these options **MODE**=(sync, bulk, or npcd), then
-change directory to @SYSCONFDIR@/config_suggestions/**MODE**
-and do ./SuggestInstall 
+When building from source *make do_npcd* will install the 
+appropriate npcd config files (similar for *make do_sync*, etc)
+
+
 
 This will install a modified @NAGIOS_CFG@, 
 a modified @NAGIOS_OBJ@/objects/templates.cfg, 
@@ -72,16 +73,16 @@ etc) the general rule is "copy what you use for Nagios".
 
 Where to find config info: 
 
-    @SYSCONFDIR@
+    @sysconfdir@
         config.php
         config_local.php (not present by default)
         config.d/*.php   (not present by default)
         npcd.cfg
         process_perfdata.cfg
-        rra.cfg (not present by default, check in @SYSCONFDIR@/samples)
+        rra.cfg (not present by default, check in @sysconfdir@/samples)
         
     @datarootdir@/application/config/config.php
-    (linked to @SYSCONFDIR@/cgi_config.php    
+    (linked to @sysconfdir@/cgi_config.php    
     
 When things go wrong, it's useful to increase the logging level
 and see more.  Logging of the Nagios to RRD steps can be

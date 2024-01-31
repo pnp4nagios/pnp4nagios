@@ -6,7 +6,7 @@ defined('SYSPATH') or die('No direct access allowed.');
  * then a full URL will be used, eg: http://localhost/kohana/. If it only includes
  * the path, and a site_protocol is specified, the domain will be auto-detected.
  */
-$config['site_domain'] = BASE_URL;
+$config['site_domain'] = PNP_URL;
 
 /*
  * Force a default protocol to be used by the site. If no site_protocol is

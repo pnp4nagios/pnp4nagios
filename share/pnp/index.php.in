@@ -14,7 +14,7 @@ define('PNP_NAME', '@PACKAGE_NAME@');
 define('PNP_VERSION', '@PACKAGE_VERSION@');
 define('PNP_REL_DATE', '@PKG_REL_DATE@');
 define('PNP_ETC_PATH', '@sysconfdir@');
-define('PNP_LOG_PATH', '@localstatedir@');
+define('PNP_LOG_PATH', '@logdir@');
 
 /**
  * Define the website environment status. When this flag is set to TRUE, some
@@ -47,7 +47,7 @@ if (substr($_SERVER["SCRIPT_FILENAME"], 0, 4) == '/omd') {
  * Autodetect base URL
  *
  */
-define('BASE_URL', dirname($_SERVER["SCRIPT_NAME"]));
+define('PNP_URL', dirname($_SERVER["SCRIPT_NAME"]));
 
 /**
 * The current XML Structure Tag for this PNP Version

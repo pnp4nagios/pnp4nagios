@@ -230,11 +230,11 @@ class Rrdtool_Model extends System_Model
                 $width = max($width, strlen($string));
             }
 
-            $width = (imagefontwidth($font_size) * $width);
+            $width = intval(imagefontwidth($font_size) * $width);
             if ($width <= ($this->config->conf['graph_width'] + 100)) {
                 $width = ($this->config->conf['graph_width'] + 100);
             }
-            $height = (imagefontheight($font_size) * count($ts));
+            $height = intval(imagefontheight($font_size) * count($ts));
             if ($height <= ($this->config->conf['graph_height'] + 60)) {
                 $height = ($this->config->conf['graph_height'] + 60);
             }

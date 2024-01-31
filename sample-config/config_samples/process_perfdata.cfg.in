@@ -62,7 +62,7 @@ LOG_FILE = @PERFDATA_LOG@
 #
 # Loglevel 0=silent 1=normal 2=debug
 #
-LOG_LEVEL = @DEBUG@
+LOG_LEVEL = @DEBUG_LEVEL@
 
 #
 # XML encoding
@@ -88,7 +88,7 @@ RRD_DAEMON_OPTS =
 #
 # Spool directory used for internal statistics
 #
-STATS_DIR = @localstatedir@/stats
+STATS_DIR = @logdir@/stats
 
 #
 # Ignore certain performance data based on host name

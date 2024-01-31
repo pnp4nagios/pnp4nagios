@@ -62,14 +62,13 @@ for (my $j = 0; $j <= $#cfg; $j++) {
     if ($line =~ /^cfg_file=(\S+)/) {
         my $sel = $1;
         $lastcfgfile = $j;
-        if ($sel =~ /templates\.cfg$/) {
+        if ($sel =~ /pnp\.cfg$/) {
             $got = 1;
-            splice(@cfg,$j+1,0,"cfg_file=@NAGIOS_OBJ@/pnp.cfg\n");
         }
         last;
     }
 }
-splice(@cfg,$lastcfgfile+1,0,"cfg_file=@NAGIOS_OBJ@/pnp.cfg\n")
+splice(@cfg,$lastcfgfile+1,0,"cfg_file=/etc/nagios/objects/pnp.cfg\n")
     unless $got;
 
 
@@ -153,14 +152,14 @@ if ($mode eq 'sync') {
     push(@cfg,
          '# *** the template definition differs from the one in the original nagios.cfg'."\n",
          '#'."\n",
-         'service_perfdata_file=@localstatedir@/service-perfdata'."\n",
+         'service_perfdata_file=/usr/local/pnp4nagios/var/spool/service-perfdata'."\n",
          'service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$'."\n",
          'service_perfdata_file_mode=a'."\n",
          'service_perfdata_file_processing_interval=15'."\n",
          'service_perfdata_file_processing_command=process-service-perfdata-file'."\n",
          '# *** the template definition differs from the one in the original nagios.cfg'."\n",
          '#'."\n",
-         'host_perfdata_file=@localstatedir@/host-perfdata'."\n",
+         'host_perfdata_file=/usr/local/pnp4nagios/var/spool/host-perfdata'."\n",
          'host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$'."\n",
          'host_perfdata_file_mode=a'."\n",
          'host_perfdata_file_processing_interval=15'."\n",

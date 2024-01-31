@@ -55,7 +55,8 @@ pushd pnp4nagios-${VERSION} >/dev/null
 #echo "in tar base dir " `pwd`
 
 for f in AUTHORS ChangeLog ci config.guess config.sub contrib \
-                 configure aclocal.m4 pnp4nagios.te \
+                 configure aclocal.m4 autoconf-macros \
+                 pnp4nagios.te pnp4nagios.fc.in \
                  COPYING helpers include INSTALL install-sh lib \
                  Makefile.in man README.md sample-config scripts \
                  share src subst.in summary.in THANKS ; 

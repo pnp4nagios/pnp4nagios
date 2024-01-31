@@ -27,7 +27,6 @@ LOGDIR=@localstatedir@
 CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
-LIBDIR=@libdir@
 KOHANA=@KOHANA@
 CGIDIR=@sbindir@
 INSTALL=@INSTALL@
@@ -35,8 +34,7 @@ INSTALL_OPTS=@INSTALL_OPTS@
 DATAROOTDIR=@datarootdir@
 
 SELINUX=@SELINUX@
-SELINUX_POLICY=@SELINUX_POLICY@
-DATADIR=@datadir@
+SELINUX_DEVELDIR=@SELINUX_DEVELDIR@
 
 CP=@CP@
 PERL=@PERL@
@@ -53,20 +51,38 @@ all:
 	cd $(SRC_BASE) && $(MAKE)
 	cd $(SRC_SHARE) && $(MAKE)
 	cd $(SRC_SCRIPTS) && $(MAKE)
+	cd $(SRC_CONFIG) && $(MAKE)
 	chmod a+r $(SRC_CONTRIB)/ssi/status-header.ssi
-        ifeq ($(SELINUX),yes)
-	$(MAKE) -f $(DATADIR)/selinux/devel/Makefile pnp4nagios.pp
-	bzip2 -9 pnp4nagios.pp
-        endif
 
 	@echo ""
 	@echo "*** Compile finished ***"
 	@echo ""
 	@echo "  make install"
-	@echo "     - This installs the main program and HTML files"
+	@echo "     - This installs directories, binaries and php files"
+	@echo ""
+	@echo "  make install_selinux"
+	@echo "     - This installs the selinux setup (if you are using selinux)"
+	@echo ""
+	@echo "  make install_html"
+	@echo "     - This installs the config for your http server"
+	@echo ""
+	@echo "  make use_sync"
+	@echo "     - This installs the nagios config files for syncronous RRD processing"
+	@echo ""
+	@echo "  make use_bulk"
+	@echo "     - This installs the nagios config files for bulk RRD processing"
+	@echo ""
+	@echo "  make use_npcd"
+	@echo "     - This installs the nagios config and init scripts for npcd RRD processing"
+	@echo ""
+	@echo "  PLEASE NOTE: you should make only ONE of use_sync, use_bulk, or use_npcd"
+	@echo ""
+	@echo "  make restart_servers"
+	@echo "     - This restarts servers: http, nagios, and maybe npcd"
 	@echo ""
 	@echo "  make fullinstall"
-	@echo "     - This installs the main program, init scripts, config and HTML files"
+	@echo "     - This does install, install_selinux, install_http, use_X, restart_servers"
+	@echo "     - where X=(whatever 'make use_X' was last executed) or X=sync otherwise" 
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -133,53 +149,19 @@ distclean:
 
 devclean: distclean
 
-install-html:
-	cd $(SRC_SHARE) && $(MAKE) install
-
-install-base:
-	cd $(SRC_BASE) && $(MAKE) install
-
-install-man:
-	cd $(SRC_MAN) && $(MAKE) install
-
-install-processperfdata:
-	cd $(SRC_SCRIPTS) && $(MAKE) install
 
 install-init:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
-install-config:
+
+install-http:
 	cd $(SRC_CONFIG) && $(MAKE) $@
 
-	@echo ""
-	@echo "*** PNP4Nagios sample config files installed ***"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD or Gearman mode"
+	@echo " http server config file installed"
+	@echo "Restart your webserver to activete your changes."
 	@echo ""
 	@echo ""
 	@echo ""
-
-install-webconf:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-
-	@echo ""
-	@echo "*** Apache config file installed ***"
-	@echo ""
-	@echo "Restart your apache webserver to activete your changes."
-	@echo ""
-	@echo "Please run 'make install-config' to install sample"
-	@echo "configuration files"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
-	@echo ""
-	@echo ""
-	@echo ""
-
-install-plugins:
-	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 install:
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -195,25 +177,24 @@ install:
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
 	@echo ""
-	@echo "Please run 'make install-webconf' to install the"
+	@echo "Please run one of 'make use_sync',"
+	@echo "                  'make use_bulk', or"
+	@echo "                  'make use_npcd'"
+	@echo "to install config files for one of the methods"
+	@echo "(sync, bulk, or npcd) of getting Nagios data to"
+	@echo "the pnp4nagios rrd data collection."
+	@echo ""
+	@echo "Then please run 'make install-http' to install the"
 	@echo "web configuration file"
-	@echo ""
-	@echo "Please run 'make install-config' to install sample"
-	@echo "configuration files"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
-	@echo ""
 	@echo ""
 	@echo ""
 
 install-selinux:
-	# to update previous selinux policy, how???
         ifeq ($(SELINUX),yes)
-	$(INSTALL) -D -m 0644 pnp4nagios.pp.bz2 $(prefix)$(DESTDIR)$(DATADIR)/selinux/packages/$(SELINUX_POLICY)/pnp4nagios.pp.bz2
-	$(exec_prefix)/sbin/semodule -n -s $(SELINUX_POLICY) -i $(prefix)$(DATADIR)/selinux/packages/$(SELINUX_POLICY)/pnp4nagios.pp.bz2 
-	$(exec_prefix)/sbin/selinuxenabled && $(exec_prefix)/sbin/load_policy
-	# $(exec_prefix)/sbin/semodule --refresh 
+	$(MAKE) -f $(SELINUX_DEVELDIR)/Makefile load
+	fixfiles restore @datadir@ @pkgsysconfdir@ 
+	fixfiles restore @PERFDATA_DIR@ @logdir@
+	fixfiles restore @PERFDATA_SPOOL_DIR@ @piddir@
         endif
 
 
@@ -223,15 +204,33 @@ install-unstripped:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	$(MAKE) install-basic
 
-install-post:
+use_sync:
 	cd $(SRC_CONFIG) && $(MAKE) $@
 
+use_bulk:
+	cd $(SRC_CONFIG) && $(MAKE) $@
 
-fullinstall: install install-webconf install-config install-init install-post install-selinux
+use_npcd:
+	cd $(SRC_CONFIG) && $(MAKE) $@
+	cd $(SRC_SCRIPTS) && $(MAKE) install-daemoninit
 
+use_X:
+	cd $(SRC_CONFIG) && $(MAKE) $@
+
+fullinstall:
+	$(MAKE) install
+	$(MAKE) install-selinux
+	$(MAKE) install-http
+	$(MAKE) use_X
+	$(MAKE) restart_servers
 	$(PERL) summary fullinstall
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
+	@echo "Config files in: @sysconfdir@ might need updating."
+	@echo ""
+	@echo "Right now, pnp4nagios will show a config page. To"
+	@echo "show graphs, do:"
+	@echo "  touch @datarootdir@/install.ignore"
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -240,6 +239,10 @@ dist:
 	ci/maketar.sh $(VERSION)
 	mv ci/pnp4nagios*.tgz .
 	mv ci/pnp4nagios*.zip .
+
+restart_servers:
+	service nagios restart
+	service httpd  restart
 
 
 

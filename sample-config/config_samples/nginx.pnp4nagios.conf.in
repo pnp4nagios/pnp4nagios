@@ -1,7 +1,7 @@
 # SAMPLE CONFIG SNIPPETS FOR NGINX WEB SERVER
 # Contributed by Thomas Charbonnel <thomas@evax.fr>
 #
-location @BASE_URL@ {
+location @PNP_URL@ {
     # e.g. /usr/local/pnp4nagios/share;
     alias @datarootdir@;
     auth_basic "Nagios Access";

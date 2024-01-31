@@ -1,18 +1,36 @@
 #!/usr/bin/perl
 use strict;
+use Getopt::Long;
 
-my $tfile = shift;
-die "usage: $0 <templatefile>" unless defined $tfile;
+my ($infile, $outfile, $help);
 
-if (system("grep -q '_url  */pnp4nagios/index' $tfile") == 0) {
-    print "$tfile already has pnp4nagios template info\n";
+GetOptions("input|i=s" => \$infile,
+           "output|o=s" => \$outfile,
+           "help|h" => \$help,
+    );
+if (defined($help)) {
+    help();
+    exit 0;
+}
+die "input file missing" unless defined $infile && -e $infile;
+die "output file missing" unless defined $outfile;
+
+    
+
+
+
+
+if (system("grep -q '_url  */pnp4nagios/index' $infile") == 0) {
+    print "$infile already has pnp4nagios template info\n";
     exit 0;
 }
 
 
-open(T,"<$tfile") || die "unable to open $tfile";
+open(T,"<$infile") || die "unable to open $infile";
 my (@templ) = (<T>);
 close(T);
+open(OUT, ">$outfile") || die "unable to open $outfile";
+
 
 
 my ($genhost0,$genhost1);
@@ -68,7 +86,7 @@ for ($j = $genhost0; $j <= $genhost1; $j++) {
 }
 splice(@templ,$genhost0+1,0,"    use\t\t\t\t    host-pnp                ; graphing\n") unless $diduse;
 
-my $j = -1;
+$j = -1;
 foreach my $line (@templ) {
     $j++;
 
@@ -100,21 +118,23 @@ splice(@templ,$gensvc0+1,0,"    use\t\t\t\t    service-pnp                ; grap
 
 
 foreach my $line (@templ) {
-    print $line;
+    print OUT $line;
 }
 
-print "######################################################\n";
-print "#\n";
-print "# pnp4nagios\n";
-print "#\n";
-print "define host {\n";
-print "       name host-pnp\n";
-print "       action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=_HOST_\n";
-print "       register 0\n";
-print "}\n";
-print "\n";
-print "define service {\n";
-print "       name service-pnp\n";
-print "       action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=\$SERVICEDESC\$\n";
-print "       register 0\n";
-print "}\n";
+print OUT "######################################################\n";
+print OUT "#\n";
+print OUT "# pnp4nagios\n";
+print OUT "#\n";
+print OUT "define host {\n";
+print OUT "       name host-pnp\n";
+print OUT "       action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=_HOST_\n";
+print OUT "       register 0\n";
+print OUT "}\n";
+print OUT "\n";
+print OUT "define service {\n";
+print OUT "       name service-pnp\n";
+print OUT "       action_url /pnp4nagios/index.php/graph?host=\$HOSTNAME\$&srv=\$SERVICEDESC\$\n";
+print OUT "       register 0\n";
+print OUT "}\n";
+close(OUT);
+exit 0;

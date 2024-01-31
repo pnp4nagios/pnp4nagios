@@ -14,17 +14,15 @@
 # where all of the config files are loaded.
 #
 
-
 #
-# Bulk mode
+# Bulk with NPCD mode
 #
 define command {
        command_name    process-service-perfdata-file
-       command_line    @libexecdir@/process_perfdata.pl --bulk @localstatedir@/service-perfdata
+       command_line    /bin/mv @PERFDATA_SPOOL_DIR@/service-perfdata @PERFDATA_SPOOL_DIR@/service-perfdata.$TIMET$
 }
 
 define command {
        command_name    process-host-perfdata-file
-       command_line    @libexecdir@/process_perfdata.pl --bulk @localstatedir@/host-perfdata
+       command_line    /bin/mv @PERFDATA_SPOOL_DIR@/host-perfdata @PERFDATA_SPOOL_DIR@/host-perfdata.$TIMET$
 }
-

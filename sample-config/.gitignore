@@ -1,0 +1,5 @@
+# created from .in files
+nagios.cfg-sample
+pnp-bulk.cfg-sample
+pnp-npcd.cfg-sample
+pnp-synchronous.cfg-sample

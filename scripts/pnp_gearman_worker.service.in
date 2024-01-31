@@ -7,9 +7,9 @@ After=network.target local-fs.target
 Type=exec
 User=@nagios_user@
 Group=@nagios_grp@
-PIDFile=@PIDDIR@/gearman_worker.pid
-Environment="CONFIG_FILE=@SYSCONFDIR@/process_perfdata.cfg"
-ExecStart="@libexecdir@/process_perfdata.pl  --config=${CONFIG_FILE} --gearman --pidfile=@PIDDIR@/gearman_worker.pid"
+PIDFile=@piddir@/gearman_worker.pid
+Environment="CONFIG_FILE=@sysconfdir@/process_perfdata.cfg"
+ExecStart="@libexecdir@/process_perfdata.pl  --config=${CONFIG_FILE} --gearman --pidfile=@piddir@/gearman_worker.pid"
 ExecStop=/bin/kill -s QUIT "$MAINPID"
 
 [Install]

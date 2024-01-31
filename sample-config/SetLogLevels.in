@@ -1,0 +1,59 @@
+#!/bin/bash
+# set pnp4nagios log levels for several components,
+# all at one time.
+npcdcfg=@sysconfdir@/npcd.cfg
+ppcfg=@sysconfdir@/process_perfdata.cfg
+kohcfg=@datarootdir@/application/config/config.php
+
+# setloglev  (npcd_level) (process_perfdata_level) (php level)
+setloglev () {
+    sed -i "/^ *log_level *=/s/= *-*[0-9]/= $1/" $npcdcfg
+    sed -i "/^ *LOG_LEVEL *=/s/= *[0-9]/= $2/" $ppcfg
+    sed -i "/^ *\$config\['log_threshold'\]/s/= *[0-9]/= $3/" $kohcfg
+}    
+
+case "$1" in
+    "" )
+        echo -n "npcd.cfg:                            "
+        grep '^ *log_level *=' $npcdcfg
+        echo -n "process_perfdata.cfg:                "
+        grep '^ *LOG_LEVEL' $ppcfg
+        echo -n "share/application/config/config.php: "
+        grep log_threshold $kohcfg
+        ;;
+    -* )
+        echo "$0: usage"
+        echo "$0 with no parameters: show current levels"
+        echo "$0 0|off    turn off logging"
+        echo "$0 1|err  errors only"
+        echo "$0 2|warn   warnings and errors"
+        echo "$0 3|debug  debugging"
+        echo "not all components have the same levels,"
+        echo "but 'off' and 'debug' are well matched"
+        echo ""
+        echo "the three files affected are: "
+        echo "$npcdcfg"
+        echo "$ppcfg"
+        echo "$kohcfg"
+        ;;
+    0 | off | OFF )
+        setloglev 0 0 0 
+        ;;
+    1 | err* )
+        setloglev 1 1 1
+        ;;
+    2 | warn* )
+        setloglev 2 1 2
+        ;;
+    3 | deb* )
+        setloglev -1 2 4
+        ;;
+    * )
+        echo "unknown argument, try $0 --help"
+        ;;
+esac
+exit 0
+    
+
+
+    

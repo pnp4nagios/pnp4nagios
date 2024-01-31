@@ -556,7 +556,7 @@ int prepare_vars() {
 	if (macro_x[CONFIG_OPT_SCANDIR] != NULL) {
 		directory = macro_x[CONFIG_OPT_SCANDIR];
 	} else {
-		directory = "/usr/local/pnp4nagios/var/spool/";
+		directory = "@PERFDATA_SPOOL_DIR@/";
 		printf(
 				"WARNING - Adapting a hardcoded default perfdata spooldir - '%s'\n",
 				directory);
@@ -565,7 +565,7 @@ int prepare_vars() {
 	if (macro_x[CONFIG_OPT_PIDFILE] != NULL) {
 		pidfile = macro_x[CONFIG_OPT_PIDFILE];
 	} else
-		pidfile = "/usr/local/pnp4nagios/var/npcd.pid";
+		pidfile = "@piddir@/npcd.pid";
 
 	if (macro_x[CONFIG_OPT_LOGLEVEL] != NULL) {
 		loglevel = atoi(macro_x[CONFIG_OPT_LOGLEVEL]);

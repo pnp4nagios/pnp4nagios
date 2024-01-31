@@ -20,11 +20,11 @@
 #
 define command {
        command_name    process-service-perfdata-file
-       command_line    /usr/local/usr/lib/pnp4nagios/libexec/process_perfdata.pl --bulk /usr/local/var/log/pnp4nagios/service-perfdata
+       command_line    @libexecdir@/process_perfdata.pl --bulk @PERFDATA_SPOOL_DIR@/service-perfdata
 }
 
 define command {
        command_name    process-host-perfdata-file
-       command_line    /usr/local/usr/lib/pnp4nagios/libexec/process_perfdata.pl --bulk /usr/local/var/log/pnp4nagios/host-perfdata
+       command_line    @libexecdir@/process_perfdata.pl --bulk @PERFDATA_SPOOL_DIR@/host-perfdata
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 ##
-## Program: @PACKAGE_NAME@-@PACKAGE_VERSION@ , Performance Data Addon for Nagios(r)
+## Program: pnp4nagios-0.6.27 , Performance Data Addon for Nagios(r)
 ## License: GPL
 ## Copyright (c) 2005-2010 Joerg Linge (http://www.pnp4nagios.org)
 ##
@@ -29,7 +29,7 @@ $conf['use_url_rewriting'] = 1;
 #
 # Location of rrdtool binary
 #
-$conf['rrdtool'] = "@RRDTOOL@";
+$conf['rrdtool'] = "/usr/bin/rrdtool";
 #
 # RRDTool image size of graphs
 #
@@ -49,13 +49,22 @@ $conf['right_zoom_offset'] = 30;
 
 #
 # RRDTool image size of PDFs
-#
-$conf['pdf_width']        = "675";
-$conf['pdf_height']       = "100";
-$conf['pdf_page_size']    = "A4";   # A4 or Letter
-$conf['pdf_margin_top']   = "30";
-$conf['pdf_margin_left']  = "17.5";
-$conf['pdf_margin_right'] = "10";
+#  dimensions in pt?
+if ('letter' == 'A4') {
+    $conf['pdf_width']        = "675";
+    $conf['pdf_height']       = "100";
+    $conf['pdf_page_size']    = "A4";   # A4 or Letter
+    $conf['pdf_margin_top']   = "30";
+    $conf['pdf_margin_left']  = "17.5";
+    $conf['pdf_margin_right'] = "10";
+} else {
+    $conf['pdf_width']        = "654";
+    $conf['pdf_height']       = "140";
+    $conf['pdf_page_size']    = "letter";   # A4 or Letter
+    $conf['pdf_margin_top']   = "30";
+    $conf['pdf_margin_left']  = "20";
+    $conf['pdf_margin_right'] = "0";
+}
 #
 # Additional options for RRDTool
 #
@@ -70,11 +79,11 @@ $conf['pdf_graph_opt'] = "";
 #
 # Directory where the RRD Files will be stored
 #
-$conf['rrdbase'] = "@PERFDATA_DIR@/";
+$conf['rrdbase'] = "/usr/local/pnp4nagios/var/rrd/";
 #
 # Location of "page" configs
 #
-$conf['page_dir'] = "@sysconfdir@/pages/";
+$conf['page_dir'] = "/usr/local/pnp4nagios/etc/pages/";
 #
 # Site refresh time in seconds
 #
@@ -200,8 +209,8 @@ $conf['use_fpdf'] = 1;
 #
 # Use this file as PDF background.
 #
-$conf['background_pdf'] = '@sysconfdir@/background-A4.pdf' ;
-#$conf['background_pdf'] = '@sysconfdir@/background-letter.pdf' ;
+$conf['background_pdf'] = '/usr/local/pnp4nagios/etc/background-A4.pdf' ;
+#$conf['background_pdf'] = '/usr/local/pnp4nagios/etc/background-letter.pdf' ;
 
 #
 # Enable Calendar
@@ -235,18 +244,18 @@ $views[] = array('title' => 'One Year',  'start' => (60 * 60 * 24 * 380) );
 $conf['RRD_DAEMON_OPTS'] = '';
 
 # A list of directories to search for templates
-# @datarootdir@/templates.dist is always the last directory to be searched for templates
+# /usr/local/pnp4nagios/share/templates.dist is always the last directory to be searched for templates
 #
 # Add your own template directories here
 # First match wins!
 #$conf['template_dirs'][] = '/usr/local/check_mk/pnp-templates';
-$conf['template_dirs'][] = '@datarootdir@/templates';
-$conf['template_dirs'][] = '@datarootdir@/templates.dist';
+$conf['template_dirs'][] = '/usr/local/pnp4nagios/share/templates';
+$conf['template_dirs'][] = '/usr/local/pnp4nagios/share/templates.dist';
 
 #
 # Directory to search for special templates
 #
-$conf['special_template_dir'] = '@datarootdir@/templates.special';
+$conf['special_template_dir'] = '/usr/local/pnp4nagios/share/templates.special';
 
 #
 # Regex to detect mobile devices
