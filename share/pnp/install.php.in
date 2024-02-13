@@ -69,6 +69,15 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <?php endif ?>
 </tr>
 <tr>
+<th>PHP mbstring extension</th>
+<?php if (function_exists('mb_convert_encoding')) : ?>
+<td class="pass">Pass</td>
+<?php else :
+    $failed++ ?>
+<td class="fail">PHP mbstring extension not available/enabled</td>
+<?php endif ?>
+</tr>
+<tr>
 <th>PHP GD extension</th>
 <?php if (function_exists('imagecreatefrompng')) : ?>
 <td class="pass">Pass</td>

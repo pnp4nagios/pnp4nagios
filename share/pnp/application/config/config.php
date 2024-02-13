@@ -45,7 +45,7 @@ $config['internal_cache'] = false;
  * environment variable is set for rrdtool to use.
  */
 
-$config['fontconfig_cache'] = '/var/cache/httpd';
+$config['fontconfig_cache'] = CACHE_DIR;
 
 
 /*

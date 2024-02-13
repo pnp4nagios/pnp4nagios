@@ -84,10 +84,16 @@ autoconf
            --datarootdir=%{_datadir}/nagios/html/%{name} \
            %if 0%{with_selinux} 
            --enable-selinux=yes \
-           --with-selinux_policy=%{selinuxtype} \
            %else
            --with-selinux=no \
            %endif
+           --with-dist-type=rh \
+           --with-init-type=systemd \
+           --with-http_user=apache \
+           --with-http_group=apache \
+           --with-nagios_user=nagios \
+           --with-nagios_group=nagios \
+           --with-cache_dir=/var/cache/pnp4nagios \
            --with-perfdata-dir=%{_localstatedir}/lib/%{name} \
            --with-perfdata-spool-dir=%{_localstatedir}/spool/%{name} 
 

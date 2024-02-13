@@ -37,7 +37,7 @@ my $PACKAGE_NAME="@PACKAGE_NAME@";
 my $PNP_URL="@PNP_URL@";
 my $NAGIOS_CFG="@NAGIOS_CFG@";
 my $NAGIOS_VER="@NAGIOS_VER@";
-#my $HTTP_CONF="@HTTP_CONF@";
+my $HTTP_CONFDIR="@HTTP_CONFDIR@";
 my $initdir="@initdir@";
 my $npcd_name="@npcd_name@";
 my $pp_pl_name="@pp_pl_name@";
@@ -103,6 +103,7 @@ while ($f = shift @ARGV) {
 		s|\@PNP_URL\@|$PNP_URL|g;
                 s|\@NAGIOS_CFG\@|$NAGIOS_CFG|g;
                 s|\@NAGIOS_VER\@|$NAGIOS_VER|g;
+                s|\@HTTP_CONFDIR\@|$HTTP_CONFDIR|g;
 		s|\@npcd_name\@|$npcd_name|g;
 		s|\@pp_pl_name\@|$pp_pl_name|g;
 		s|\@nagios_user\@|$nagios_user|g;

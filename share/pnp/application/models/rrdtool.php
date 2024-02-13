@@ -222,7 +222,7 @@ class Rrdtool_Model extends System_Model
             } else {
                 $data .= $this->format_rrd_debug($this->config->conf['rrdtool'] . $this->RRD_CMD);
                 // Set font size
-                $font_size = 1.5;
+                $font_size = 2;
             }
             $ts    = explode("\n", $data);
             $width = 0;
@@ -230,11 +230,11 @@ class Rrdtool_Model extends System_Model
                 $width = max($width, strlen($string));
             }
 
-            $width = intval(imagefontwidth($font_size) * $width);
+            $width = imagefontwidth($font_size) * $width;
             if ($width <= ($this->config->conf['graph_width'] + 100)) {
                 $width = ($this->config->conf['graph_width'] + 100);
             }
-            $height = intval(imagefontheight($font_size) * count($ts));
+            $height = imagefontheight($font_size) * count($ts);
             if ($height <= ($this->config->conf['graph_height'] + 60)) {
                 $height = ($this->config->conf['graph_height'] + 60);
             }

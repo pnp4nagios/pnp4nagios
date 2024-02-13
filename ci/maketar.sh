@@ -84,6 +84,12 @@ popd >/dev/null
 # resulting 'FILE' is not. 
 find -L pnp4nagios-${VERSION} -name '*.in' >dist.exclude
 sed -i 's/.in$//' dist.exclude
+# .. no object files
+find -L pnp4nagios-${VERSION} -name '*.o' >>dist.exclude
+# .. no binaries
+echo "./pnp4nagios-${VERSION}/src/npcd" >>dist.exclude
+echo "./pnp4nagios-${VERSION}/src/utils" >>dist.exclude
+echo "./pnp4nagios-${VERSION}/src/pnpsender" >>dist.exclude
 # ...and no archives in dist, either
 find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.tgz' >>dist.exclude
 find -L pnp4nagios-${VERSION} -name 'pnp4nagios-*.zip' >>dist.exclude

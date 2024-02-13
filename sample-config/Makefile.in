@@ -58,7 +58,7 @@ config_samples/templates.cfg:
 	$(PERL) config_tools/TemplateMod.pl -i $(NAG_OBJ)/templates.cfg -o config_samples/templates.cfg
 
 
-install: collection_method
+install: collection_method install-contrib
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config.d
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
@@ -76,7 +76,6 @@ install: collection_method
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/npcd.cfg $(DESTDIR)$(SYSCONFDIR)/npcd.cfg
 	$(INSTALL) -m 644 $(INSTALL_OPTS) collection_method $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)/
-
 	if ! diff -q pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>&1 ; then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS) $(BACKUP) pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ ; \
 	fi
@@ -86,6 +85,17 @@ install: collection_method
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/background.pdf ] ; then \
 		ln -rs $(DESTDIR)$(SYSCONFDIR)/pages/background-$(PAPERSIZE).pdf $(DESTDIR)$(SYSCONFDIR)/background.pdf ;\
 	fi
+
+
+
+install-contrib:
+	$(INSTALL) -m 755 -d $(DESTDIR)$(SYSCONFDIR)/contrib
+	$(INSTALL) -m 644 $(BACKUP) ../contrib/ssi/status-header.ssi $(DESTDIR)$(SYSCONFDIR)/contrib
+	$(INSTALL) -m 644 $(BACKUP) ../contrib/fedora/pnp4nagios.logrotate.conf $(DESTDIR)$(SYSCONFDIR)/contrib
+	$(INSTALL) -m 644 -D $(BACKUP) ../contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/contrib/logwatch/conf/logfiles/pnp4nagios.conf
+	$(INSTALL) -m 644 -D $(BACKUP) ../contrib/fedora/logwatch/conf/services/pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/contrib/logwatch/conf/services/pnp4nagos.conf
+	$(INSTALL) -m 644 -D $(BACKUP) ../contrib/fedora/logwatch/scripts/services/pnp4nagios $(DESTDIR)$(SYSCONFDIR)/contrib/logwatch/scripts/services/pnp4nagios
+
 
 
 install-http: 

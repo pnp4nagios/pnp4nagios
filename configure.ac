@@ -25,6 +25,10 @@ AC_CONFIG_HEADERS(include/config.h:include/config.h.in)
 AC_PREFIX_DEFAULT(/usr/local/pnp4nagios)
 
 #
+if echo $PATH | grep -qv '/sbin' ; then
+  echo "PATH variable doesn't include sbin, probable failure"
+  exit 1
+fi
 #
 AC_SUBST(ac_configure_args)
 XML_STRUCTURE_VERSION="4"
@@ -59,6 +63,7 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PATH_PROG([STRIP],[strip],[true])
 AC_PROG_GREP
+AC_PROG_EGREP
 AC_PROG_AWK
 AC_PROG_SED
 AC_PROG_LN_S
@@ -271,75 +276,99 @@ AC_SUBST(SELINUX_DEVELDIR)
 
 
 dnl ================ Nagios configuration info ============
-
-AC_MSG_CHECKING(Nagios server)
-# if nagios not installed yet, probably will install a new version
-# so just pick a recent version unless one is given in arguments
-NAGIOS_VER=no
-AC_ARG_WITH(nagios_version,[ --with-nagios-version=<nagios_version> nagios version string, like 3.1 etc], NAGIOS_VER=$withval,NAGIOS_VER=no)
-if test x$NAGIOS_VER = xno; then
-   if which nagios >/dev/null 2>/dev/null ; then
-      NAGIOS_VER=`nagios --help | ${AWK} '/^Nagios /'  | ${AWK} -v RS=' ' '/^[[0-9]]/'`
-      AC_MSG_RESULT($NAGIOS_VER)
-   else
-      NAGIOS_VER=4.4.6
-      AC_MSG_RESULT([not found, assuming $NAGIOS_VER])
-   fi    
-else
-   AC_MSG_RESULT([forced use of version $NAGIOS_VER])
-fi
-AC_SUBST(NAGIOS_VER)
-
-AC_DEFINE([DEFAULT_NAGIOS_USER], [nagios], [Default Nagios User])
-AC_DEFINE([DEFAULT_NAGIOS_GROUP], [nagios], [Default Nagios Group])
-AC_ARG_WITH(nagios_user,[  --with-nagios-user=<user> sets user name to run nagios],nagios_user=$withval,nagios_user=nagios)
-AC_ARG_WITH(nagios_group,[  --with-nagios-group=<grp> sets group name to run nagios],nagios_grp=$withval,nagios_grp=nagios)
-AC_SUBST(nagios_user)
-AC_SUBST(nagios_grp)
-AC_DEFINE_UNQUOTED(DEFAULT_NAGIOS_USER,"$nagios_user")
-AC_DEFINE_UNQUOTED(DEFAULT_NAGIOS_GROUP,"$nagios_grp")
-INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
-AC_SUBST(INSTALL_OPTS)
-
-PERFDATA_LOG="${logdir}/perfdata.log"
-AC_ARG_WITH(perfdata-logfile,[  --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile],
-        PERFDATA_LOG=$withval
-	   )
-AC_SUBST(PERFDATA_LOG)
-
-PERFDATA_DIR="${localstatedir}/rrd"
-AC_ARG_WITH(perfdata-dir,[  --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files],
-	    PERFDATA_DIR=$withval
-	   )
-AC_SUBST(PERFDATA_DIR)
-
-PERFDATA_SPOOL_DIR="$spooldir"
-AC_ARG_WITH(perfdata-spool-dir,[  --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd],
-	    PERFDATA_SPOOL_DIR=$withval
-	   )
-AC_SUBST(PERFDATA_SPOOL_DIR)
-
-
 dnl check for location where Nagios keeps its config
-AC_MSG_CHECKING(Nagios config)
 
-NAGIOS_CFG=no
-AC_ARG_WITH(nagios_cfg,[ --with-nagios-cfg=<nagios_cfg_dir> sets path to nagios.cfg file], NAGIOS_CFG=$withval,NAGIOS_CFG=no)
-if test x$NAGIOS_CFG = xno; then
-   if test -e /etc/nagios/nagios.cfg ; then
-      NAGIOS_CFG=/etc/nagios/nagios.cfg
-      AC_MSG_RESULT($NAGIOS_CFG)
-   elif test -e /usr/local/etc/nagios/nagios.cfg ; then
-      NAGIOS_CFG=/usr/local/etc/nagios/nagios.cfg
-      AC_MSG_RESULT($NAGIOS_CFG)
-   else
-      NAGIOS_CFG=/etc/nagios/nagios.cfg
-      AC_MSG_RESULT([not found, assume default $NAGIOS_CFG])
-   fi
-else
-   AC_MSG_RESULT([forced to $NAGIOS_CFG])
+dnl user inputs override info from system
+AC_ARG_WITH(nagios_cfg,[ --with-nagios-cfg=<nagios_cfg_dir> sets path to nagios.cfg file], NAGIOS_CFG=$withval, NAGIOS_CFG=no)
+
+AC_ARG_WITH(nagios_version,[ --with-nagios-version=<nagios_version> nagios version string, like 3.1 etc], NAGIOS_VER=$withval, NAGIOS_VER=no)
+
+NAGIOS_EXE=no
+
+if test x$NAGIOS_CFG = xno -a x$NAGIOS_VER = xno ; then
+    AC_MSG_CHECKING(Look for running nagios server)
+    rnag=`ps -eo command | ${EGREP} '/nagios4?(\s|$)' | head -n 1 | ${AWK} '{print $1;}'`
+    
+    if test x$rnag = x ; then
+       AC_MSG_RESULT([not seen])
+    else
+       AC_MSG_RESULT($rnag)
+       ncfg=`ps -eo command | ${EGREP} '/nagios4?(\s+\-d)?\s+.*\.cfg' | head -n 1 | ${AWK} -v RS=' ' '/\.cfg/{print $1;}'`
+       if test x$ncfg != x ; then
+          NAGIOS_CFG=$ncfg
+       fi 
+    fi
+    
+    AC_MSG_CHECKING(Nagios executable)
+    if test x$rnag = x ; then
+       rnag=`which nagios 2>/dev/null`
+       if test x$rnag = x ; then
+           rnag=`which nagios4 2>/dev/null`
+       fi
+    fi
+    if test x$rnag = x ; then
+       rnag=no
+    fi
+    NAGIOS_EXE=$rnag
+    AC_MSG_RESULT($NAGIOS_EXE)
+    
+    AC_MSG_CHECKING(Nagios config file location)
+    
+    if test x$NAGIOS_CFG = xno; then
+       if test -e /etc/nagios/nagios.cfg ; then
+          NAGIOS_CFG=/etc/nagios/nagios.cfg
+       elif test -e /etc/nagios4/nagios.cfg ; then
+          NAGIOS_CFG=/etc/nagios4/nagios.cfg
+       elif test -e /usr/local/etc/nagios/nagios.cfg ; then
+          NAGIOS_CFG=/usr/local/etc/nagios/nagios.cfg
+       fi
+    fi
+    if test x${NAGIOS_CFG} = xno ; then
+        NAGIOS_CFG=/etc/nagios/nagios.cfg
+        AC_MSG_RESULT([Not found, forced to $NAGIOS_CFG])
+    else               
+        AC_MSG_RESULT($NAGIOS_CFG)
+    fi
+
+    AC_MSG_CHECKING(Nagios version)
+    # if nagios not installed yet, probably will install a new version
+    # so just pick a recent version unless one is given in arguments
+    
+    if test x$NAGIOS_VER = xno; then   
+       if test x$NAGIOS_EXE != xno ; then
+          NAGIOS_VER=`${NAGIOS_EXE} --help | ${AWK} '/^Nagios /'  | ${AWK} -v RS=' ' '/^[[0-9]]/'`
+          AC_MSG_RESULT($NAGIOS_VER)
+       else
+          NAGIOS_VER=4.4.6
+          AC_MSG_RESULT([not found, assuming $NAGIOS_VER])
+       fi    
+    else
+       AC_MSG_RESULT([forced use of version $NAGIOS_VER])
+    fi
 fi
 AC_SUBST(NAGIOS_CFG)
+AC_SUBST(NAGIOS_VER)
+
+dnl check for service/init for nagios
+AC_ARG_WITH(nagios_unit,[ --with-nagios_unit=<nagios_unit_name> sets name of unit for nagios service], NAGIOS_UNIT=$withval,NAGIOS_UNIT=no)
+if test x$NAGIOS_UNIT = xno; then
+    nagunit=''
+    case $init_type in
+         systemd)
+            nagunit=`systemctl list-units -q 'nagios*.service'|${AWK} '{print $1;}'`
+            ;;
+         sysv)
+            nagunit=`chkconfig --list 2>/dev/null|${GREPE} 'nagios.?\s+0'|${AWK} '{print $1;}'`
+            ;;
+# not sure how to do other init_types
+    esac
+    if test "x$nagunit" != x; then
+       NAGIOS_UNIT=$nagunit
+    fi
+fi
+NAGIOS_UNIT=${NAGIOS_UNIT%.service}
+AC_SUBST(NAGIOS_UNIT)
+
 
 nagios_dir=`dirname $NAGIOS_CFG`
 
@@ -354,6 +383,9 @@ if test x$NAGIOS_PWD = xno; then
       AC_MSG_RESULT($NAGIOS_PWD)
    elif test -e "${nagios_dir}/htpasswd.users" ; then
       NAGIOS_PWD="${nagios_dir}/htpasswd.users"
+      AC_MSG_RESULT($NAGIOS_PWD)
+   elif test -e "${nagios_dir}/htdigest.users" ; then
+      NAGIOS_PWD="${nagios_dir}/htdigest.users"
       AC_MSG_RESULT($NAGIOS_PWD)
    else
       NAGIOS_PWD="${nagios_dir}/passwd"
@@ -381,6 +413,64 @@ else
 fi
 AC_SUBST(NAGIOS_OBJ)
 
+
+AC_MSG_CHECKING(Nagios user/group)
+nagios_user=no
+nagios_grp=no
+if test -e "$NAGIOS_CFG" ; then
+   nagios_user=`${AWK} -F= '/nagios_user/ {print $2;}' $NAGIOS_CFG`
+   nagios_grp=`${AWK} -F= '/nagios_group/ {print $2;}' $NAGIOS_CFG`
+fi
+
+AC_ARG_WITH(nagios_user,[  --with-nagios-user=<user> sets user name to run nagios],nagios_user=$withval)
+AC_ARG_WITH(nagios_group,[  --with-nagios-group=<grp> sets group name to run nagios],nagios_grp=$withval)
+
+ugmsg=""
+if test x$nagios_user = xno ; then
+    ugmsg="using default"
+    nagios_user=nagios
+fi
+
+if test x$nagios_grp = xno ; then
+    ugmsg="using_default"
+    nagios_grp=nagios
+fi
+
+if test x$ugmsg = x ; then
+    AC_MSG_RESULT([${nagios_user} / ${nagios_grp}])
+else
+    AC_MSG_RESULT([$ugmsg ${nagios_user} / ${nagios_grp}])
+fi
+
+AC_SUBST(nagios_user)
+AC_SUBST(nagios_grp)
+INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
+AC_SUBST(INSTALL_OPTS)
+
+#
+# pnp4nagios locations and files
+#
+
+PERFDATA_LOG="${logdir}/perfdata.log"
+AC_ARG_WITH(perfdata-logfile,[  --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile],
+        PERFDATA_LOG=$withval
+	   )
+AC_SUBST(PERFDATA_LOG)
+
+PERFDATA_DIR="${localstatedir}/rrd"
+AC_ARG_WITH(perfdata-dir,[  --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files],
+	    PERFDATA_DIR=$withval
+	   )
+AC_SUBST(PERFDATA_DIR)
+
+PERFDATA_SPOOL_DIR="$spooldir"
+AC_ARG_WITH(perfdata-spool-dir,[  --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd],
+	    PERFDATA_SPOOL_DIR=$withval
+	   )
+AC_SUBST(PERFDATA_SPOOL_DIR)
+
+
+
 dnl ---not sure if these three are used ---
 pnpsender_name=pnpsender
 AC_SUBST(pnpsender_name)
@@ -398,71 +488,123 @@ dnl =================== http server settings ================
 AC_MSG_CHECKING(http server)
 HTTP_SERVER=no
 AC_ARG_WITH(http_server,
- [ --with-http_server=apache,lighttpd,nginx http server software],
- HTTP_SERVER=$withval, HTTP_SERVER=no )
+ [ --with-http_server=(http,apache,apache2,lighttpd,nginx) http server software],
+ HTTP_SERVER=$withval)
 
+if test "x${HTTP_SERVER}" = xno ; then
+    http_server_types="httpd
+    apache
+    apache2
+    lighttpd
+    nginx"
+else
+    http_server_types=${HTTP_SERVER}
+fi
 
-if test "x${HTTP_SERVER}" = "xno" ; then
-   http_base=no
-   for HTTP_SERVER in "httpd" "lighttpd" "nginx" 
-   do
-        if test -e "/etc/${HTTP_SERVER}" ; then
-           http_base="/etc/${HTTP_SERVER}"
-           break
-        elif test -e "/usr/local/${HTTP_SERVER}" ; then
-           http_base="/usr/local/${HTTP_SERVER}"
-           break
-        elif test -e "/usr/local/etc/${HTTP_SERVER}" ; then
-           http_base="/usr/local/etc/${HTTP_SERVER}"
-           break
-        fi
-   done
-  
-   if test "x$http_base" = "xno" ; then
-      AC_MSG_ERROR(not found)
-   fi 
+http_base=no
+HTTP_UNIT=
+for HTTP_SERVER in $http_server_types
+do
+    case "$init_type" in
+          systemd)
+             HTTP_UNIT=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
+             ;;
+          sysv)   
+             HTTP_UNIT=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
+             ;;
+     esac
+     if test "x${HTTP_UNIT}" != x ; then
+         break ;
+     fi
+done
 
-   if test "${HTTP_SERVER}" = "httpd" ; then
-        HTTP_SERVER=apache
-   fi
-   AC_MSG_RESULT($HTTP_SERVER)
+case "${HTTP_SERVER}" in
+     apache*)
+        if apachectl -t -D DUMP_RUN_CFG >/dev/null 2>/dev/null ;
+        then
+             http_base=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^ServerRoot:/ {print $2;}'`
+             http_base=${srvroot//\"/}
+             HTTP_USER=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^User:/ {print $2;}'`
+             HTTP_USER=${HTTP_USER/name=/}
+             HTTP_USER=${HTTP_USER//\"/}
+             HTTP_GROUP=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^Group:/ {print $2;}'`
+             HTTP_GROUP=${HTTP_GROUP/name=/}
+             HTTP_GROUP=${HTTP_GROUP//\"/}
+             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES| ${GREP} "$http_base/.*\.conf" | ${AWK} '/\/conf/{print $2;}' | ${SED} -E 's/[^\/]+$//' | head -n 1`
+
+             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES | grep "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|sed -E 's/\/[[^\/]]+$//' | head -n 1`
+             fi
+         ;;
+esac
+             
+if test x$http_base = xno ; then           
+    if test -e "/etc/${HTTP_SERVER}" ; then
+       http_base="/etc/${HTTP_SERVER}"
+    elif test -e "/usr/local/${HTTP_SERVER}" ; then
+       http_base="/usr/local/${HTTP_SERVER}"
+    elif test -e "/usr/local/etc/${HTTP_SERVER}" ; then
+       http_base="/usr/local/etc/${HTTP_SERVER}"
+    fi
+fi
+
+if test "x$http_base" = "xno" ; then
+   AC_MSG_ERROR(http server base directory not found)
+fi
+
+if test "x$HTTP_CONFDIR" = x ; then
+   case  "$HTTP_SERVER" in
+      apache* | httpd )
+          if test -e "${http_base}/conf/httpd.conf" ; then
+              HTTP_USER=`${AWK} '/^User/{print $2;}' ${http_base}/conf/httpd.conf`
+              HTTP_GROUP=`${AWK} '/^Group/{print $2;}' ${http_base}/conf/httpd.conf`
+           fi
+           HTTP_USER=${HTTP_USER:-daemon}
+           HTTP_GROUP=${HTTP_GROUP:-daemon}
+           HTTP_CONFDIR="${http_base}/conf.d"
+           ;;
+    lighttpd )
+           HTTP_USER=lighttpd
+           HTTP_GROUP=lighttpd
+           HTTP_CONFDIR="${http_base}/conf.d"
+           ;;
+    nginx )
+           HTTP_USER=nobody
+           HTTP_GROUP=root
+           HTTP_CONFDIR="${http_base}/conf.d" 
+           ;;
+   esac
+fi
+
+if test "${HTTP_SERVER}" = "httpd" ; then
+     HTTP_SERVER=apache
+elif test "${HTTP_SERVER}" = "apache2" ; then
+     HTTP_SERVER=apache
+fi
+AC_MSG_RESULT($HTTP_SERVER)
+AC_SUBST(HTTP_SERVER)
+HTTP_UNIT=${HTTP_UNIT%.service}
+AC_SUBST(HTTP_UNIT)
 
 dnl user/grp are based on "tar" install defaults
 dnl becuase package managers do their own thing.
 dnl so if these user/group settings look unfamiliar, that
 dnl might be why
 
-   case  "$HTTP_SERVER" in
-        apache )
-               if test -e "${http_base}/conf/httpd.conf" ; then
-                 def_httpserver_user=`${AWK} '/^User/{print $2;}' ${http_base}/conf/httpd.conf`
-                 def_httpserver_grp=`${AWK} '/^Group/{print $2;}' ${http_base}/conf/httpd.conf`
-               fi
-               def_httpserver_user=${def_httpserver_user:-daemon}
-               def_httpserver_grp=${def_httpserver_grp:-daemon}
-               HTTP_CONFDIR="${http_base}/conf.d"
-               ;;
-        lighttpd )
-               def_httpserver_user=lighttpd
-               def_httpserver_grp=lighttpd
-               HTTP_CONFDIR="${http_base}/conf.d"
-               ;;
-        nginx )
-               def_httpserver_user=nobody
-               def_httpserver_grp=root
-               HTTP_CONFDIR="${http_base}/conf.d" 
-               ;;
-    esac
-fi
-AC_SUBST(HTTP_SERVER)
+AC_ARG_WITH(http_user,[  --with-http_user=<user> sets user name for http server],http_user=$withval,http_user=$HTTP_USER)
+AC_ARG_WITH(http_group,[  --with-http_group=<grp> sets group name for http server],http_group=$withval,http_group=$HTTP_GROUP)
 
-AC_ARG_WITH(http_user,[  --with-http_user=<user> sets user name for http server],http_user=$withval,http_user=$def_httpserver_user)
-AC_ARG_WITH(http_group,[  --with-http_group=<grp> sets group name for http server],http_group=$withval,http_group=$def_httpserver_grp)
-HTTP_USER=$http_user
-HTTP_GROUP=$http_group
+HTTP_USER=${http_user}
+HTTP_GROUP=${http_group}
+
+if test x${HTTP_USER} = xno ; then
+    AC_MSG_ERROR(http_user not defined)
+elif test x${HTTP_GROUP} = xno ; then
+    AC_MSG_ERROR(http_group not defined)
+fi
+
 AC_SUBST(HTTP_USER)
 AC_SUBST(HTTP_GROUP)
-HTTP_INSTALL_OPTS="-o $http_user -g $http_group"
+HTTP_INSTALL_OPTS="-o $HTTP_USER -g $HTTP_GROUP"
 AC_SUBST(HTTP_INSTALL_OPTS)
 
 dnl override the http server config directory, if requested
@@ -470,6 +612,18 @@ dnl override the http server config directory, if requested
 AC_ARG_WITH(http_confdir,[  --with-http_confdir=<path_to_conf_dir> sets path to http server conf.d directory],HTTP_CONFDIR=$withval)
 AC_SUBST(HTTP_CONFDIR)
 
+dnl cache directory, needed for XDG_CACHE_DIR
+
+AC_ARG_WITH(cache_dir,[ --with-cache_dir=<path to cache dir>],
+CACHE_DIR=$withval,CACHE_DIR=no)
+if test "x$CACHE_DIR" = "xno" ; then
+   if test -e "/var/cache" ; then
+      CACHE_DIR=/var/cache/pnp4nagios
+   else
+      AC_MSG_ERROR([/var/cache missing, need to define cache_dir])
+   fi
+fi
+AC_SUBST(CACHE_DIR)
 
 dnl set the url that points to pnp4nagios graphs
 AC_ARG_WITH(pnp_url,
@@ -568,9 +722,12 @@ AC_CONFIG_FILES(sample-config/config_samples/pnp-npcd.cfg)
 AC_CONFIG_FILES(sample-config/config_samples/pnp-sync.cfg)
 AC_CONFIG_FILES(sample-config/config_samples/process_perfdata.cfg)
 AC_CONFIG_FILES(sample-config/pnp4nagios_release)
-AC_CONFIG_FILES(contrib/ssi/status-header.ssi)
 AC_CONFIG_FILES(man/npcd.8 ci/pnp4nagios.spec)
 AC_CONFIG_FILES(pnp4nagios.fc src/config.c src/npcdmod.c)
+AC_CONFIG_FILES(contrib/fedora/pnp4nagios.logrotate.conf)
+AC_CONFIG_FILES(contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf)
+AC_CONFIG_FILES(contrib/ssi/status-header.ssi)
+
 AC_OUTPUT
  
 #### need to use 'subst' instead of configure for this
@@ -627,6 +784,7 @@ dnl
 AC_MSG_RESULT([       RRD Files stored in:  $PERFDATA_DIR])
 AC_MSG_RESULT([  process_perfdata Logfile:  $PERFDATA_LOG])
 AC_MSG_RESULT([   NPCD perfdata stored in:  $PERFDATA_SPOOL_DIR])
+AC_MSG_RESULT([      fontconfig cache dir:  $CACHE_DIR])
 
 
 
@@ -636,8 +794,8 @@ echo " ------------------------"
 
 AC_MSG_RESULT([               http server:  $HTTP_SERVER])
 AC_MSG_RESULT([          http configs dir:  $HTTP_CONFDIR])
-AC_MSG_RESULT([      pnp http config File:  ${HTTP_CONFDIR}/${PACKAGE_NAME}.conf])
-AC_MSG_RESULT([           http user/group:  $http_user,$http_group])
+AC_MSG_RESULT([  put pnp http config File:  ${HTTP_CONFDIR}/${PACKAGE_NAME}.conf])
+AC_MSG_RESULT([           http user/group:  $HTTP_USER,$HTTP_GROUP])
 AC_MSG_RESULT([                  HTML URL:  https://localhost${PNP_URL}/])
 
 if test "x$DESTDIR" != "x" ; then

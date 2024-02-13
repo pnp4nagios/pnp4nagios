@@ -62,10 +62,10 @@ for (my $j = 0; $j <= $#cfg; $j++) {
     if ($line =~ /^cfg_file=(\S+)/) {
         my $sel = $1;
         $lastcfgfile = $j;
-        if ($sel =~ /pnp\.cfg$/) {
+        if ($sel =~ /pnp\.cfg/) {
             $got = 1;
+            last;
         }
-        last;
     }
 }
 splice(@cfg,$lastcfgfile+1,0,"cfg_file=/etc/nagios/objects/pnp.cfg\n")

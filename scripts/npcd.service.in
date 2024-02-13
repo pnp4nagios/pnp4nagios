@@ -13,4 +13,4 @@ ExecStart=@bindir@/npcd -f ${CONFIG_FILE}
 #ExecStop=/bin/kill -s QUIT $MAINPID
 
 [Install]
-WantedBy=nagios.service
+WantedBy=@NAGIOS_UNIT@.service

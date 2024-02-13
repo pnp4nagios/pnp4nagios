@@ -31,7 +31,10 @@ KOHANA=@KOHANA@
 CGIDIR=@sbindir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
+HTTP_INSTALL_OPTS=@HTTP_INSTALL_OPTS@
 DATAROOTDIR=@datarootdir@
+NAGIOS_VERSION=@NAGIOS_VER@
+CACHE_DIR=@CACHE_DIR@
 
 SELINUX=@SELINUX@
 SELINUX_DEVELDIR=@SELINUX_DEVELDIR@
@@ -80,9 +83,11 @@ all:
 	@echo "  make restart_servers"
 	@echo "     - This restarts servers: http, nagios, and maybe npcd"
 	@echo ""
+	@echo ""
 	@echo "  make fullinstall"
-	@echo "     - This does install, install_selinux, install_http, use_X, restart_servers"
-	@echo "     - where X=(whatever 'make use_X' was last executed) or X=sync otherwise" 
+	@echo "    -  install everything except the 'use_X' "
+	@echo "    -  collection config. Suitable if you already "
+	@echo "    -  have a pnp4nagios installation"
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -143,6 +148,8 @@ distclean:
 	rm -f Makefile include/stamp-h1 include/config.h config.status config.log
 	rm -f subst summary
 	rm -f $(SRC_CONTRIB)/ssi/status-header.ssi
+	rm -f $(SRC_CONTRIB)/fedora/pnp4nagios.logrotate.conf
+	rm -f $(SRC_CONTRIB)/fedora/logwatch/conf/logfiles/pnp4nagios.conf
         ifeq ($SELINUX,yes)
 	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
         endif
@@ -170,10 +177,9 @@ install:
 	if [ x$(KOHANA) = xyes ]; then \
 		cd $(SRC_LIB) && $(MAKE) $@; \
 	fi
-
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	cd $(SRC_CONFIG) && $(MAKE) $@
-
+	$(INSTALL) $(HTTP_INSTALL_OPTS) -d $(CACHE_DIR)
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
 	@echo ""
@@ -204,7 +210,16 @@ install-unstripped:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	$(MAKE) install-basic
 
+
+NMAJ:=$(shell echo $(NAGIOS_VERSION)|cut -f1 -d.)
+NMIN:=$(shell echo $(NAGIOS_VERSION)|cut -f2 -d.)
+NREL:=$(shell echo $(NAGIOS_VERSION)|cut -f3 -d.)
+
 use_sync:
+	if (( $(NMAJ) == 4 && ( $(NMIN) < 4 || ( $(NMIN) == 4 && $(NREL) < 14 ) ) ))  ; then \
+	echo "sync does not work with Nagios 4.0.0 .. 4.4.13). Stop" ; \
+	exit 1 ; \
+	fi
 	cd $(SRC_CONFIG) && $(MAKE) $@
 
 use_bulk:
@@ -221,7 +236,6 @@ fullinstall:
 	$(MAKE) install
 	$(MAKE) install-selinux
 	$(MAKE) install-http
-	$(MAKE) use_X
 	$(MAKE) restart_servers
 	$(PERL) summary fullinstall
 	@echo ""
@@ -235,14 +249,19 @@ fullinstall:
 	@echo "Enjoy."
 	@echo ""
 
+
 dist:
 	ci/maketar.sh $(VERSION)
 	mv ci/pnp4nagios*.tgz .
 	mv ci/pnp4nagios*.zip .
 
 restart_servers:
-	service nagios restart
-	service httpd  restart
+	if [ "@init_type@" = "systemd" -o "@init_type@" = "sysv" ] ; then  \
+	    service @NAGIOS_UNIT@ restart ; \
+	    service @HTTP_UNIT@  restart ; \
+	else  \
+	   echo "don't know how to restart with @init_type@" ; \
+	fi
 
 
 
