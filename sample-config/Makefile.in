@@ -58,23 +58,21 @@ config_samples/templates.cfg:
 	$(PERL) config_tools/TemplateMod.pl -i $(NAG_OBJ)/templates.cfg -o config_samples/templates.cfg
 
 
-install: collection_method install-contrib
+install: install-contrib config_samples/nagios-sync.cfg config_samples/nagios-bulk.cfg config_samples/nagios-npcd.cfg config_samples/templates.cfg
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config.d
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/pages
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_tools
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config_samples
+	$(INSTALL) -m 755 $(INSTALL_OPTS) README_config.md      $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) SetLogLevels   $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_tools/*.pl $(DESTDIR)$(SYSCONFDIR)/config_tools/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_tools/verify_pnp_config $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) check_commands/* $(DESTDIR)$(SYSCONFDIR)/check_commands/
-	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/*.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/
-	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/*.conf $(DESTDIR)$(SYSCONFDIR)/config_samples/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/config.php $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/process_perfdata.cfg $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/npcd.cfg $(DESTDIR)$(SYSCONFDIR)/npcd.cfg
-	$(INSTALL) -m 644 $(INSTALL_OPTS) collection_method $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)/
 	if ! diff -q pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>&1 ; then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS) $(BACKUP) pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ ; \
@@ -85,7 +83,15 @@ install: collection_method install-contrib
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/background.pdf ] ; then \
 		ln -rs $(DESTDIR)$(SYSCONFDIR)/pages/background-$(PAPERSIZE).pdf $(DESTDIR)$(SYSCONFDIR)/background.pdf ;\
 	fi
-
+	$(INSTALL) -m 755 -d $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects
+	$(INSTALL) -m 644 config_samples/templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
+	$(INSTALL) -m 644 config_samples/pnp-sync.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
+	$(INSTALL) -m 644 config_samples/pnp-bulk.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
+	$(INSTALL) -m 644 config_samples/pnp-npcd.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
+	$(INSTALL) -m 644 config_samples/nagios-sync.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 config_samples/nagios-bulk.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 config_samples/nagios-npcd.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 -D config_samples/$(HTTP_SERVER).pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/config_samples/http_server_$(HTTP_SERVER)/pnp4nagios.conf
 
 
 install-contrib:
@@ -98,34 +104,4 @@ install-contrib:
 
 
 
-install-http: 
-	$(INSTALL) -m 755 -d $(DESTDIR)$(HTTP_CONFDIR)
-	$(INSTALL) -m 644 $(BACKUP) config_samples/$(HTTP_SERVER).pnp4nagios.conf $(DESTDIR)$(HTTP_CONFDIR)/pnp4nagios.conf
 
-use_sync: config_samples/nagios-sync.cfg
-	$(INSTALL) -m 755 -d $(DESTDIR)$(NAG_OBJ)
-	$(INSTALL) -m 644 config_samples/pnp-sync.cfg $(DESTDIR)$(NAG_OBJ)/pnp.cfg
-	$(INSTALL) -m 644 $(BACKUP) config_samples/nagios-sync.cfg $(DESTDIR)$(NAG_CFG)
-	$(INSTALL) -m 644 $(BACKUP) config_samples/templates.cfg $(DESTDIR)$(NAG_OBJ)/templates.cfg
-	echo "sync" >collection_method
-
-use_bulk: config_samples/nagios-bulk.cfg
-	$(INSTALL) -m 755 -d $(DESTDIR)$(NAG_OBJ)
-	$(INSTALL) -m 644 config_samples/pnp-bulk.cfg $(DESTDIR)$(NAG_OBJ)/pnp.cfg
-	$(INSTALL) -m 644 $(BACKUP) config_samples/nagios-bulk.cfg $(DESTDIR)$(NAG_CFG)
-	$(INSTALL) -m 644 $(BACKUP) config_samples/templates.cfg $(DESTDIR)$(NAG_OBJ)/templates.cfg
-	echo "bulk" >collection_method
-
-use_npcd: config_samples/nagios-npcd.cfg
-	$(INSTALL) -m 755 -d $(DESTDIR)$(NAG_OBJ)
-	$(INSTALL) -m 644 config_samples/pnp-npcd.cfg $(DESTDIR)$(NAG_OBJ)/pnp.cfg
-	$(INSTALL) -m 644 $(BACKUP) config_samples/nagios-npcd.cfg $(DESTDIR)$(NAG_CFG)
-	$(INSTALL) -m 644 $(BACKUP) config_samples/templates.cfg $(DESTDIR)$(NAG_OBJ)/templates.cfg
-	echo "npcd" >collection_method
-
-use_X: collection_method
-
-collection_method:
-	if ! -e "collection_method" ; then \
-	$(MAKE) use_sync ;\
-	fi

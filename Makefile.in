@@ -47,8 +47,7 @@ PERL=@PERL@
 none:
 	@echo "Please supply a command line argument (i.e. 'make all').  Other targets are:"
 	@echo "   clean distclean dist"
-	@echo "   install install-init install-config install-processperfdata install-html fullinstall"
-	@echo "   install-plugins"
+	@echo "   install install-init install-selinux fullinstall"
 
 all:
 	cd $(SRC_BASE) && $(MAKE)
@@ -63,31 +62,12 @@ all:
 	@echo "  make install"
 	@echo "     - This installs directories, binaries and php files"
 	@echo ""
-	@echo "  make install_selinux"
+	@echo "  make install-selinux"
 	@echo "     - This installs the selinux setup (if you are using selinux)"
-	@echo ""
-	@echo "  make install_html"
-	@echo "     - This installs the config for your http server"
-	@echo ""
-	@echo "  make use_sync"
-	@echo "     - This installs the nagios config files for syncronous RRD processing"
-	@echo ""
-	@echo "  make use_bulk"
-	@echo "     - This installs the nagios config files for bulk RRD processing"
-	@echo ""
-	@echo "  make use_npcd"
-	@echo "     - This installs the nagios config and init scripts for npcd RRD processing"
-	@echo ""
-	@echo "  PLEASE NOTE: you should make only ONE of use_sync, use_bulk, or use_npcd"
-	@echo ""
-	@echo "  make restart_servers"
-	@echo "     - This restarts servers: http, nagios, and maybe npcd"
 	@echo ""
 	@echo ""
 	@echo "  make fullinstall"
-	@echo "    -  install everything except the 'use_X' "
-	@echo "    -  collection config. Suitable if you already "
-	@echo "    -  have a pnp4nagios installation"
+	@echo "    -  install everything "
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -161,14 +141,6 @@ install-init:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 
-install-http:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-	@echo " http server config file installed"
-	@echo "Restart your webserver to activete your changes."
-	@echo ""
-	@echo ""
-	@echo ""
 
 install:
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -179,19 +151,10 @@ install:
 	fi
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	cd $(SRC_CONFIG) && $(MAKE) $@
-	$(INSTALL) $(HTTP_INSTALL_OPTS) -d $(CACHE_DIR)
+	$(INSTALL) $(HTTP_INSTALL_OPTS) -d $(DESTDIR)$(CACHE_DIR)
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
 	@echo ""
-	@echo "Please run one of 'make use_sync',"
-	@echo "                  'make use_bulk', or"
-	@echo "                  'make use_npcd'"
-	@echo "to install config files for one of the methods"
-	@echo "(sync, bulk, or npcd) of getting Nagios data to"
-	@echo "the pnp4nagios rrd data collection."
-	@echo ""
-	@echo "Then please run 'make install-http' to install the"
-	@echo "web configuration file"
 	@echo ""
 	@echo ""
 
@@ -211,40 +174,14 @@ install-unstripped:
 	$(MAKE) install-basic
 
 
-NMAJ:=$(shell echo $(NAGIOS_VERSION)|cut -f1 -d.)
-NMIN:=$(shell echo $(NAGIOS_VERSION)|cut -f2 -d.)
-NREL:=$(shell echo $(NAGIOS_VERSION)|cut -f3 -d.)
-
-use_sync:
-	if (( $(NMAJ) == 4 && ( $(NMIN) < 4 || ( $(NMIN) == 4 && $(NREL) < 14 ) ) ))  ; then \
-	echo "sync does not work with Nagios 4.0.0 .. 4.4.13). Stop" ; \
-	exit 1 ; \
-	fi
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-use_bulk:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-use_npcd:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-	cd $(SRC_SCRIPTS) && $(MAKE) install-daemoninit
-
-use_X:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
 fullinstall:
 	$(MAKE) install
 	$(MAKE) install-selinux
-	$(MAKE) install-http
-	$(MAKE) restart_servers
 	$(PERL) summary fullinstall
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
 	@echo "Config files in: @sysconfdir@ might need updating."
 	@echo ""
-	@echo "Right now, pnp4nagios will show a config page. To"
-	@echo "show graphs, do:"
-	@echo "  touch @datarootdir@/install.ignore"
 	@echo ""
 	@echo "Enjoy."
 	@echo ""

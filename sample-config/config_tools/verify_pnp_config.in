@@ -34,11 +34,6 @@ use vars qw ( $help $debug $mode $vInfo $PNPCfg $MainCfg $last_check $object $us
 # use 'config' to set defaults
 $MainCfg='@NAGIOS_CFG@';
 $PNPCfg='@sysconfdir@';
-if (open(CM,"<@sysconfdir@/collection_method")) {
-    $mode = <CM>;
-    chomp $mode;
-    close(CM);
-}
 $http_user='@HTTP_USER@';
 $http_group='@HTTP_GROUP@';
 
@@ -62,7 +57,7 @@ if ($help) {
 }
 
 
-my @modes    = ("bulk", "npcd", "sync", "npcdmod");
+my @modes    = ("bulk", "npcd", "sync","npcdmod");
 my @products = ("nagios", "icinga", "icinga2");
 my @states   = ("OK", "WARN", "CRIT", "UNKN", "INFO", "HINT", "DBG");
 my @colors   = ("bold green", "bold yellow", "bold red", "bold blue", "bold blue", "bold yellow", "black on_red");
@@ -82,9 +77,22 @@ if ( ! $MainCfg ){
 }
 
 if ( ! $mode ){
-	usage();
+    if (open(N,"<$MainCfg")) {
+        while (<N>) {
+            if (/^cfg_file=\/.*\/pnp-(\w+)\.cfg/) {
+                $mode = $1;
+                last;
+            }
+        }
+        close(N);
+    } else {
+        die "error opening $MainCfg for reading";
+    }
+    if (! $mode) {
+        usage();
 	usage_no_mode();
 	exit;
+    }
 }
 
 if ( ! $PNPCfg ){

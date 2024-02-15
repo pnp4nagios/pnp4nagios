@@ -10,6 +10,7 @@ In summary:
   * [A] get the Nagios data to pnp4nagios
   * [B] make pnp4nagios links on Nagios pages
   * [C] make pnp4nagios available on webserver
+  * [D] restart http server and Nagios to use new settings
 
 **[A] get the Nagios data to pnp4nagios**
 
@@ -17,7 +18,12 @@ There are several options for feeding Nagios data to
 pnp4nagios, and you need to choose one:
 
   * **sync**: gets executed on each update,
-     best choice for a "low activity" Nagios
+     best choice for a "low activity" Nagios.
+     Warning: Nagios versions 4.4.0 to 4.4.12 
+     do **not** work with sync, because of a bug
+     in Nagios. If you see failures in process_perfdata
+     with "Cant find Nagios Environment." you're probably
+     running into this. 
 
   * **bulk**: batches updates, but otherwise like
      the synchronous option in how the updates are
@@ -27,14 +33,16 @@ pnp4nagios, and you need to choose one:
     a regular schedule and deals with them; best for a 
     "high activity" Nagios.
 
-When building from source *make do_npcd* will install the 
-appropriate npcd config files (similar for *make do_sync*, etc)
+All three options are included, and you can switch between
+them. 
+
+First, 
+   cp config_samples/nagios/objects/pnp-*.cfg  @NAGIOS_OBJ@/
+Use "bulk" mode as an example:
+   cp config_samples/nagios/nagios-bulk.cfg @NAGIOS_CFG@
+    
 
 
-
-This will install a modified @NAGIOS_CFG@, 
-a modified @NAGIOS_OBJ@/objects/templates.cfg, 
-a new @NAGIOS_OBJ@/objects/pnp.cfg
 
 **[B] make pnp4nagios links on Nagios pages**
 
@@ -47,6 +55,10 @@ definitions so that they'll include the pnp4nagios templates.
 
 You can also edit the generic-* templates directly to add the
 action urls. 
+
+For an already-edited example templates.cfg file, just
+   cp config_samples/nagios/objects/templates.cfg @NAGIOS_OBJ@/
+
 
 **[C] make pnp4nagios available on webserver**
 
@@ -68,6 +80,27 @@ what is in the pnp4nagios.conf file.
 For more complicated authentication schemes (user certificates,
 etc) the general rule is "copy what you use for Nagios". 
 
+For an example config:
+   cp config_samples/http_server_apache/pnp4nagios.conf @HTTP_CONFDIR@/
+
+**[D] restart http server and Nagios **
+
+Before restarting, it can be useful to run the 
+**verify_pnp_config** script, but you will have to 
+specify which "mode" (sync|bulk|npcd) you are using
+with (for example)
+ ./verify_pnp_config --mode=bulk
+
+If it looks good, restart the http server and Nagios
+(hopefully with no errors).  Point your browser to the
+Nagios page, and look for the little "graph" icons next
+to hosts and services.  Clicking on an icon should bring
+up an installation-check page. Again, if all good, the
+green box at the bottom of the installation-check page 
+will tell you how to skip the installation-check and get
+the graphs.  Please note that it will take a while for
+data to be stored in rrd files, and you may get some errors
+about "missing file" before the rrd files are created. 
 
 ** Where to find configuration settings **
 
@@ -82,22 +115,16 @@ Where to find config info:
         rra.cfg (not present by default, check in @sysconfdir@/samples)
         
     @datarootdir@/application/config/config.php
-    (linked to @sysconfdir@/cgi_config.php    
     
 When things go wrong, it's useful to increase the logging level
-and see more.  Logging of the Nagios to RRD steps can be
-found in npcd.cfg (for NPCD mode processing) or 
-process_perfdata.cfg for all processing modes.
-
-For the problems that show up when displaying graphs, the 
-logging level in cgi_config.php is
-most helpful; the log file (if you're not using the system
-log) is in @localstatedir@/kohana/
+and see more. The **SetLogLevel** script can be used to
+assist with this, because log levels can be set for npcd,
+process_perfdata, and .../application/config/config.php
+for cgi execution. 
 
 When it's a "selinux problem", then you need to check in
-/var/log/message or journalctl. The messages generally give
+/var/log/messages or journalctl. The messages generally give
 information about how to work around the security violations,
 which can be extremely useful for updating the selinux 
 configuration for pnp4nagios. 
-
 
