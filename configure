@@ -833,6 +833,7 @@ with_pnp_logdir
 with_perfdata_dir
 with_perfdata_spool_dir
 with_http_server
+with_http_server_base
 with_http_user
 with_http_group
 with_http_confdir
@@ -1527,6 +1528,7 @@ Optional Packages:
   --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files
   --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd
  --with-http_server=(http,apache,apache2,lighttpd,nginx) http server software
+ --with-http_server_base=(http server base dir)
   --with-http_user=<user> sets user name for http server
   --with-http_group=<grp> sets group name for http server
   --with-http_confdir=<path_to_conf_dir> sets path to http server conf.d directory
@@ -7500,31 +7502,41 @@ if test "x${HTTP_SERVER}" = xno ; then
     apache2
     lighttpd
     nginx"
-else
-    http_server_types=${HTTP_SERVER}
+    http_unit=x
+    for HTTP_SERVER in $http_server_types
+    do
+        case "$init_type" in
+             systemd)
+                http_unit=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
+                ;;
+              sysv)
+                http_unit=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
+                ;;
+         esac
+         if test "x${http_unit}" != x ; then
+            break;
+         fi
+     done
 fi
 
-http_base=no
-HTTP_UNIT=
-for HTTP_SERVER in $http_server_types
-do
-    case "$init_type" in
-          systemd)
-             HTTP_UNIT=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
-             ;;
-          sysv)
-             HTTP_UNIT=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
-             ;;
-     esac
-     if test "x${HTTP_UNIT}" != x ; then
-         break ;
-     fi
-done
 
-case "${HTTP_SERVER}" in
-     apache*)
+# Check whether --with-http_server_base was given.
+if test ${with_http_server_base+y}
+then :
+  withval=$with_http_server_base; http_base=$withval
+else $as_nop
+  http_base=no
+fi
+
+
+if test x$http_base = xno ; then
+   echo "no http_base, yet"
+    case "${HTTP_SERVER}" in
+       apache*)
+        echo "test for apache"
         if apachectl -t -D DUMP_RUN_CFG >/dev/null 2>/dev/null ;
         then
+                echo "we have apachectl"
              http_base=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^ServerRoot:/ {print $2;}'`
              http_base=${srvroot//\"/}
              HTTP_USER=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^User:/ {print $2;}'`
@@ -7538,7 +7550,10 @@ case "${HTTP_SERVER}" in
              HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES | grep "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|sed -E 's/\/[^\/]+$//' | head -n 1`
              fi
          ;;
-esac
+   esac
+fi
+
+
 
 if test x$http_base = xno ; then
     if test -e "/etc/${HTTP_SERVER}" ; then
@@ -7553,6 +7568,9 @@ fi
 if test "x$http_base" = "xno" ; then
    as_fn_error $? "http server base directory not found" "$LINENO" 5
 fi
+
+
+
 
 if test "x$HTTP_CONFDIR" = x ; then
    case  "$HTTP_SERVER" in

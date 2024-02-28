@@ -502,29 +502,30 @@ if test "x${HTTP_SERVER}" = xno ; then
     apache2
     lighttpd
     nginx"
-else
-    http_server_types=${HTTP_SERVER}
+    http_unit=x
+    for HTTP_SERVER in $http_server_types
+    do
+        case "$init_type" in
+             systemd)
+                http_unit=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
+                ;;
+              sysv)
+                http_unit=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
+                ;;
+         esac
+         if test "x${http_unit}" != x ; then
+            break;
+         fi
+     done
 fi
 
-http_base=no
-HTTP_UNIT=
-for HTTP_SERVER in $http_server_types
-do
-    case "$init_type" in
-          systemd)
-             HTTP_UNIT=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
-             ;;
-          sysv)   
-             HTTP_UNIT=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
-             ;;
-     esac
-     if test "x${HTTP_UNIT}" != x ; then
-         break ;
-     fi
-done
+AC_ARG_WITH(http_server_base,
+ [ --with-http_server_base=(http server base dir)],
+ http_base=$withval, http_base=no)
 
-case "${HTTP_SERVER}" in
-     apache*)
+if test x$http_base = xno ; then
+    case "${HTTP_SERVER}" in
+       apache*)
         if apachectl -t -D DUMP_RUN_CFG >/dev/null 2>/dev/null ;
         then
              http_base=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^ServerRoot:/ {print $2;}'`
@@ -540,8 +541,11 @@ case "${HTTP_SERVER}" in
              HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES | grep "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|sed -E 's/\/[[^\/]]+$//' | head -n 1`
              fi
          ;;
-esac
-             
+   esac
+fi
+
+
+
 if test x$http_base = xno ; then           
     if test -e "/etc/${HTTP_SERVER}" ; then
        http_base="/etc/${HTTP_SERVER}"
@@ -555,6 +559,9 @@ fi
 if test "x$http_base" = "xno" ; then
    AC_MSG_ERROR(http server base directory not found)
 fi
+
+
+
 
 if test "x$HTTP_CONFDIR" = x ; then
    case  "$HTTP_SERVER" in

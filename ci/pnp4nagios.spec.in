@@ -14,9 +14,8 @@ Source0:        %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  autoconf, automake, libtool
-BuildRequires:  rrdtool-perl
-BuildRequires:  perl(Time::HiRes)
-#BuildRequires:  httpd, nagios
+Requires:       rrdtool-perl
+Requires:       perl(Time::HiRes)
 Requires:       nagios
 Requires:       httpd
 Requires:       rrdtool-perl
@@ -94,6 +93,7 @@ autoconf
            --with-dist-type=rh \
            --with-init-type=systemd \
            --with-initdir=%{_unitdir} \
+           --with-http_server_base=%{_syscnfdir}/httpd \
            --with-http_user=apache \
            --with-http_group=apache \
            --with-nagios_user=nagios \
