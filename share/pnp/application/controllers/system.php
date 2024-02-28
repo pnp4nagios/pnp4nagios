@@ -68,7 +68,7 @@ class System_Controller extends Template_Controller
         $this->view       = pnp::clean($this->input->get('view', ''));
         $this->host       = pnp::clean($this->input->get('host', null));
         $this->service    = pnp::clean($this->input->get('srv', null));
-        $this->source     = intval(pnp::clean($this->input->get('source', null)));
+        $this->source     = pnp::clean($this->input->get('source', null));
         $this->version    = pnp::clean($this->input->get('version', null));
         $this->tpl        = pnp::clean($this->input->get('tpl'));
         $this->controller = Router::$controller;
