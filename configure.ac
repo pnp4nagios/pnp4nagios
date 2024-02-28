@@ -37,7 +37,7 @@ AC_SUBST(XML_STRUCTURE_VERSION)
 DEBUG_LEVEL=0
 AC_ARG_WITH(debug_level, [ --with-debug_level=<debuglevel> ],
 DEBUG_LEVEL=$withval, DEBUG_LEVEL=0)
-if test "$DEBUG_LEVEL" > 0 ; then
+if test $DEBUG_LEVEL -gt 0 ; then
 CFLAGS="${CFLAGS} -O0 -ggdb3 -g3"
 fi
 AC_SUBST(DEBUG_LEVEL)
@@ -164,7 +164,7 @@ fi
 case $src_init in
     default-service)
         src_init=npcd.service
-        initname="${initname}.service"        
+        #initname="${initname}.service"        
         ;;
     default-init)
         src_init=rc.npcd
@@ -450,12 +450,18 @@ AC_SUBST(INSTALL_OPTS)
 #
 # pnp4nagios locations and files
 #
+PNP_LOGDIR="${logdir}"
+AC_ARG_WITH(pnp-logdir,[ --with-pnp-logdir=<location of pnp4nagios log files and directories],
+      PNP_LOGDIR=$withval
+      )
+AC_SUBST(PNP_LOGDIR)
 
-PERFDATA_LOG="${logdir}/perfdata.log"
-AC_ARG_WITH(perfdata-logfile,[  --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile],
-        PERFDATA_LOG=$withval
-	   )
+PERFDATA_LOG="${PNP_LOGDIR}/perfdata.log"
 AC_SUBST(PERFDATA_LOG)
+
+PERFDATA_STATS="${PNP_LOGDIR}/stats"
+AC_SUBST(PERFDATA_STATS)
+
 
 PERFDATA_DIR="${localstatedir}/rrd"
 AC_ARG_WITH(perfdata-dir,[  --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files],
@@ -468,7 +474,6 @@ AC_ARG_WITH(perfdata-spool-dir,[  --with-perfdata-spool-dir=<path_to_perfdata_sp
 	    PERFDATA_SPOOL_DIR=$withval
 	   )
 AC_SUBST(PERFDATA_SPOOL_DIR)
-
 
 
 dnl ---not sure if these three are used ---

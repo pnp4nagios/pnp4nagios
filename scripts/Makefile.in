@@ -1,6 +1,6 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-LOGDIR=@logdir@
+LOGDIR=@PNP_LOGDIR@
 CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
@@ -66,15 +66,11 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/stats
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/lock
 	$(INSTALL) -m 755 -d $(INIT_OPTS)  $(DESTDIR)$(INIT_DIR)
-	$(INSTALL) -m 644 $(INIT_OPTS) $(SRC_INIT) $(DESTDIR)$(INIT_DIR)/$(INIT_FILE)
+	$(INSTALL) -m 644 $(INIT_OPTS) $(SRC_INIT) $(DESTDIR)$(INIT_DIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) process_perfdata.pl $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) check_pnp_rrds.pl $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_convert.pl $(DESTDIR)$(LIBEXECDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_modify.pl $(DESTDIR)$(LIBEXECDIR)
-	@if [ x$(INIT_TYPE) = xsystemd ]; then \
-            if which systemctl >/dev/null 2>&1; then \
-                 systemctl daemon-reload; \
-	    fi \
-	fi
 

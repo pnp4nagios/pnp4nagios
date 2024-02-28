@@ -88,7 +88,7 @@ RRD_DAEMON_OPTS =
 #
 # Spool directory used for internal statistics
 #
-STATS_DIR = @logdir@/stats
+STATS_DIR = @PERFDATA_STATS@
 
 #
 # Ignore certain performance data based on host name

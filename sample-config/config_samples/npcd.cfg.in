@@ -40,7 +40,7 @@ log_type = file
 # log_file = </path/to/logpath/filename>
 #
 
-log_file = @logdir@/npcd.log
+log_file = @PNP_LOGDIR@/npcd.log
 
 
 # max_logfile_size - defines the maximum filesize (bytes)

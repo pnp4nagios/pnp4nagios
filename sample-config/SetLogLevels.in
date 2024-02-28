@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 # set pnp4nagios log levels for several components,
 # all at one time.
 npcdcfg=@sysconfdir@/npcd.cfg
@@ -52,10 +52,10 @@ case "$1" in
         setloglev 1 1 1
         ;;
     2 | warn* )
-        setloglev 2 1 2
+        setloglev 2 2 2
         ;;
     3 | deb* )
-        setloglev -1 2 4
+        setloglev -1 3 4
         ;;
     * )
         echo "unknown argument, try $0 --help"

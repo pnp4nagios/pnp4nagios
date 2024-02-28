@@ -50,10 +50,10 @@ none:
 	@echo "   install install-init install-selinux fullinstall"
 
 all:
-	cd $(SRC_BASE) && $(MAKE)
-	cd $(SRC_SHARE) && $(MAKE)
-	cd $(SRC_SCRIPTS) && $(MAKE)
-	cd $(SRC_CONFIG) && $(MAKE)
+	cd $(SRC_BASE) && $(MAKE) $@
+	cd $(SRC_SHARE) && $(MAKE) $@
+	cd $(SRC_SCRIPTS) && $(MAKE) $@
+	cd $(SRC_CONFIG) && $(MAKE) $@
 	chmod a+r $(SRC_CONTRIB)/ssi/status-header.ssi
 
 	@echo ""
@@ -95,10 +95,10 @@ config.status: configure
 
 
 scripts:
-	cd $(SRC_SCRIPTS) && $(MAKE)
+	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 share:
-	cd $(SRC_SHARE) && $(MAKE)
+	cd $(SRC_SHARE) && $(MAKE) $@
 
 
 clean:
@@ -112,7 +112,8 @@ clean:
 	-rm -f *~ *.*~ */*~ */*.*~
 	-rm -f config.log config.status config.cache
         ifeq ($(SELINUX),yes)
-	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
+	rm -f pnp4nagios.fc 
+	rm -f pnp4nagios.if pnp4nagios.pp* tmp
         endif
 
 distclean: 
@@ -141,7 +142,6 @@ install-init:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 
-
 install:
 	cd $(SRC_BASE) && $(MAKE) $@
 	cd $(SRC_MAN) && $(MAKE) $@
@@ -158,8 +158,23 @@ install:
 	@echo ""
 	@echo ""
 
-install-selinux:
+# Nagios might have some pnp4nagios selinux entries
+# so mask out duplicates.
+
+install-selinux: 
         ifeq ($(SELINUX),yes)
+	-rm nagios.pp
+	-semodule -E nagios 2>/dev/null >/dev/null
+	if [ -e nagios.pp ]  ; then \
+	  semodule_unpackage nagios.pp nagios.mod nagios.fc ; \
+	  for pnpdir in /etc/pnp4nagios /var/log/pnp4nagios /var/lib/pnp4nagios /usr/lib/pnp4nagios ; \
+	  do \
+	      if grep -q "^$pnpdir" nagios.fc ; \
+	      then \
+	          sed -i "\\|^$pnpdir|s/^/#/" pnp4nagios.fc ; \
+	      fi \
+	  done \
+	fi
 	$(MAKE) -f $(SELINUX_DEVELDIR)/Makefile load
 	fixfiles restore @datadir@ @pkgsysconfdir@ 
 	fixfiles restore @PERFDATA_DIR@ @logdir@
@@ -175,8 +190,8 @@ install-unstripped:
 
 
 fullinstall:
-	$(MAKE) install
-	$(MAKE) install-selinux
+	$(MAKE) install 
+	$(MAKE) install-selinux 
 	$(PERL) summary fullinstall
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
@@ -192,13 +207,6 @@ dist:
 	mv ci/pnp4nagios*.tgz .
 	mv ci/pnp4nagios*.zip .
 
-restart_servers:
-	if [ "@init_type@" = "systemd" -o "@init_type@" = "sysv" ] ; then  \
-	    service @NAGIOS_UNIT@ restart ; \
-	    service @HTTP_UNIT@  restart ; \
-	else  \
-	   echo "don't know how to restart with @init_type@" ; \
-	fi
 
 
 

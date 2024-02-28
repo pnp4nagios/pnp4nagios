@@ -629,7 +629,7 @@ print_stats();
 
 if (-e "@datadir@/install.php" &&
     ! -e "@datadir@/install.ignore" ) {
-    info("Showing pnp4nagios config on webserver. Do 'touch @datadir@/install.ignore' to show graphs",1);
+    info("Showing pnp4nagios config on webserver. Do ' mv @datarootdir@/install.ignore.not @datarootdir@/install.ignore ' to show graphs",1);
 }
    
 exit;

@@ -57,8 +57,13 @@ config_samples/nagios-npcd.cfg:
 config_samples/templates.cfg:
 	$(PERL) config_tools/TemplateMod.pl -i $(NAG_OBJ)/templates.cfg -o config_samples/templates.cfg
 
+install-samples: config_samples/nagios-sync.cfg config_samples/nagios-bulk.cfg config_samples/nagios-npcd.cfg config_samples/templates.cfg
+	$(INSTALL) -m 644 config_samples/nagios-sync.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 config_samples/nagios-bulk.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 config_samples/nagios-npcd.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
+	$(INSTALL) -m 644 config_samples/templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
 
-install: install-contrib config_samples/nagios-sync.cfg config_samples/nagios-bulk.cfg config_samples/nagios-npcd.cfg config_samples/templates.cfg
+install: install-contrib
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/config.d
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(SYSCONFDIR)/check_commands
@@ -73,26 +78,25 @@ install: install-contrib config_samples/nagios-sync.cfg config_samples/nagios-bu
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/config.php $(DESTDIR)$(SYSCONFDIR)/
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/process_perfdata.cfg $(DESTDIR)$(SYSCONFDIR)/process_perfdata.cfg
 	$(INSTALL) -m 755 $(INSTALL_OPTS) $(BACKUP) config_samples/npcd.cfg $(DESTDIR)$(SYSCONFDIR)/npcd.cfg
+	$(INSTALL) -m 644 $(INSTALL_OPTS) $(BACKUP) config_samples/rra.cfg $(DESTDIR)$(SYSCONFDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp4nagios_release $(DESTDIR)$(SYSCONFDIR)/
-	if ! diff -q pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>&1 ; then \
+	if ! diff -q pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>/dev/null ; then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS) $(BACKUP) pages/background-A4.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ ; \
 	fi
-	if ! diff -q pages/background-letter.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>&1 ; then \
+	if ! diff -q pages/background-letter.pdf $(DESTDIR)$(SYSCONFDIR)/pages/ >/dev/null 2>/dev/null ; then \
 		$(INSTALL) -m 644 $(INSTALL_OPTS) $(BACKUP) pages/background-letter.pdf $(DESTDIR)$(SYSCONFDIR)/pages ; \
 	fi
 	if [ ! -e $(DESTDIR)$(SYSCONFDIR)/background.pdf ] ; then \
 		ln -rs $(DESTDIR)$(SYSCONFDIR)/pages/background-$(PAPERSIZE).pdf $(DESTDIR)$(SYSCONFDIR)/background.pdf ;\
 	fi
 	$(INSTALL) -m 755 -d $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects
-	$(INSTALL) -m 644 config_samples/templates.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
 	$(INSTALL) -m 644 config_samples/pnp-sync.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
 	$(INSTALL) -m 644 config_samples/pnp-bulk.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
 	$(INSTALL) -m 644 config_samples/pnp-npcd.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/objects/
-	$(INSTALL) -m 644 config_samples/nagios-sync.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
-	$(INSTALL) -m 644 config_samples/nagios-bulk.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
-	$(INSTALL) -m 644 config_samples/nagios-npcd.cfg $(DESTDIR)$(SYSCONFDIR)/config_samples/nagios/
 	$(INSTALL) -m 644 -D config_samples/$(HTTP_SERVER).pnp4nagios.conf $(DESTDIR)$(SYSCONFDIR)/config_samples/http_server_$(HTTP_SERVER)/pnp4nagios.conf
-
+	if [ "x${NOSAMPLES}" = "x" ] ; then \
+	$(MAKE) install-samples ; \
+	fi
 
 install-contrib:
 	$(INSTALL) -m 755 -d $(DESTDIR)$(SYSCONFDIR)/contrib

@@ -62,15 +62,12 @@ for (my $j = 0; $j <= $#cfg; $j++) {
     if ($line =~ /^cfg_file=(\S+)/) {
         my $sel = $1;
         $lastcfgfile = $j;
-        if ($sel =~ /pnp\.cfg/) {
+        if ($sel =~ /\/pnp-\w+\.cfg/) {
             $cfg[$j] = '#'.$cfg[$j];
-            $got = 1;
-            last;
         }
     }
 }
-splice(@cfg,$lastcfgfile+1,0,"cfg_file=@NAGIOS_OBJ@/pnp-$mode.cfg\n")
-    unless $got;
+splice(@cfg,$lastcfgfile+1,0,"cfg_file=@NAGIOS_OBJ@/pnp-$mode.cfg\n");
 
 
 

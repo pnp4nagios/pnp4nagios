@@ -241,9 +241,11 @@ body { width: 42em; margin: 0 auto; font-family: sans-serif; font-size: 90%; }
 <?php if ($failed > 0) : ?>
 <p class="fail">@PACKAGE_NAME@ may not work correctly with your environment. Remove or rename the <code><?php echo __FILE__ ?></code> file on your own risk.</p>
 <?php else : ?>
-<p class="pass">Your environment passed all requirements. Remove or rename the <code>
-    <?php echo __FILE__ ?>
-     </code> file now, or create a file named <code>install.ignore</code></p>
+     <p class="pass">Your environment passed all requirements. To show the graphs:
+     <br>
+     <code>mv @datarootdir@/install.ignore.not
+     @datarootdir@/install.ignore</code>.
+</p>
 <?php endif ?>
 </div>
 

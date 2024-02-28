@@ -1,11 +1,10 @@
 %global debug_package %{nil}
 %global with_selinux 1
-%global selinuxtype  targeted
 %global _libdir      %{_prefix}/lib64
 
 Name:           pnp4nagios
-Version:        @PACKAGE_VERSION@
-Release:        @PACKAGE_RELEASE@%{?dist}
+Version:        0.6.27
+Release:        4%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System
@@ -17,7 +16,7 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires:  autoconf, automake, libtool
 BuildRequires:  rrdtool-perl
 BuildRequires:  perl(Time::HiRes)
-BuildRequires:  httpd, nagios
+#BuildRequires:  httpd, nagios
 Requires:       nagios
 Requires:       httpd
 Requires:       rrdtool-perl
@@ -27,7 +26,11 @@ Requires:       php-xml
 Requires:       php-mbstring
 # This ensures that the *-selinux package and all it’s dependencies are not pulled
 # into containers and other systems that do not use SELinux
+%if 0%{?fedora} || 0%{?rhel} >= 8
 Requires:       (%{name}-selinux if selinux-policy-%{selinuxtype})
+%else
+Requires:       %{name}-selinux
+%endif
 
 %if 0%{?rhel} > 6 || 0%{?fedora} > 20
 # For necessary macros
@@ -48,9 +51,11 @@ and stores them automatically into RRD-databases.
 %package selinux
 Summary:          SELinux context for %{name}
 BuildArch:        noarch
+%global selinuxtype  targeted
+%global modulename   pnp4nagios
 Requires:         selinux-policy-%{selinuxtype}
 Requires(post):   selinux-policy-%{selinuxtype}
-BuildRequires:    checkpolicy, selinux-policy-devel, bzip2
+Requires:    checkpolicy, selinux-policy-devel, bzip2
 %{?selinux_requires}
 
 %description selinux
@@ -75,7 +80,6 @@ sed -i -e '/^\t$(MAKE) strip-post-install$/d' src/Makefile.in
 
 autoconf
 %configure --prefix='' \
-           --with-cpusize=64 \
            --bindir=%{_sbindir} \
            --libexecdir=%{_libexecdir}/%{name} \
            --sysconfdir=%{_sysconfdir}/%{name} \
@@ -89,23 +93,24 @@ autoconf
            %endif
            --with-dist-type=rh \
            --with-init-type=systemd \
+           --with-initdir=%{_unitdir} \
            --with-http_user=apache \
            --with-http_group=apache \
            --with-nagios_user=nagios \
            --with-nagios_group=nagios \
-           --with-cache_dir=/var/cache/pnp4nagios \
+           --with-nagios_unit=nagios \
+           --with-cache_dir=%{_localstatedir}/cache/pnp4nagios \
            --with-perfdata-dir=%{_localstatedir}/lib/%{name} \
-           --with-perfdata-spool-dir=%{_localstatedir}/spool/%{name} 
+           --with-perfdata-spool-dir=%{_localstatedir}/spool/%{name} \
+	   --with-pnp-logdir=%{_localstatedir}/log/%{name}
 
 %{__make} %{?_smp_mflags} all
-
 
 %install
 if [ "$RPM_BUILD_ROOT" != "/" ]; then
     rm -rf $RPM_BUILD_ROOT
 fi
-%{__make} install DESTDIR=$RPM_BUILD_ROOT INSTALL_OPTS="" HTTP_INSTALL_OPTS="" INIT_OPTS="" 
-%{__make} install-config DESTDIR=$RPM_BUILD_ROOT INSTALL_OPTS="" HTTP_INSTALL_OPTS="" INIT_OPTS="" 
+%{__make} install DESTDIR=$RPM_BUILD_ROOT INSTALL_OPTS="" HTTP_INSTALL_OPTS="" MIX_OPTS="" INIT_OPTS="" NOSAMPLES=1
 
 # NO...do NOT remove -sample from filename suffix
 #for i in $RPM_BUILD_ROOT/%{_sysconfdir}/pnp4nagios/*-sample \
@@ -115,10 +120,15 @@ fi
 #done
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config.php.*
 rm -f $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config_local.php
+chmod a-x $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/config.php
+chmod a-x $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/*.cfg
+chmod a-x $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/*.md
+chmod a-x $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/check_commands/*.cfg-sample
 
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/lib/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/spool/%{name}
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}
+mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}/stats
 mkdir -p $RPM_BUILD_ROOT%{_localstatedir}/log/%{name}/kohana
 #
 install -Dp -m 0644 contrib/fedora/pnp4nagios.logrotate.conf \
@@ -134,24 +144,20 @@ install -m 0644 contrib/fedora/logwatch/conf/services/pnp4nagios.conf \
 install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
 #
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
+#mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
 #sed 's|/usr/local/nagios/etc/htpasswd.users|@NAGIOS_PWD@|' \
 #   sample-config/httpd.conf \
 #   > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
-install -m 0644 sample-config/httpd.conf \
-        $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
 install -Dp -m 0644 scripts/npcd.service \
         $RPM_BUILD_ROOT%{_unitdir}/npcd.service
-install -Dp -m 0644 scripts/pnp_gearman_worker.service \
-        $RPM_BUILD_ROOT%{_unitdir}/pnp_gearman_worker.service
 
 #### broker api changed
 #mkdir -p $RPM_BUILD_ROOT%{_libdir}/nagios/brokers
 #mv $RPM_BUILD_ROOT%{_libdir}/npcdmod.o \
 #   $RPM_BUILD_ROOT%{_libdir}/nagios/brokers/npcdmod.o
-rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/npcmod.o
+## rm -f $RPM_BUILD_ROOT%{_libdir}/%{name}/npcmod.o
 
-mv $RPM_BUILD_ROOT/man $RPM_BUILD_ROOT%{_datadir}/
+#mv $RPM_BUILD_ROOT/man $RPM_BUILD_ROOT%{_datadir}/
 
 # Move kohana to pnp4nagios, there is another kohana in fedore/EPEL,
 # which can be installed.
@@ -159,10 +165,14 @@ mv $RPM_BUILD_ROOT%{_libdir}/pnp4nagios/kohana \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/kohana
 sed -i 's|%{_libdir}/pnp4nagios/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
-
+mv $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/install.ignore.not \
+   $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/install.ignore
+rm $RPM_BUILD_ROOT%{_sysconfdir}/pnp4nagios/background.pdf
 
 %if 0%{with_selinux}
-install -D -m 0644 %{name}.pp.bz2 $RPM_BUILD_ROOT%{_datadir}/selinux/packages/%{selinuxtype}/%{name}.pp.bz2
+install -d $RPM_BUILD_ROOT%{_localstatedir}/lib/selinux/tmp/%{name}
+install -m 0644 %{name}.fc $RPM_BUILD_ROOT%{_localstatedir}/lib/selinux/tmp/%{name}/%{modulename}.fc
+install -m 0644 %{name}.te $RPM_BUILD_ROOT%{_localstatedir}/lib/selinux/tmp/%{name}/%{modulename}.te
 %endif
 
 %package logrotate
@@ -196,44 +206,32 @@ files for errors, and flagging them for attention.
 %doc AUTHORS ChangeLog COPYING
 %doc INSTALL README.md README.fedora
 %doc THANKS contrib/
-%config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/background-*.pdf
-%{_sysconfdir}/%{name}/background.pdf
-%{_sysconfdir}/%{name}/cgi_config.php
+%config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/pages/background-*.pdf
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/config.php
 %config(noreplace) %attr(644,root,root) %{_sysconfdir}/%{name}/*.cfg
+%attr(755,root,root) %{_sysconfdir}/%{name}/SetLogLevels
+%attr(755,root,root) %{_sysconfdir}/%{name}/verify_pnp_config
 %attr(644,root,root) %{_sysconfdir}/%{name}/README_config.md
 %{_sysconfdir}/%{name}/check_commands/*
+%{_sysconfdir}/%{name}/contrib/*
 %dir %{_sysconfdir}/%{name}/config.d
-%attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/NagiosCfgMod.pl
-%attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/TemplateMod.pl
-%attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/bulk/SuggestInstall
-%attr(644,root,root) %{_sysconfdir}/%{name}/config_suggestions/bulk/pnp.cfg
-%attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/sync/SuggestInstall
-%attr(644,root,root) %{_sysconfdir}/%{name}/config_suggestions/sync/pnp.cfg
-%attr(755,root,root) %{_sysconfdir}/%{name}/config_suggestions/npcd/SuggestInstall
-%attr(644,root,root) %{_sysconfdir}/%{name}/config_suggestions/npcd/pnp.cfg
-
-%{_sysconfdir}/%{name}/pages/*
-%{_sysconfdir}/%{name}/samples/*
+%dir %attr(744,apache,apache) /var/cache/pnp4nagios
+%attr(755,root,root) %{_sysconfdir}/%{name}/config_tools/NagiosCfgMod.pl
+%attr(755,root,root) %{_sysconfdir}/%{name}/config_tools/TemplateMod.pl
+%{_sysconfdir}/%{name}/config_samples/*
 %{_sysconfdir}/%{name}/pnp4nagios_release
 
-%config(noreplace) %{_sysconfdir}/httpd/conf.d/%{name}.conf
-%attr(755,root,root) %{_bindir}/npcd
-%{_unitdir}/npcd.service
-%{_unitdir}/pnp_gearman_worker.service
+%attr(755,root,root) %{_sbindir}/npcd
+%config(noreplace) %attr(644,root,root) %{_unitdir}/npcd.service
 %dir %{_libexecdir}/%{name}
 %attr(755,root,root) %{_libexecdir}/%{name}/*
 %attr(755,nagios,nagios) %{_localstatedir}/lib/%{name}
 %dir %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}
 %dir %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}/stats
+%dir %attr(755,nagios,nagios) %{_localstatedir}/log/%{name}/lock
 %dir %attr(755,apache,apache) %{_localstatedir}/log/%{name}/kohana
 %dir %attr(755,nagios,nagios) %{_localstatedir}/spool/%{name}
 %{_datadir}/nagios/html/%{name}/
-# Remove install check script
-# as it is not required if all dependencies are met.
-%exclude %{_datadir}/nagios/html/%{name}/install.php
-# remove broker module, api changed
-%exclude %{_libdir}/%{name}/npcdmod.o
 %{_mandir}/man8/*
 
 %files logrotate
@@ -247,49 +245,96 @@ files for errors, and flagging them for attention.
 
 %if 0%{?with_selinux}
 %files selinux
-%{_datadir}/selinux/packages/%{selinuxtype}/%{name}.pp.*
-%ghost %verify(not md5 size mode mtime) %{_sharedstatedir}/selinux/%{selinuxtype}/active/modules/200/%{name}
+%{_localstatedir}/lib/selinux/tmp/%{name}/%{modulename}.te
+%{_localstatedir}/lib/selinux/tmp/%{name}/%{modulename}.fc
+
+%pre selinux
+%selinux_relabel_pre -s %{selinuxtype}
+
+%post selinux
+pushd %{_localstatedir}/lib/selinux/tmp/%{name} >/dev/null
+if semodule -E nagios 2>/dev/null >/dev/null  ;
+then
+  semodule_unpackage nagios.pp nagios.mod nagios.fc
+  for pnpdir in /etc/pnp4nagios /var/log/pnp4nagios /var/lib/pnp4nagios /usr/lib/pnp4nagios
+  do
+      if grep -q $pnpdir nagios.fc ;
+      then
+          sed -i "\\|$pnpdir|s/^/#/" %{modulename}.fc
+      fi
+  done
+fi
+rm nagios.*
+%{__make} %{?_smp_mflags} -f /usr/share/selinux/devel/Makefile all
+bzip2 %{name}.pp
+install -m 0600 %{modulename}.pp.bz2 %{_datadir}/selinux/packages/%{selinuxtype}/
+popd >/dev/null
+rm -rf /var/lib/selinux/tmp/%{name}
+%selinux_modules_install -s %{selinuxtype} %{_datadir}/selinux/packages/%{selinuxtype}/%{modulename}.pp.bz2
+
+%postun selinux
+if [ $1 -eq 0 ]; then
+    %selinux_modules_uninstall -s %{selinuxtype} %{modulename}
+fi
+
+%posttrans selinux
+%selinux_relabel_post -s %{selinuxtype}
+
 %endif
 
 
 %post
-# config suggestion update
-pushd %{_sysconfdir}/pnp4nagios/config_suggestions
+# config sample update
+pushd %{_sysconfdir}/pnp4nagios >/dev/null
 if [ -e %{_sysconfdir}/nagios/objects/templates.cfg ] ;
 then
-        perl TemplateMod.pl %{_sysconfdir}/nagios/objects/templates.cfg | tee sync/templates.cfg | tee bulk/templates.cfg | tee npcd/templates.cfg >/dev/null
+        perl %{_sysconfdir}/pnp4nagios/config_tools/TemplateMod.pl -i %{_sysconfdir}/nagios/objects/templates.cfg -o config_samples/nagios/objects/templates.cfg
 fi
 if [ -e %{_sysconfdir}/nagios/nagios.cfg ] ;
 then
     nagver=`nagios --version | gawk '/^Nagios /'  | gawk -v RS=' ' '/^[0-9]/'`
-    perl NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m sync -o sync/nagios.cfg -n $nagver
-    perl NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m bulk -o bulk/nagios.cfg -n $nagver
-    perl NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m npcd -o npcd/nagios.cfg -n $nagver
+    perl %{_sysconfdir}/pnp4nagios/config_tools/NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m sync -o config_samples/nagios/nagios-sync.cfg -n $nagver
+    perl %{_sysconfdir}/pnp4nagios/config_tools/NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m bulk -o config_samples/nagios/nagios-bulk.cfg -n $nagver
+    perl %{_sysconfdir}/pnp4nagios/config_tools/NagiosCfgMod.pl -i %{_sysconfdir}/nagios/nagios.cfg -m npcd -o config_samples/nagios/nagios-npcd.cfg -n $nagver
 fi        
-popd
-
-# since service files changed, need reload, maybe
-systemctl daemon-reload
-systemctl try-restart npcd
-systemctl try-restart pnp_gearman_worker
-
-%if 0%{?with_selinux}
-%post selinux
-%selinux_modules_install -s %{selinuxtype} %{_datadir}/selinux/packages/%{selinuxtype}/%{name}.pp.bz2
-%selinux_relabel_post -s %{selinuxtype}
-
-
-%postun selinux
-if [ $1 -eq 0 ]; then
-    %selinux_modules_uninstall -s %{selinuxtype} %{name}
-    %selinux_relabel_post -s %{selinuxtype}
+# determine default paper size based on locale
+if test -e "/etc/locale.conf" ; then
+    localefile=/etc/locale.conf
+elif test -e "/etc/default/coale" ; then
+    localefile=/etc/default/locale
+else
+    localefile=""
 fi
-%endif
+if test "x${localefile}" = "x" ; then
+    PAPERSIZE=A4
+else
+    country=`grep "_..\." -o ${localefile} | sed 's/[\._]//g'`
+    if echo 'BZ,CA,CL,CO,CR,SV,GT,MX,NI,PA,PH,PR,US,VE' | grep -q ${country} ; then
+       PAPERSIZE=letter
+    else
+       PAPERSIZE=A4
+    fi
+fi
+if [ ! -e %{_sysconfdir}/pnp4nagios/background.pdf ] ; then
+   ln -rs %{_sysconfdir}/pnp4nagios/pages/background-${PAPERSIZE}.pdf %{_sysconfdir}/pnp4nagios/background.pdf
+fi
+
+popd >/dev/null
+%systemd_post npcd.service
+
+%preun
+%systemd_preun npcd.service
+
+%postun
+%systemd_postun_with_restart npcd.service
 
 
 
 
 %changelog
+* Mon Feb 19 2024 Chuck Lane <lane@dchooz.org> - 0.6.27-6
+- get rpm in sync with 'build-from-source' autoconf setup
+
 * Thu Nov 23 2023 Chuck Lane <lane@dchooz.org> - 0.6.27-5
 - add selinux info, improved packaging
 

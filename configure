@@ -668,7 +668,9 @@ npcd_name
 pnpsender_name
 PERFDATA_SPOOL_DIR
 PERFDATA_DIR
+PERFDATA_STATS
 PERFDATA_LOG
+PNP_LOGDIR
 INSTALL_OPTS
 nagios_grp
 nagios_user
@@ -827,7 +829,7 @@ with_nagios_pwd
 with_nagios_objects
 with_nagios_user
 with_nagios_group
-with_perfdata_logfile
+with_pnp_logdir
 with_perfdata_dir
 with_perfdata_spool_dir
 with_http_server
@@ -1521,7 +1523,7 @@ Optional Packages:
  --with-nagios-objects=<nagios_objects_directory> location of nagios object config files
   --with-nagios-user=<user> sets user name to run nagios
   --with-nagios-group=<grp> sets group name to run nagios
-  --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile
+ --with-pnp-logdir=<location of pnp4nagios log files and directories
   --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files
   --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd
  --with-http_server=(http,apache,apache2,lighttpd,nginx) http server software
@@ -2805,7 +2807,7 @@ else $as_nop
   DEBUG_LEVEL=0
 fi
 
-if test "$DEBUG_LEVEL" > 0 ; then
+if test $DEBUG_LEVEL -gt 0 ; then
 CFLAGS="${CFLAGS} -O0 -ggdb3 -g3"
 fi
 
@@ -6992,7 +6994,7 @@ fi
 case $src_init in
     default-service)
         src_init=npcd.service
-        initname="${initname}.service"
+        #initname="${initname}.service"
         ;;
     default-init)
         src_init=rc.npcd
@@ -7428,15 +7430,21 @@ INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
 #
 # pnp4nagios locations and files
 #
+PNP_LOGDIR="${logdir}"
 
-PERFDATA_LOG="${logdir}/perfdata.log"
-
-# Check whether --with-perfdata-logfile was given.
-if test ${with_perfdata_logfile+y}
+# Check whether --with-pnp-logdir was given.
+if test ${with_pnp_logdir+y}
 then :
-  withval=$with_perfdata_logfile; PERFDATA_LOG=$withval
+  withval=$with_pnp_logdir; PNP_LOGDIR=$withval
 
 fi
+
+
+
+PERFDATA_LOG="${PNP_LOGDIR}/perfdata.log"
+
+
+PERFDATA_STATS="${PNP_LOGDIR}/stats"
 
 
 
@@ -7459,7 +7467,6 @@ then :
   withval=$with_perfdata_spool_dir; PERFDATA_SPOOL_DIR=$withval
 
 fi
-
 
 
 
