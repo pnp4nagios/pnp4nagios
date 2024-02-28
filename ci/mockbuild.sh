@@ -23,6 +23,8 @@ config='alma+epel-8-x86_64'
 mock -r $config  \
      --additional-package=selinux-policy-targeted \
      --additional-package=selinux-policy-devel \
+     --additional-package=perl-Time-HiRes \
+     --additional-package=rrdtool \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
 
@@ -31,6 +33,8 @@ config='fedora-38-x86_64'
 mock -v -r $config \
      --additional-package=selinux-policy-targeted \
      --additional-package=selinux-policy-devel \
+     --additional-package=perl-Time-HiRes \
+     --additional-package=rrdtool \
      --spec=${NAME}.spec \
      --sources=. --resultdir=./outputs -N
 
