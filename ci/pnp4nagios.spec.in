@@ -93,7 +93,7 @@ autoconf
            --with-dist-type=rh \
            --with-init-type=systemd \
            --with-initdir=%{_unitdir} \
-           --with-http_server=http \
+           --with-http_server=apache \
            --with-http_server_base=%{_syscnfdir}/httpd \
            --with-http_user=apache \
            --with-http_group=apache \
