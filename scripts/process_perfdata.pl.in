@@ -1703,6 +1703,7 @@ sub GetLock
     $wait = 1000000 unless defined $wait;
     
     my $FH;
+    my $madewhen;
     while ($tries > 0) {
         if (sysopen($FH,$dlockfile,O_WRONLY|O_CREAT|O_EXCL)) {
             my $t = time();
