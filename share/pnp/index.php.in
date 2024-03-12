@@ -13,7 +13,7 @@
 define('PNP_NAME', '@PACKAGE_NAME@');
 define('PNP_VERSION', '@PACKAGE_VERSION@');
 define('PNP_REL_DATE', '@PKG_REL_DATE@');
-define('PNP_ETC_PATH', '@sysconfdir@');
+define('PNP_ETC_PATH', '@pkgsysconfdir@');
 define('PNP_LOG_PATH', '@PNP_LOGDIR@');
 define('CACHE_DIR', '@CACHE_DIR@');
 

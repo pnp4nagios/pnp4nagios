@@ -83,7 +83,7 @@ $conf['rrdbase'] = "@PERFDATA_DIR@/";
 #
 # Location of "page" configs
 #
-$conf['page_dir'] = "@sysconfdir@/pages/";
+$conf['page_dir'] = "@pkgsysconfdir@/pages/";
 #
 # Site refresh time in seconds
 #
@@ -209,8 +209,8 @@ $conf['use_fpdf'] = 1;
 #
 # Use this file as PDF background.
 #
-$conf['background_pdf'] = '@sysconfdir@/background-A4.pdf' ;
-#$conf['background_pdf'] = '@sysconfdir@/background-letter.pdf' ;
+$conf['background_pdf'] = '@pkgsysconfdir@/background-A4.pdf' ;
+#$conf['background_pdf'] = '@pkgsysconfdir@/background-letter.pdf' ;
 
 #
 # Enable Calendar

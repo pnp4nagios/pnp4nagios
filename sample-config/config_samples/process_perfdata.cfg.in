@@ -26,7 +26,7 @@ RRDTOOL = @RRDTOOL@
 #
 # Location of PNP config files
 #
-CFG_DIR = @sysconfdir@
+CFG_DIR = @pkgsysconfdir@
 
 #
 # Use a single RRD database per service 
@@ -47,7 +47,7 @@ RRD_HEARTBEAT = 8460
 #
 # File with RRA options used to create new RRD files
 #
-RRA_CFG = @sysconfdir@/rra.cfg
+RRA_CFG = @pkgsysconfdir@/rra.cfg
 
 #
 # Interval at which PDPs are generated
@@ -153,4 +153,4 @@ KEY = should_be_changed
 # The shared password will be read from this file.
 # Only the first 32 characters will be used.
 #
-# KEY_FILE = @sysconfdir@/secret.key 
+#KEY_FILE = @pkgsysconfdir@/secret.key 

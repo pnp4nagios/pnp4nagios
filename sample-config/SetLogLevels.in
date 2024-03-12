@@ -1,8 +1,8 @@
-#!/usr/bin/bash
+#!/bin/sh
 # set pnp4nagios log levels for several components,
 # all at one time.
-npcdcfg=@sysconfdir@/npcd.cfg
-ppcfg=@sysconfdir@/process_perfdata.cfg
+npcdcfg=@pkgsysconfdir@/npcd.cfg
+ppcfg=@pkgsysconfdir@/process_perfdata.cfg
 kohcfg=@datarootdir@/application/config/config.php
 
 # setloglev  (npcd_level) (process_perfdata_level) (php level)

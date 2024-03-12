@@ -1,7 +1,7 @@
 # @datarootdir@ to make configure STFU
 @bindir@/npcd              system_u:object_r:nagios_exec_t:s0
 #@datadir@(/.*)?            system_u:object_r:nagios_spool_t:s0
-@sysconfdir@(/.*)?         system_u:object_r:nagios_etc_t:s0
+@pkgsysconfdir@(/.*)?         system_u:object_r:nagios_etc_t:s0
 @piddir@/npcd.pid          system_u:object_r:nagios_var_run_t:s0
 @PERFDATA_DIR@(/.*)?       system_u:object_r:nagios_spool_t:s0
 @logdir@(/.*)?             system_u:object_r:nagios_log_t:s0

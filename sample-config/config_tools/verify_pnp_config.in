@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!@PERL@
 # @datarootdir@  just to keep configure from bitching about it.
 #
 # Copyright (c) 2005-2011 PNP4Nagios Developer Team (http://www.pnp4nagios.org)
@@ -29,14 +29,16 @@ use Term::ANSIColor;
 my $version = '@PACKAGE_VERSION@';
 
 # process command line parameters
-use vars qw ( $help $debug $mode $vInfo $PNPCfg $MainCfg $last_check $object $user $group $http_user $http_group );
+use vars qw ( $help $debug $mode $vInfo $PNPCfg $MainCfg $last_check $object $user $group $http_user $http_group
+$dist_type $opsys);
 
 # use 'config' to set defaults
 $MainCfg='@NAGIOS_CFG@';
-$PNPCfg='@sysconfdir@';
+$PNPCfg='@pkgsysconfdir@';
 $http_user='@HTTP_USER@';
 $http_group='@HTTP_GROUP@';
-
+$dist_type='@dist_type@'; 
+$opsys='@opsys@';
 
 my $start_options = $0 . " " . join(" ", @ARGV);
 Getopt::Long::Configure('bundling');
@@ -876,22 +878,37 @@ sub check_rrdtool {
 
 sub check_proc_npcd {
 	my $user = shift;
-	my $out = `ps -u $user -o cmd | grep /npcd | grep -v grep`;
-	my $rc = $?;
-	chomp $out;
-	info("Check process: 'ps -u $user -o cmd | grep /npcd | grep -v grep'", 6);
-	info("Result: $out", 6);
-	info("Returncode: $rc", 6);
-	#extract npcd.cfg 
-	$out =~ /-f\s?(\S+)/;
-	my $npcd_cfg = $1;
-	if($rc == 0){
+        # may need to get cases based on $opsys,
+        # but this handles linux and bsd, maybe others
+        if (!open(PS,"ps -A -o user -o command|")) {
+           info("error running 'ps -A -o user -o command'",0);
+           return;
+        }
+        my $cfgfile;
+        
+        while (<PS>) {
+          chomp;
+          my ($psuser,$pscomm,@psargs) = split(/\s+/);
+          next unless $psuser eq $user;
+          next unless $pscomm =~ /\/npcd(\s|$)/;
+          info("Check process matched: $_",6);
+          while (my $token = shift(@psargs)) {
+              if ($token eq '-f') {
+                 $cfgfile=shift(@psargs);
+                 last;
+              }
+          }
+          last if defined $cfgfile;
+        }
+        close(PS);
+        
+	if(defined($cfgfile)){
 		info("npcd daemon is running",0);
-	}else{
+	} else {
 		info("npcd daemon is not running",2);
 		info_and_exit("A running npcd daemon is needed to process data.",4);
 	}
-	return $npcd_cfg;
+	return $cfgfile;
 }
 
 # process a nagios config file

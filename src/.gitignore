@@ -1,0 +1,6 @@
+*.o
+npcd
+pnpsender
+Makefile
+config.c
+npcdmod.c

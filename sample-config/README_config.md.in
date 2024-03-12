@@ -106,13 +106,13 @@ about "missing file" before the rrd files are created.
 
 Where to find config info: 
 
-    @sysconfdir@
+    @pkgsysconfdir@
         config.php
         config_local.php (not present by default)
         config.d/*.php   (not present by default)
         npcd.cfg
         process_perfdata.cfg
-        rra.cfg (not present by default, check in @sysconfdir@/samples)
+        rra.cfg
         
     @datarootdir@/application/config/config.php
     

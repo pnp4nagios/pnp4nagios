@@ -35,7 +35,7 @@ if( $< == 0 ){
 #
 
 my %conf = (
-    CFG_DIR           => "@sysconfdir@/", 
+    CFG_DIR           => "@pkgsysconfdir@/", 
     RRDPATH           => "@PERFDATA_DIR@",
     RRDTOOL           => "@RRDTOOL@",
     LOG_LEVEL         => 0,

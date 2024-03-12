@@ -6,7 +6,7 @@ exec_prefix=@exec_prefix@
 
 # This is a custom variable, and has the following default value if a
 # specific config file is not defined by the user.
-: ${NPCD_CONFIG:="@sysconfdir@/npcd.cfg"}
+: ${NPCD_CONFIG:="@pkgsysconfdir@/npcd.cfg"}
 : ${NAGIOS_CFG:="@NAGIOS_CFG@"}
 
 # The rest are OpenRC variables.
@@ -16,7 +16,7 @@ extra_started_commands="reload"
 command="@bindir@/npcd"
 command_args="-f ${NPCD_CONFIG}"
 pidfile="@piddir@/npcd.pid"
-verify="@sysconfdir@/verify_pnp_config"
+verify="@pkgsysconfdir@/verify_pnp_config"
 
 depend(){
   use logger

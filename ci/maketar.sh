@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # collect up all the "base" files into a tar file
 # exclude the stuff that gets created during a build
 

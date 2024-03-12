@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/sh
 
 NAME=pnp4nagios
 VERSION=$1

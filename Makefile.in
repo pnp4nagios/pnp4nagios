@@ -24,7 +24,6 @@ LDFLAGS=@LDFLAGS@ @LIBS@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 KOHANA=@KOHANA@
@@ -111,10 +110,8 @@ clean:
 	-rm -f *.cfg core
 	-rm -f *~ *.*~ */*~ */*.*~
 	-rm -f config.log config.status config.cache
-        ifeq ($(SELINUX),yes)
-	rm -f pnp4nagios.fc 
-	rm -f pnp4nagios.if pnp4nagios.pp* tmp
-        endif
+@SE@	rm -f pnp4nagios.fc 
+@SE@	rm -f pnp4nagios.if pnp4nagios.pp* tmp
 
 distclean: 
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -131,9 +128,7 @@ distclean:
 	rm -f $(SRC_CONTRIB)/ssi/status-header.ssi
 	rm -f $(SRC_CONTRIB)/fedora/pnp4nagios.logrotate.conf
 	rm -f $(SRC_CONTRIB)/fedora/logwatch/conf/logfiles/pnp4nagios.conf
-        ifeq ($SELINUX,yes)
-	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
-        endif
+@SE@	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
 
 devclean: distclean
 
@@ -162,24 +157,22 @@ install:
 # so mask out duplicates.
 
 install-selinux: 
-        ifeq ($(SELINUX),yes)
-	-rm nagios.pp
-	-semodule -E nagios 2>/dev/null >/dev/null
-	if [ -e nagios.pp ]  ; then \
-	  semodule_unpackage nagios.pp nagios.mod nagios.fc ; \
-	  for pnpdir in /etc/pnp4nagios /var/log/pnp4nagios /var/lib/pnp4nagios /usr/lib/pnp4nagios ; \
-	  do \
-	      if grep -q "^$pnpdir" nagios.fc ; \
-	      then \
-	          sed -i "\\|^$pnpdir|s/^/#/" pnp4nagios.fc ; \
-	      fi \
-	  done \
-	fi
-	$(MAKE) -f $(SELINUX_DEVELDIR)/Makefile load
-	fixfiles restore @datadir@ @pkgsysconfdir@ 
-	fixfiles restore @PERFDATA_DIR@ @logdir@
-	fixfiles restore @PERFDATA_SPOOL_DIR@ @piddir@
-        endif
+@SE@	-rm nagios.pp
+@SE@	-semodule -E nagios 2>/dev/null >/dev/null
+@SE@	if [ -e nagios.pp ]  ; then \
+@SE@	  semodule_unpackage nagios.pp nagios.mod nagios.fc ; \
+@SE@	  for pnpdir in /etc/pnp4nagios /var/log/pnp4nagios /var/lib/pnp4nagios /usr/lib/pnp4nagios ; \
+@SE@	  do \
+@SE@	      if grep -q "^$pnpdir" nagios.fc ; \
+@SE@	      then \
+@SE@	          sed -i "\\|^$pnpdir|s/^/#/" pnp4nagios.fc ; \
+@SE@	      fi \
+@SE@	  done \
+@SE@	fi
+@SE@	$(MAKE) -f $(SELINUX_DEVELDIR)/Makefile load
+@SE@	fixfiles restore @datadir@ @pkgsysconfdir@ 
+@SE@	fixfiles restore @PERFDATA_DIR@ @logdir@
+@SE@	fixfiles restore @PERFDATA_SPOOL_DIR@ @piddir@
 
 
 install-unstripped:
@@ -195,7 +188,7 @@ fullinstall:
 	$(PERL) summary fullinstall
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
-	@echo "Config files in: @sysconfdir@ might need updating."
+	@echo "Config files in: @pkgsysconfdir@ might need updating."
 	@echo ""
 	@echo ""
 	@echo "Enjoy."

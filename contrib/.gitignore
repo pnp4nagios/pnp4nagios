@@ -1,0 +1,4 @@
+fedora/logwatch/conf/logfiles/pnp4nagios.conf
+fedora/logwatch/scripts/services/pnp4nagios
+fedora/pnp4nagios.logrotate.conf
+ssi/status-header.ssi

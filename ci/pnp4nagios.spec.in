@@ -94,9 +94,10 @@ autoconf
            --with-init-type=systemd \
            --with-initdir=%{_unitdir} \
            --with-http_server=apache \
-           --with-http_server_base=%{_syscnfdir}/httpd \
+           --with-http_server_base=%{_sysconfdir}/httpd \
            --with-http_user=apache \
            --with-http_group=apache \
+           --with-kohana_system=%{_datadir}/nagios/html/%{name}/kohana/system \
            --with-nagios_user=nagios \
            --with-nagios_group=nagios \
            --with-nagios_unit=nagios \
@@ -162,10 +163,10 @@ install -Dp -m 0644 scripts/npcd.service \
 
 # Move kohana to pnp4nagios, there is another kohana in fedore/EPEL,
 # which can be installed.
-mv $RPM_BUILD_ROOT%{_libdir}/pnp4nagios/kohana \
-  $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/kohana
-sed -i 's|%{_libdir}/pnp4nagios/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
-  $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
+#mv $RPM_BUILD_ROOT%{_libdir}/kohana \
+#  $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/kohana
+#sed -i 's|%{_libdir}/pnp4nagios/kohana|%{_datadir}/nagios/html/%{name}/kohana|' \
+#  $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/index.php
 mv $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/install.ignore.not \
    $RPM_BUILD_ROOT%{_datadir}/nagios/html/%{name}/install.ignore
 rm $RPM_BUILD_ROOT%{_sysconfdir}/pnp4nagios/background.pdf

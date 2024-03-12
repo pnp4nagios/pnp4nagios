@@ -1,0 +1,71 @@
+#!@PERL@
+##########################################################################
+# $Id: $
+##########################################################################
+# $Log:  $
+# Rev for pnp4nagios 0.6.26  2022/10/23 lane@dchooz.org
+##########################################################################
+
+use strict;
+use Logwatch ':all';
+
+my $Debug = $ENV{'LOGWATCH_DEBUG'} || 0;
+my $DebugCounter = 0;
+
+my @OtherList = ();
+
+if ( $Debug >= 5 ) {
+	print STDERR "\n\nDEBUG: Inside pnp4nagios Filter \n\n";
+	$DebugCounter = 1;
+}
+
+my $line = 0;
+#my $date = '\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d \[\d+\] \[\d+\]';
+while (defined(my $ThisLine = <STDIN>)) {
+	if ( $Debug >= 5 ) {
+		print STDERR "DEBUG($DebugCounter): $ThisLine";
+		$DebugCounter++;
+	}
+	chomp($ThisLine);
+        $ThisLine =~ s/^File truncated// if $line == 0;
+        $line++;
+
+	if (
+            ($ThisLine =~ /Found Performance Data for/) or
+            ($ThisLine =~ /\d+ lines processed/) or
+            ($ThisLine =~ /\/var\/spool\/pnp4nagios\/service-perfdata\.\d+-PID-\d+ deleted/) or
+            ($ThisLine =~ /\/var\/spool\/pnp4nagios\/host-perfdata\.\d+-PID-\d+ deleted/) or
+            ($ThisLine =~ /PNP exiting \(runtime/) or
+            ($ThisLine =~ /process_perfdata.pl-[\.\d]+ starting in BULK Mode called by (NPCD|Nagios)/) or
+            ($ThisLine =~ /process_perfdata.pl-[\.\d]+ starting in SYNC Mode/) or
+            ($ThisLine =~ /process_perfdata.pl-[\.\d]+ starting in STDIN Mode/) or
+            ($ThisLine =~ /NPCD: Found \d+ files in/) or
+            ($ThisLine =~ /NPCD: ThreadCounter \d+\/\d+ File is/) or
+            ($ThisLine =~ /NPCD: Regular File: (host|service)-perfdata\.\d+/) or
+            ($ThisLine =~ /NPCD: A thread was started on thread_counter = \d+/) or
+            ($ThisLine =~ /NPCD: Processing file (host|service)-perfdata\.\d+ with ID \d+ - going to exec/) or
+            ($ThisLine =~ /NPCD: Have to wait: Filecounter = \d+ - thread_counter = \d+/) or
+            ($ThisLine =~ /NPCD: No more files to process\.\.\. waiting for \d+ seconds/) or
+            0 # this line prevents blame-shifting as lines are added above
+            )
+	{
+            if ( $Debug >= 6 ) {
+                print STDERR "DEBUG($DebugCounter): line ignored\n";
+            }
+        } else
+        {
+            # Report any unmatched entries...
+            push @OtherList, "$ThisLine\n";
+        }
+}
+
+###########################################################
+
+if ($#OtherList >= 0) {
+   print "\n**Unmatched Entries**\n";
+   print @OtherList;
+}
+
+exit(0);
+
+# vi: shiftwidth=3 tabstop=3 syntax=perl et

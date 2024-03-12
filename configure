@@ -679,6 +679,7 @@ NAGIOS_PWD
 NAGIOS_UNIT
 NAGIOS_VER
 NAGIOS_CFG
+SE
 SELINUX_DEVELDIR
 SELINUX
 RRDTOOL
@@ -706,6 +707,7 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+INSTALL_SUFFIX
 INSTALL_DATA
 INSTALL_SCRIPT
 INSTALL_PROGRAM
@@ -733,6 +735,7 @@ inetdname
 initname
 objsysconfdir
 pkgsysconfdir
+INIT_PERM
 init_type
 dist_ver
 dist_type
@@ -2788,7 +2791,6 @@ PKG_REL_DATE="2023-10-15"
 ac_config_headers="$ac_config_headers include/config.h:include/config.h.in"
 
 
-
 #
 if echo $PATH | grep -qv '/sbin' ; then
   echo "PATH variable doesn't include sbin, probable failure"
@@ -2932,6 +2934,7 @@ test -n "$target_alias" &&
   test "$program_prefix$program_suffix$program_transform_name" = \
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
+
 
 INIT_PROG=npcd
 
@@ -3290,6 +3293,15 @@ fi
 
 		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $init_type" >&5
 printf "%s\n" "$init_type" >&6; }
+
+
+if test $init_type = systemd ; then
+   INIT_PERM=0644
+else
+   INIT_PERM=0755
+fi
+
+
 
 
 
@@ -4160,6 +4172,18 @@ fi
 printf "%s\n" "$src_inetd" >&6; }
 
 
+if test $opsys = bsd -a $dist_type = netbsd ; then
+   sysconfdir="${prefix}/etc"
+   pkgsysconfdir="${sysconfdir}/pnp4nagios"
+   datarootdir="${datarootdir}/pnp4nagios"
+   libdir="${prefix}/lib/pnp4nagios"
+   libexecdir="${prefix}/libexec/pnp4nagios"
+   if test $initdiroverridden = no -a $init_type = newbsd ; then
+      initdir=/etc/rc.d
+   fi
+fi
+
+
 # for some reason AX_NAGIOS_GET_PATHS doesn't AC_SUBST this...
 
 
@@ -4261,6 +4285,13 @@ test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
 test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
+
+INSTALL_SUFFIX="-S"
+inbk=`install --help 2>&1|grep -o -e '-B suffix'|head -n 1`
+if test "$inbk" = "-B suffix" ; then
+  INSTALL_SUFFIX="-B"
+fi
+
 
 
 
@@ -5711,16 +5742,17 @@ else $as_nop
   x64=""
 fi
 
-if test -d "/usr/lib${x64}" ; then
-   libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
-elif test -d "/lib${x64}"; then
-   libdir="${prefix}/lib${x64}/${PACKAGE_NAME}"
-elif test -d "/usr/lib" ; then
-   libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
-else
-   libdir="${prefix}/lib/${PACKAGE_NAME}"
+if test x$libdir = x ; then
+   if test -d "/usr/lib${x64}" ; then
+      libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+   elif test -d "/lib${x64}"; then
+      libdir="${prefix}/lib${x64}/${PACKAGE_NAME}"
+   elif test -d "/usr/lib" ; then
+      libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+   else
+      libdir="${prefix}/lib/${PACKAGE_NAME}"
+   fi
 fi
-
 
 # Check whether --with-libdir was given.
 if test ${with_libdir+y}
@@ -6993,13 +7025,19 @@ if test "x$initdiroverridden" != "xyes"; then
        initname="npcd"
 fi
 
+#initname=`echo "$initname" | ${SED} "s#${PKG_NAME}#npcd#"`
+initconf=`echo "$initconf" | ${SED} "s#${pkgsysconfdir}#npcd.cfg#"`
+
 case $src_init in
     default-service)
         src_init=npcd.service
-        #initname="${initname}.service"
+        initname=npcd.service
         ;;
     default-init)
         src_init=rc.npcd
+        ;;
+    newbsd-init)
+        src_init=newbsd.npcd
         ;;
     openrc-init)
        src_init=openrc.npcd
@@ -7013,17 +7051,13 @@ case $src_init in
 esac
 
 
-initname=${initname/${PKG_NAME}/npcd}
-initconf=${initconf=${pkgsysconfdir}/npcd.cfg}
-
-if test "x$spooldir" == "xN/A" ; then
-   spooldir="$localstatedir/spool"
-else
-   spooldir=${spooldir/${PKG_NAME}/npcd}
+if test "x$spooldir" = "xN/A" ; then
+   spooldir="$localstatedir/spool/pnp4nagios"
 fi
-lockfile=${lockfile=${localstatedir}/npcd.lock}
+lockfile=`echo "${lockfile}"|${SED} "s#${localstatedir}#npcd.lock#"`
 
-eval logdir="${logdir}/log"
+logdir=`echo "${logdir}"|${SED} 's#/log$##'`
+logdir="${logdir}/log"
 
 case $host_os in
 *bsd*|darwin*)
@@ -7184,6 +7218,10 @@ fi
 
 
 
+SE=""
+if test $SELINUX = no ; then
+  SE="\#"
+fi
 
 
 
@@ -7212,7 +7250,7 @@ NAGIOS_EXE=no
 if test x$NAGIOS_CFG = xno -a x$NAGIOS_VER = xno ; then
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Look for running nagios server" >&5
 printf %s "checking Look for running nagios server... " >&6; }
-    rnag=`ps -eo command | ${EGREP} '/nagios4?(\s|$)' | head -n 1 | ${AWK} '{print $1;}'`
+    rnag=`ps -A -o command | ${EGREP} '/nagios4?( |$)' | head -n 1 | ${AWK} '{print $1;}'`
 
     if test x$rnag = x ; then
        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not seen" >&5
@@ -7220,7 +7258,7 @@ printf "%s\n" "not seen" >&6; }
     else
        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $rnag" >&5
 printf "%s\n" "$rnag" >&6; }
-       ncfg=`ps -eo command | ${EGREP} '/nagios4?(\s+\-d)?\s+.*\.cfg' | head -n 1 | ${AWK} -v RS=' ' '/\.cfg/{print $1;}'`
+       ncfg=`ps -A -o command | ${EGREP} '/nagios4? +.*\.cfg' | head -n 1 | ${AWK} -v RS=' ' '/\.cfg/{print $1;}'`
        if test x$ncfg != x ; then
           NAGIOS_CFG=$ncfg
        fi
@@ -7432,7 +7470,7 @@ INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
 #
 # pnp4nagios locations and files
 #
-PNP_LOGDIR="${logdir}"
+PNP_LOGDIR="${logdir}/pnp4nagios"
 
 # Check whether --with-pnp-logdir was given.
 if test ${with_pnp_logdir+y}
@@ -7450,7 +7488,7 @@ PERFDATA_STATS="${PNP_LOGDIR}/stats"
 
 
 
-PERFDATA_DIR="${localstatedir}/rrd"
+PERFDATA_DIR="${PNP_LOGDIR}/rrd"
 
 # Check whether --with-perfdata-dir was given.
 if test ${with_perfdata_dir+y}
@@ -7530,24 +7568,21 @@ fi
 
 
 if test x$http_base = xno ; then
-   echo "no http_base, yet"
     case "${HTTP_SERVER}" in
        apache*)
-        echo "test for apache"
         if apachectl -t -D DUMP_RUN_CFG >/dev/null 2>/dev/null ;
         then
-                echo "we have apachectl"
              http_base=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^ServerRoot:/ {print $2;}'`
-             http_base=${srvroot//\"/}
+             http_base=`echo "$srvroot"|${SED} 's/"//'`
              HTTP_USER=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^User:/ {print $2;}'`
-             HTTP_USER=${HTTP_USER/name=/}
-             HTTP_USER=${HTTP_USER//\"/}
+             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/name=//'`
+             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/"//'`
              HTTP_GROUP=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^Group:/ {print $2;}'`
-             HTTP_GROUP=${HTTP_GROUP/name=/}
-             HTTP_GROUP=${HTTP_GROUP//\"/}
+             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/name=//'`
+             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/"//'`
              HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES| ${GREP} "$http_base/.*\.conf" | ${AWK} '/\/conf/{print $2;}' | ${SED} -E 's/^\/+$//' | head -n 1`
 
-             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES | grep "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|sed -E 's/\/[^\/]+$//' | head -n 1`
+             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES |${GREP} "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|${SED} -E 's/\/[^\/]+$//' | head -n 1`
              fi
          ;;
    esac
@@ -7555,13 +7590,15 @@ fi
 
 
 
-if test x$http_base = xno ; then
+if test "x${http_base}" = xno ; then
     if test -e "/etc/${HTTP_SERVER}" ; then
        http_base="/etc/${HTTP_SERVER}"
     elif test -e "/usr/local/${HTTP_SERVER}" ; then
        http_base="/usr/local/${HTTP_SERVER}"
     elif test -e "/usr/local/etc/${HTTP_SERVER}" ; then
        http_base="/usr/local/etc/${HTTP_SERVER}"
+    elif test -e "/usr/pkg/etc/${HTTP_SERVER}" ; then
+       http_base="/usr/pkg/etc/${HTTP_SERVER}"
     fi
 fi
 
@@ -7569,19 +7606,32 @@ if test "x$http_base" = "xno" ; then
    as_fn_error $? "http server base directory not found" "$LINENO" 5
 fi
 
-
-
-
 if test "x$HTTP_CONFDIR" = x ; then
    case  "$HTTP_SERVER" in
       apache* | httpd )
           if test -e "${http_base}/conf/httpd.conf" ; then
-              HTTP_USER=`${AWK} '/^User/{print $2;}' ${http_base}/conf/httpd.conf`
-              HTTP_GROUP=`${AWK} '/^Group/{print $2;}' ${http_base}/conf/httpd.conf`
+              hconf="${http_base}/conf/httpd.conf"
+          elif test -e "${http_base}/httpd.conf" ; then
+              hconf="${http_base}/httpd.conf"
+          elif test -e "${http_base}/apache.conf" ; then
+              hconf="${http_base}/apache.conf"
+          elif test -e "${http_base}/apache2.conf" ; then
+              hconf="${http_base}/apache2.conf"
+          else
+              echo "HTTPD main configure file not found"
+              hconf="${http_base}/httpd.conf"
+          fi
+          if test -e $hconf ; then
+              HTTP_USER=`${AWK} '/^User/{print $2;}' $hconf`
+              HTTP_GROUP=`${AWK} '/^Group/{print $2;}' $hconf`
+              HTTP_CONFDIR=`${AWK} '/^IncludeOptional .*\*/{print $2;}' $hconf|head -n 1`
+              if test "x${HTTP_CONFDIR}" != x ; then
+                   HTTP_CONFDIR=`dirname "${http_base}/${HTTP_CONFDIR}"`
+              fi
            fi
            HTTP_USER=${HTTP_USER:-daemon}
            HTTP_GROUP=${HTTP_GROUP:-daemon}
-           HTTP_CONFDIR="${http_base}/conf.d"
+           HTTP_CONFDIR=${HTTP_CONFDIR:-$http_base}
            ;;
     lighttpd )
            HTTP_USER=lighttpd
@@ -7595,6 +7645,11 @@ if test "x$HTTP_CONFDIR" = x ; then
            ;;
    esac
 fi
+
+if test ! -e ${HTTP_CONFDIR} ; then
+   HTTP_CONFDIR=${http_base}
+fi
+
 
 if test "${HTTP_SERVER}" = "httpd" ; then
      HTTP_SERVER=apache
@@ -7761,6 +7816,8 @@ ac_config_files="$ac_config_files scripts/rrd_modify.pl scripts/rc.npcd scripts/
 
 ac_config_files="$ac_config_files scripts/npcd.service scripts/pnp_gearman_worker.service"
 
+ac_config_files="$ac_config_files scripts/newbsd.npcd"
+
 ac_config_files="$ac_config_files scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php"
 
 ac_config_files="$ac_config_files sample-config/README_config.md"
@@ -7768,6 +7825,8 @@ ac_config_files="$ac_config_files sample-config/README_config.md"
 ac_config_files="$ac_config_files sample-config/SetLogLevels"
 
 ac_config_files="$ac_config_files sample-config/config_tools/NagiosCfgMod.pl"
+
+ac_config_files="$ac_config_files sample-config/config_tools/TemplateMod.pl"
 
 ac_config_files="$ac_config_files sample-config/config_tools/verify_pnp_config"
 
@@ -7800,6 +7859,8 @@ ac_config_files="$ac_config_files pnp4nagios.fc src/config.c src/npcdmod.c"
 ac_config_files="$ac_config_files contrib/fedora/pnp4nagios.logrotate.conf"
 
 ac_config_files="$ac_config_files contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf"
+
+ac_config_files="$ac_config_files contrib/fedora/logwatch/scripts/services/pnp4nagios"
 
 ac_config_files="$ac_config_files contrib/ssi/status-header.ssi"
 
@@ -8422,12 +8483,14 @@ do
     "scripts/rc.pnp_gearman_worker") CONFIG_FILES="$CONFIG_FILES scripts/rc.pnp_gearman_worker" ;;
     "scripts/npcd.service") CONFIG_FILES="$CONFIG_FILES scripts/npcd.service" ;;
     "scripts/pnp_gearman_worker.service") CONFIG_FILES="$CONFIG_FILES scripts/pnp_gearman_worker.service" ;;
+    "scripts/newbsd.npcd") CONFIG_FILES="$CONFIG_FILES scripts/newbsd.npcd" ;;
     "scripts/check_pnp_rrds.pl") CONFIG_FILES="$CONFIG_FILES scripts/check_pnp_rrds.pl" ;;
     "share/pnp/index.php") CONFIG_FILES="$CONFIG_FILES share/pnp/index.php" ;;
     "share/pnp/install.php") CONFIG_FILES="$CONFIG_FILES share/pnp/install.php" ;;
     "sample-config/README_config.md") CONFIG_FILES="$CONFIG_FILES sample-config/README_config.md" ;;
     "sample-config/SetLogLevels") CONFIG_FILES="$CONFIG_FILES sample-config/SetLogLevels" ;;
     "sample-config/config_tools/NagiosCfgMod.pl") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/NagiosCfgMod.pl" ;;
+    "sample-config/config_tools/TemplateMod.pl") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/TemplateMod.pl" ;;
     "sample-config/config_tools/verify_pnp_config") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/verify_pnp_config" ;;
     "sample-config/config_samples/apache.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/apache.pnp4nagios.conf" ;;
     "sample-config/config_samples/config.php") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/config.php" ;;
@@ -8447,6 +8510,7 @@ do
     "src/npcdmod.c") CONFIG_FILES="$CONFIG_FILES src/npcdmod.c" ;;
     "contrib/fedora/pnp4nagios.logrotate.conf") CONFIG_FILES="$CONFIG_FILES contrib/fedora/pnp4nagios.logrotate.conf" ;;
     "contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf" ;;
+    "contrib/fedora/logwatch/scripts/services/pnp4nagios") CONFIG_FILES="$CONFIG_FILES contrib/fedora/logwatch/scripts/services/pnp4nagios" ;;
     "contrib/ssi/status-header.ssi") CONFIG_FILES="$CONFIG_FILES contrib/ssi/status-header.ssi" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
@@ -9000,7 +9064,7 @@ printf "%s\n" "$as_me: $ac_file is unchanged" >&6;}
 
 
   case $ac_file$ac_mode in
-    "include/stamp-h":F) date -Is > include/stamp-h ;;
+    "include/stamp-h":F) date '+%Y-%m-%dT%H:%M:%S%z' > include/stamp-h ;;
 
   esac
 done # for ac_tag
@@ -9088,8 +9152,8 @@ printf "%s\n" "         Nagios user/group:  $nagios_user,$nagios_grp" >&6; }
 printf "%s\n" "           Root user/group:  root,$root_grp" >&6; }
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               PNP HTML dir:  $datarootdir" >&5
 printf "%s\n" "              PNP HTML dir:  $datarootdir" >&6; }
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                 Config dir:  $sysconfdir" >&5
-printf "%s\n" "                Config dir:  $sysconfdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                 Config dir:  $pkgsysconfdir" >&5
+printf "%s\n" "                Config dir:  $pkgsysconfdir" >&6; }
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:             rrdtool binary:  $rrdtool_message" >&5
 printf "%s\n" "            rrdtool binary:  $rrdtool_message" >&6; }
 if test "x$RRDS" = "x0" ; then
@@ -9161,6 +9225,26 @@ printf "%s\n" "                 sbindir:  $sbindir" >&6; }
 printf "%s\n" "                  bindir:  $bindir" >&6; }
 fi
 
+if test $opsys = unix ; then
+   if test "x$prefix" = "x/usr/local/nagios" ; then
+      echo ""
+      echo ""
+      echo "prefix=$prefix"
+      echo "You probably wanted to do:"
+      echo "   ./configure --prefix=/usr/local/pnp4nagios"
+      echo "(or some similar prefix) to get the correct prefix."
+   fi
+fi
+if test "$install_method"  = default ; then
+    if test $opsys = bsd ; then
+      echo ""
+      echo ""
+      echo "prefix=$prefix"
+      echo "You probably wanted to do:"
+      echo "   ./configure --enable-install-method=os "
+      echo "to get the correct installation paths"
+    fi
+fi
 
 echo ""
 echo ""

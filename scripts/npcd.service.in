@@ -8,7 +8,7 @@ Type=exec
 User=@nagios_user@
 Group=@nagios_grp@
 PIDFile=@piddir@/npcd.pid
-Environment="CONFIG_FILE=@sysconfdir@/npcd.cfg"
+Environment="CONFIG_FILE=@pkgsysconfdir@/npcd.cfg"
 ExecStart=@bindir@/npcd -f ${CONFIG_FILE}
 #ExecStop=/bin/kill -s QUIT $MAINPID
 

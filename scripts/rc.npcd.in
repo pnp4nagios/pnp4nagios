@@ -17,7 +17,7 @@
 
 servicename=@npcd_name@
 NpcdBin=@bindir@/@npcd_name@
-NpcdCfgFile=@sysconfdir@/npcd.cfg
+NpcdCfgFile=@pkgsysconfdir@/npcd.cfg
 NpcdVarDir=@localstatedir@
 NpcdRunFile=@piddir@/npcd.pid
 NpcdLockDir=/var/lock/subsys

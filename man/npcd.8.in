@@ -24,7 +24,7 @@ http://pnp4nagios.sourceforge.net
 Run \fBnpcd\fR as daemon in the background.
 .TP
 \fB\-f, \--config\fR \fI<configfile>
-Path to the \fBnpcd\fR config file (typically @sysconfdir@/npcd.cfg).
+Path to the \fBnpcd\fR config file (typically @pkgsysconfdir@/npcd.cfg).
 .SH "RETURN VALUE"
 On success starting \fBnpcd\fR 0 is returned.
 .SH ERRORS
@@ -32,7 +32,7 @@ On error starting \fBnpcd\fR 1 is returned.
 .SH FILES
 .br
 .nf
-\fI@sysconfdir@/npcd.cfg\fR	default config file
+\fI@pkgsysconfdir@/npcd.cfg\fR	default config file
 .SH AUTHORS
 Joerg Linge <pitchfork@pnp4nagios.org>, 
 Hendrik Baecker <andurin@process-zero.de>

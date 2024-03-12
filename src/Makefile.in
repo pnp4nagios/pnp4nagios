@@ -32,7 +32,6 @@ MOD_CFLAGS=@MOD_CFLAGS@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 LIBDIR=@libdir@

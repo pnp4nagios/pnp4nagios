@@ -1,0 +1,32 @@
+#!/bin/sh
+#
+# $NetBSD: npcd.sh,v 1.6 2008/06/20 15:28:11 gdt Exp $
+#
+# PROVIDE: npcd
+# REQUIRE: DAEMON
+
+. /etc/rc.subr
+
+name="@npcd_name@"
+command="@bindir@/${name}"
+piddir="@piddir@"
+pidfile="${piddir}/${name}.pid"
+config="@pkgsysconfdir@/${name}.cfg"
+@npcd_name@_user=@nagios_user@
+@npcd_name@_group=@nagios_grp@
+
+command_args="-d -f $config"
+required_files=$config
+
+start_precmd="npcd_precmd"
+
+
+npcd_precmd()
+{
+    mkdir -p ${piddir}
+    chown @nagios_user@:@nagios_grp@ ${piddir}
+}
+
+
+load_rc_config $name
+run_rc_command "$1"

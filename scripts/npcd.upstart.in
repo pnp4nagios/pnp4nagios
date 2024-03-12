@@ -15,7 +15,7 @@ respawn
 
 pre-start script
     
-    @sysconfdir@/verify_pnp_config -m bulk+npcd -p @sysconfdir@/npcd.cfg -c @NAGIOS_CFG@
+    @pkgsysconfdir@/verify_pnp_config -m bulk+npcd -p @pkgsysconfdir@/npcd.cfg -c @NAGIOS_CFG@
 end script
 
-exec @bindir@/npcd -f @sysconfdir@/npcd.cfg
+exec @bindir@/npcd -f @pkgsysconfdir@/npcd.cfg
