@@ -48,6 +48,9 @@ jobs:
           name: pnp4nagios-${{ env.VERSION }}.tgz
           path: ci/pnp4nagios-${{ env.VERSION }}.tgz
 
+      - name: test tar.gz
+        run: tar tzf ci/pnp4nagios-${{ env.VERSION }}.tgz
+
       - name: Upload zip
         uses: actions/upload-artifact@v4
         with:
