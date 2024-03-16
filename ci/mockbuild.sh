@@ -9,33 +9,26 @@ dnf install -y mock
 
 cp ${NAME}.spec ${NAME}.spec.base
 
+echo "VERSION = ${VERSION}"
 echo "RELEASE = ${RELEASE}"
 mkdir outputs
 
+# want to use the plain-vanilla pnp4nagios.spec so that
+# it's the one that is included in the srpm
 
 BREL="${RELEASE}.alma%{?dist}"
 sed "/^Release:/c\
 Release:        ${BREL}" <${NAME}.spec.base >${NAME}.spec
+
 config='alma+epel-8-x86_64'
-mock -r $config  \
+mock -v -r $config  \
      --additional-package=selinux-policy-targeted \
      --additional-package=selinux-policy-devel \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
      --sources=${NAME}-${VERSION}.tgz \
-     --resultdir=./outputs
-
-mock -r $config  \
-     --install selinux-policy-targeted \
-     selinux-policy-devel \
-     perl-Time-HiRes \
-     rrdtool 
-SRPM=$(ls outputs/*el8.src.rpm)
-mock -r $config -n \
-     --resultdir=./outputs \
-     ${SRPM}
-
+     --resultdir=./outputs -N
 
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
@@ -45,19 +38,7 @@ mock -v -r $config \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
-     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs
-#
-mock -r $config  \
-     --install selinux-policy-targeted \
-     selinux-policy-devel \
-     perl-Time-HiRes \
-     rrdtool 
-SRPM=$(ls outputs/*fc38.src.rpm)
-mock -r $config -n \
-     --resultdir=./outputs \
-     ${SRPM}
-
-
+     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
 
 
 ls -lR .

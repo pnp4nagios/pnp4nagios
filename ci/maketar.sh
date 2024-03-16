@@ -7,52 +7,52 @@
 
 # also makes a zip file
 
-me=`realpath -e -L $0`
-distdir=`dirname $me`
-basedir=`realpath -e -L $distdir/..`
+startdir=$(pwd)
+me=$(realpath -e -L $0)
+distdir=$(dirname $me)
+basedir=$(realpath -e -L $distdir/..)
 #echo "distdir $distdir"
 #echo "basedir $basedir"
 
 VERSION=$1
-CVER=`awk -F, '/^AC_INIT/ {print $2}' $basedir/configure.ac|tr -d '[]'`
-if [ "x${VERSION}" == "x" ] ;
+CVER=$(awk -F, '/^AC_INIT/ {print $2}' $basedir/configure.ac|tr -d '[]')
+if test "x${VERSION}" = "x"  ;
 then
     VERSION=$CVER
     echo "VERSION ($VERSION) from configure.ac"
-elif [ "${VERSION}" != "${CVER}" ] ;
+elif test "${VERSION}" != "${CVER}"  ;
 then
     echo "$0 version requested $VERSION mismatch configure.ac $CVER"
     exit 1
 fi
     
 RELEASE=$2
-if [ "x${RELEASE}" == "x" ] ;
+if test "x${RELEASE}" = "x"  ;
 then
-    RELEASE=`awk -F'"' '/^PACKAGE_RELEASE=/{print $2}' $basedir/configure.ac`
+    RELEASE=$(awk -F'"' '/^PACKAGE_RELEASE=/{print $2}' $basedir/configure.ac)
     echo "RELEASE ($RELEASE) from configure.ac"
 fi
 
 RELDATE=$3
-if [ "x${RELDATE}" == "x" ] ;
+if test "x${RELDATE}" = "x"  ;
 then
-    RELDATE=`awk -F'"' '/^PKG_REL_DATE=/{print $2}' $basedir/configure.ac`
+    RELDATE=$(awk -F'"' '/^PKG_REL_DATE=/{print $2}' $basedir/configure.ac)
     echo "RELDATE ($RELDATE) from configure.ac"
 fi
 
 echo "Version $VERSION Release $RELEASE Date $RELDATE"
 
-tdir=`mktemp -p "/tmp" -d "pnp4nagiosDIST_XXXXXXXX"`
+tdir=$(mktemp -p "/tmp" -d "pnp4nagiosDIST_XXXXXXXX")
 #echo "tempdir $tdir"
-pushd $tdir >/dev/null
+cd $tdir
 
 #directory for dist 
 mkdir pnp4nagios-${VERSION}
 
 
 #populate with symbolic links from main code directory
-pushd pnp4nagios-${VERSION} >/dev/null
+cd pnp4nagios-${VERSION} 
 
-#echo "in tar base dir " `pwd`
 
 for f in AUTHORS ChangeLog ci config.guess config.sub contrib \
                  configure aclocal.m4 autoconf-macros \
@@ -78,7 +78,7 @@ sed -i "s/PKG_REL_DATE=\"[^\"]*\"/PKG_REL_DATE=\"${RELDATE}\"/" \
     configure.ac
 
 
-popd >/dev/null
+cd ..
 
 # any file that is a 'FILE.in' is kept, but the
 # resulting 'FILE' is not. 
@@ -110,9 +110,8 @@ mv pnp4nagios-${VERSION}.tgz $distdir
 
 zip -r -q pnp4nagios-${VERSION}.zip  pnp4nagios-${VERSION}/ -x\*~ -x\*\# -x\@dist.exclude
 mv pnp4nagios-${VERSION}.zip $distdir
-popd >/dev/null
+cd $startdir
 # clean up temp directory
 rm -rf $tdir
 
-echo "pnp4nagios-${VERSION}.tgz" >$distdir/TGZ_FILE
 
