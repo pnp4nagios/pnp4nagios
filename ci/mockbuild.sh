@@ -23,7 +23,19 @@ mock -r $config  \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
-     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
+     --sources=${NAME}-${VERSION}.tgz \
+     --resultdir=./outputs
+
+mock -r $config  \
+     --install selinux-policy-targeted \
+     selinux-policy-devel \
+     perl-Time-HiRes \
+     rrdtool 
+SRPM=$(ls outputs/*el8.src.rpm)
+mock -r $config -n \
+     --resultdir=./outputs \
+     ${SRPM}
+
 
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
@@ -33,6 +45,19 @@ mock -v -r $config \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
-     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
+     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs
+#
+mock -r $config  \
+     --install selinux-policy-targeted \
+     selinux-policy-devel \
+     perl-Time-HiRes \
+     rrdtool 
+SRPM=$(ls outputs/*fc38.src.rpm)
+mock -r $config -n \
+     --resultdir=./outputs \
+     ${SRPM}
+
+
+
 
 ls -lR .
