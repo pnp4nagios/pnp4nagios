@@ -1,16 +1,13 @@
 #!/bin/sh
 
 NAME=pnp4nagios
-VERSION=$1
+VERSION=$(grep '^Version: ' ${NAME}.spec | cut -d ':' -f2 | awk -F'%' '{print $1}' | tr -d ' ')
+RELEASE=$(grep '^Release: ' ${NAME}.spec | cut -d ':' -f2 | awk -F'%' '{print $1}' | tr -d ' ')
 
 dnf install -y epel-release
 dnf install -y mock
 
-#tar -xf ${NAME}-${VERSION}.tgz ${NAME}-${VERSION}/ci/${NAME}.spec
-#mv ${NAME}-${VERSION}/ci/${NAME}.spec ./${NAME}.spec.base
 cp ${NAME}.spec ${NAME}.spec.base
-
-RELEASE=$(grep '^Release: ' ${NAME}.spec.base | cut -d ':' -f2 | awk -F'%' '{print $1}' | tr -d ' ')
 
 echo "RELEASE = ${RELEASE}"
 mkdir outputs
@@ -26,7 +23,7 @@ mock -r $config  \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
-     --sources=. --resultdir=./outputs -N
+     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
 
 cp ${NAME}.spec.base ${NAME}.spec
 config='fedora-38-x86_64'
@@ -36,6 +33,6 @@ mock -v -r $config \
      --additional-package=perl-Time-HiRes \
      --additional-package=rrdtool \
      --spec=${NAME}.spec \
-     --sources=. --resultdir=./outputs -N
+     --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
 
 ls -lR .

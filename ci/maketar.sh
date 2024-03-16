@@ -114,4 +114,5 @@ popd >/dev/null
 # clean up temp directory
 rm -rf $tdir
 
+echo "pnp4nagios-${VERSION}.tgz" >$distdir/TGZ_FILE
 

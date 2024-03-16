@@ -5779,6 +5779,13 @@ fi
 #
 # Checking for Perl Modules
 #
+foo=`$PERL -V`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $foo" >&5
+printf "%s\n" "$foo" >&6; }
+bar=`rpm -qa`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $bar" >&5
+printf "%s\n" "$bar" >&6; }
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Time::HiRes" >&5
 printf %s "checking for Perl Module Time::HiRes... " >&6; }
 $PERL -MTime::HiRes -e exit >/dev/null 2>&1
@@ -5836,7 +5843,7 @@ if test ${with_kohana_system+y}
 then :
   withval=$with_kohana_system; KOHANA_SYSTEM=$withval
 else $as_nop
-  KOHANA_SYSTEM="$libdir/kohana/system"
+  KOHANA_SYSTEM="${datarootdir}/kohana/system"
 fi
 
 eval KOHANA_SYSTEM="${KOHANA_SYSTEM}"
@@ -7058,6 +7065,7 @@ lockfile=`echo "${lockfile}"|${SED} "s#${localstatedir}#npcd.lock#"`
 
 logdir=`echo "${logdir}"|${SED} 's#/log$##'`
 logdir="${logdir}/log"
+eval logdir="$logdir"
 
 case $host_os in
 *bsd*|darwin*)
@@ -7220,7 +7228,7 @@ fi
 
 SE=""
 if test $SELINUX = no ; then
-  SE="\#"
+  SE='#'
 fi
 
 
@@ -7576,10 +7584,10 @@ if test x$http_base = xno ; then
              http_base=`echo "$srvroot"|${SED} 's/"//'`
              HTTP_USER=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^User:/ {print $2;}'`
              HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/name=//'`
-             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/"//'`
+             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/"//g'`
              HTTP_GROUP=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^Group:/ {print $2;}'`
              HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/name=//'`
-             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/"//'`
+             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/"//g'`
              HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES| ${GREP} "$http_base/.*\.conf" | ${AWK} '/\/conf/{print $2;}' | ${SED} -E 's/^\/+$//' | head -n 1`
 
              HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES |${GREP} "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|${SED} -E 's/\/[^\/]+$//' | head -n 1`

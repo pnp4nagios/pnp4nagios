@@ -132,6 +132,11 @@ AC_SUBST(PERL_LIB_PATH)
 #
 # Checking for Perl Modules
 #
+foo=`$PERL -V`
+AC_MSG_RESULT($foo)
+bar=`rpm -qa`
+AC_MSG_RESULT($bar)
+
 AC_MSG_CHECKING(for Perl Module Time::HiRes)
 $PERL -MTime::HiRes -e exit >/dev/null 2>&1
 if test $? -ne 0; then
@@ -313,7 +318,7 @@ AC_SUBST(SELINUX_DEVELDIR)
 dnl conditional in Makefile
 SE=""
 if test $SELINUX = no ; then
-  SE="#"
+  SE=['#']
 fi
 AC_SUBST(SE)
 

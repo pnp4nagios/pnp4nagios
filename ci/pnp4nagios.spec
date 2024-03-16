@@ -66,8 +66,7 @@ SElinux security policy for %{name}.
 
 %prep
 %setup -q 
-autoreconf
-
+#autoreconf
 cp contrib/fedora/pnp4nagios-README.fedora README.fedora
 sed -i -e 's/^INSTALL_OPTS="-o $nagios_user -g $nagios_grp"/INSTALL_OPTS=""/' \
     configure
