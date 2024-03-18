@@ -30,8 +30,8 @@ group = @nagios_grp@
 # log_type = <value>
 #
 
-#log_type = file
-log_type = syslog
+log_type = file
+#log_type = syslog
 
 
 # log_file - define a path to your logfile
@@ -40,7 +40,7 @@ log_type = syslog
 # log_file = </path/to/logpath/filename>
 #
 
-log_file = @localstatedir@/npcd.log
+log_file = @PNP_LOGDIR@/npcd.log
 
 
 # max_logfile_size - defines the maximum filesize (bytes)
@@ -144,7 +144,7 @@ load_threshold = 0.0
 
 # location of your pid file
 
-pid_file=/run/nagios/npcd.pid
+pid_file=@piddir@/npcd.pid
 
 
 #########################

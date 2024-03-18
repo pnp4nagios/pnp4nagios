@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * @package  Database
  *
@@ -21,25 +25,25 @@
  *  table_prefix  - Database table prefix
  *  object        - Enable or disable object results
  *  cache         - Enable or disable query caching
- *	escape        - Enable automatic query builder escaping
+ *  escape        - Enable automatic query builder escaping
  */
 $config['default'] = array
 (
-	'benchmark'     => TRUE,
-	'persistent'    => FALSE,
-	'connection'    => array
-	(
-		'type'     => 'mysql',
-		'user'     => 'dbuser',
-		'pass'     => 'p@ssw0rd',
-		'host'     => 'localhost',
-		'port'     => FALSE,
-		'socket'   => FALSE,
-		'database' => 'kohana'
-	),
-	'character_set' => 'utf8',
-	'table_prefix'  => '',
-	'object'        => TRUE,
-	'cache'         => FALSE,
-	'escape'        => TRUE
+    'benchmark'     => true,
+    'persistent'    => false,
+    'connection'    => array
+    (
+        'type'     => 'mysql',
+        'user'     => 'dbuser',
+        'pass'     => 'p@ssw0rd',
+        'host'     => 'localhost',
+        'port'     => false,
+        'socket'   => false,
+        'database' => 'kohana'
+    ),
+    'character_set' => 'utf8',
+    'table_prefix'  => '',
+    'object'        => true,
+    'cache'         => false,
+    'escape'        => true
 );

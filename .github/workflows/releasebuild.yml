@@ -23,6 +23,7 @@ jobs:
           echo "VERSION=${TAG%-*}" >> $GITHUB_ENV
           echo "RELEASE=${TAG#*-}" >> $GITHUB_ENV
           echo "RELDATE=`date -I`" >> $GITHUB_ENV
+          cat $GITHUB_ENV
 
       - name: Set the git source location
         id: source_loc
@@ -30,25 +31,31 @@ jobs:
           echo "SRC=${GITHUB_REF}" >> $GITHUB_ENV
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build tar.gz
         run: ci/maketar.sh ${{ env.VERSION }} ${{ env.RELEASE }} ${{ env.RELDATE }} 
 
       - name: Upload mock script
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mockbuild.sh 
           path: ci/mockbuild.sh 
 
       - name: Upload tar.gz
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pnp4nagios-${{ env.VERSION }}.tgz
           path: ci/pnp4nagios-${{ env.VERSION }}.tgz
 
+      - name: Upload spec file
+        uses: actions/upload-artifact@v4
+        with:
+          name: pnp4nagios.spec
+          path: ci/pnp4nagios.spec
+
       - name: Upload zip
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: pnp4nagios-${{ env.VERSION }}.zip
           path: ci/pnp4nagios-${{ env.VERSION }}.zip
@@ -69,17 +76,22 @@ jobs:
              echo "RELEASE=${TAG#*-}" >> $GITHUB_ENV
  
         - name: Download mock build script
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: mockbuild.sh
 
         - name: Download tgz
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: pnp4nagios-${{ env.VERSION }}.tgz
 
+        - name: Download spec
+          uses: actions/download-artifact@v4
+          with:
+            name: pnp4nagios.spec
+
         - name: Download zip
-          uses: actions/download-artifact@v3
+          uses: actions/download-artifact@v4
           with:
             name: pnp4nagios-${{ env.VERSION }}.zip
 
@@ -92,7 +104,7 @@ jobs:
         - name: rename tgz/zip files
           run: |
                mv pnp4nagios-${{ env.VERSION }}.tgz pnp4nagios-${{ env.VERSION }}-${{ env.RELEASE }}.tgz          
-               mv pnp4nagios-${{ env.VERSION }}.zip pnp4nagios-${{ env.version }}-${{ env.RELEASE }}.zip
+               mv pnp4nagios-${{ env.VERSION }}.zip pnp4nagios-${{ env.VERSION }}-${{ env.RELEASE }}.zip
 
         - name: move rpms to main dir
           run: mv outputs/*.rpm .

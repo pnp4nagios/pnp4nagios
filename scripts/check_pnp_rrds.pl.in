@@ -40,7 +40,18 @@ my $opt_w    = 1;
 my $opt_c    = 10;
 my $opt_t    = 10;
 my $opt_p    = "@PERFDATA_DIR@";
+
+my $nagcfg = "@NAGIOS_CFG@";
+open(NC,"<$nagcfg") || die "unable to read nagios cfg at $nagcfg";
+
 my $opt_ncmd = "/usr/local/nagios/var/rw/nagios.cmd";
+while (<NC>) {
+    next unless /^\s*command_file\s*=\s*(.*)/;
+    $opt_ncmd = $1;
+    last;
+}
+close(NC);
+
 my $opt_phost = "";
 my $opt_pservice = "";
 my $opt_ignore;

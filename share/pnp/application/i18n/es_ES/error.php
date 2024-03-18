@@ -1,32 +1,58 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
-$lang = array
-(
-    'rrdtool-not-found' => 'RRDTool no se encuentra en %s. <a href="http://docs.pnp4nagios.org/es/faq/1">Leer FAQ en línea</a>',
-    'config-not-found' => 'El fichero de configuración %s no se ha encontrado. <a href="http://docs.pnp4nagios.org/es/faq/2">Leer FAQ en línea</a>',
-	'perfdata-dir-empty' => 'El directorio de Perfdata "%s" está vacío. Compruebe la configuración de Nagios. <a href="http://docs.pnp4nagios.org/es/faq/3">Leer FAQ en línea</a>',
-    'host-perfdata-dir-empty' => 'El directorio de Perfdata "%s" está vacío. Compruebe la configuración de Nagios. <a href="http://docs.pnp4nagios.org/es/faq/4">Leer FAQ en línea</a>',
-    'perfdata-dir-for-host' => 'El directorio Perfdata "%s" para el Equipo "%s" no existe. <a href="http://docs.pnp4nagios.org/es/faq/5">Leer FAQ en línea</a>',
-    'xml-not-found' => 'Fichero XML "%s" no encontrado. <a href="http://docs.pnp4nagios.org/es/faq/6">Leer FAQ en línea</a>',
-    'get-first-service' => 'No puedo encontrar el primer servicio para el equipo "%s". <a href="http://docs.pnp4nagios.org/es/faq/7">Leer FAQ en línea</a>',
-    'get-first-host' => 'No puedo encuentrar ningún Equipo. <a href="http://docs.pnp4nagios.org/es/faq/8">Leer FAQ en línea</a>',
-    'xml-structure-mismatch' => 'Error en la Estructura XML. Versión Encontrada "%d" pero debería ser "%d". <a href="http://docs.pnp4nagios.org/es/faq/9">Read FAQ online</a>',
-    'save-rrd-image' => 'fallo en php fopen("%s"). <a href="http://docs.pnp4nagios.org/es/faq/10">Leer FAQ en línea</a>',
-	'xml-structure-without-version-tag' => 'Error en la estructura XML. Etiqueta de Versión no encontrada. <a href="http://docs.pnp4nagios.org/es/faq/11">Leer FAQ en línea</a>',
-	'template-without-opt' => 'La plantilla %s no tiene el array $opt[]. <a href="http://docs.pnp4nagios.org/es/faq/12">Leer FAQ en línea</a>',
-	'template-without-def' => 'La plantilla %s no tiene el array $def[]. <a href="http://docs.pnp4nagios.org/es/faq/13">Leer FAQ en línea</a>',
-    'no-data-for-page' => 'Lo siento, no puedo encontrar ningún dato usando el fichero de configuración "%s", <a href="http://docs.pnp4nagios.org/es/faq/14">Leer FAQ en línea</a>',
-	'page-not-readable' => 'El fichero de configuración "%s" no es legible o no existe. <a href="http://docs.pnp4nagios.org/es/faq/15">Leer FAQ en línea</a>',
-    'auth-pages' => 'No está autorizado a ver "páginas" <a href="http://docs.pnp4nagios.org/es/faq/16">Leer FAQ en línea</a>',
-    'page-config-dir' => 'No hay fichero de configuración de página en "%s" <a href="http://docs.pnp4nagios.org/es/faq/17">Leer FAQ en línea</a>',
-    'xport-host-service' => 'El controlador Xport necesita los parámetros de URL "host" y "srv". <a href="http://docs.pnp4nagios.org/es/faq/18">Leer FAQ en línea</a>',
-	'mod-rewrite' => 'El módulo Apache Rewrite no está habilitado. <a href="http://docs.pnp4nagios.org/es/faq/19">Leer FAQ en línea</a>',
-    'tpl-no-services-found' => 'No services could be found "%s". <a href="http://docs.pnp4nagios.org/faq/20">Read FAQ online</a>',
-    'tpl-no-hosts-found' => 'No hosts could be found "%s". <a href="http://docs.pnp4nagios.org/faq/21">Read FAQ online</a>',
-    'no-templates-found' => 'No templates could be found. <a href="http://docs.pnp4nagios.org/faq/22">Read FAQ online</a>',
-    'not_authorized' => 'You are not authorized to view this host/service',
-    'remote_user_missing' => 'Remote user is missing. Authentication check cancled. <a href="http://docs.pnp4nagios.org/faq/23">Read FAQ online</a>',
-    'livestatus_socket_error' => 'Livestatus Socket error: %s (%s) <a href="http://docs.pnp4nagios.org/faq/24">Read FAQ online</a>',
-    'not_authorized_for_host_overview' => 'You are not authorized to access this host overview page.',
-    'xml-generic_error' => 'XML file "%s" not parsable.<p><strong>XML Errors:</strong>%s</p>',
-    'gd-missing' => 'PHP GD functions are missing. More on <a href="http://www.php.net/manual/en/book.image.php">www.php.net</a>',
-);
+<?php
+
+defined('SYSPATH') or die('No direct access allowed.');
+$lang = [
+    'rrdtool-not-found'                 => 'RRDTool no se encuentra en %s.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/1.txt">Leer FAQ en línea</a>',
+    'config-not-found'                  => 'El fichero de configuración %s no se ha encontrado.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/2.txt">Leer FAQ en línea</a>',
+    'perfdata-dir-empty'                => 'El directorio de Perfdata "%s" está vacío. Compruebe la configuración de Nagios.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/3.txt">Leer FAQ en línea</a>',
+    'host-perfdata-dir-empty'           => 'El directorio de Perfdata "%s" está vacío. Compruebe la configuración de Nagios.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/4.txt">Leer FAQ en línea</a>',
+    'perfdata-dir-for-host'             => 'El directorio Perfdata "%s" para el Equipo "%s" no existe.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/5.txt">Leer FAQ en línea</a>',
+    'xml-not-found'                     => 'Fichero XML "%s" no encontrado.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/6.txt">Leer FAQ en línea</a>',
+    'get-first-service'                 => 'No puedo encontrar el primer servicio para el equipo "%s".' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/7.txt">Leer FAQ en línea</a>',
+    'get-first-host'                    => 'No puedo encuentrar ningún Equipo.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/8.txt">Leer FAQ en línea</a>',
+    'xml-structure-mismatch'            => 'Error en la Estructura XML. Versión Encontrada "%d" pero debería ser "%d".' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/9.txt">Read FAQ online</a>',
+    'save-rrd-image'                    => 'fallo en php fopen("%s").' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/10.txt">Leer FAQ en línea</a>',
+    'xml-structure-without-version-tag' => 'Error en la estructura XML. Etiqueta de Versión no encontrada.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/11.txt">Leer FAQ en línea</a>',
+    'template-without-opt'              => 'La plantilla %s no tiene el array $opt[].' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/12.txt">Leer FAQ en línea</a>',
+    'template-without-def'              => 'La plantilla %s no tiene el array $def[].' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/13.txt">Leer FAQ en línea</a>',
+    'no-data-for-page'                  => 'Lo siento, no puedo encontrar ningún dato usando el fichero de configuración "%s",' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/14.txt">Leer FAQ en línea</a>',
+    'page-not-readable'                 => 'El fichero de configuración "%s" no es legible o no existe.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/15.txt">Leer FAQ en línea</a>',
+    'auth-pages'                        => 'No está autorizado a ver "páginas"' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/16.txt">Leer FAQ en línea</a>',
+    'page-config-dir'                   => 'No hay fichero de configuración de página en "%s"' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/17.txt">Leer FAQ en línea</a>',
+    'xport-host-service'                => 'El controlador Xport necesita los parámetros de URL "host" y "srv".' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/18.txt">Leer FAQ en línea</a>',
+    'mod-rewrite'                       => 'El módulo Apache Rewrite no está habilitado.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/19.txt">Leer FAQ en línea</a>',
+    'tpl-no-services-found'             => 'No services could be found "%s".' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/20.txt">Read FAQ online</a>',
+    'tpl-no-hosts-found'                => 'No hosts could be found "%s".' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/21.txt">Read FAQ online</a>',
+    'no-templates-found'                => 'No templates could be found.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/22.txt">Read FAQ online</a>',
+    'not_authorized'                    => 'You are not authorized to view this host/service',
+    'remote_user_missing'               => 'Remote user is missing. Authentication check cancled.' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/23.txt">Read FAQ online</a>',
+    'livestatus_socket_error'           => 'Livestatus Socket error: %s (%s)' .
+' <a href="https://raw.githubusercontent.com/pnp4nagios/docs/main/pages/faq/24.txt">Read FAQ online</a>',
+    'not_authorized_for_host_overview'  => 'You are not authorized to access this host overview page.',
+    'xml-generic_error'                 => 'XML file "%s" not parsable.<p><strong>XML Errors:</strong>%s</p>',
+    'gd-missing'                        => 'PHP GD functions are missing. More on' .
+' <a href="http://www.php.net/manual/en/book.image.php">www.php.net</a>',
+];

@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * utf8::strcasecmp
  *
@@ -10,10 +14,11 @@
  */
 function _strcasecmp($str1, $str2)
 {
-	if (utf8::is_ascii($str1) AND utf8::is_ascii($str2))
-		return strcasecmp($str1, $str2);
+    if (utf8::is_ascii($str1) and utf8::is_ascii($str2)) {
+        return strcasecmp($str1, $str2);
+    }
 
-	$str1 = utf8::strtolower($str1);
-	$str2 = utf8::strtolower($str2);
-	return strcmp($str1, $str2);
+    $str1 = utf8::strtolower($str1);
+    $str2 = utf8::strtolower($str2);
+    return strcmp($str1, $str2);
 }

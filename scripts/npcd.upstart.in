@@ -1,0 +1,21 @@
+# pnp4nagios   NPCD daemon for graphing Nagios data
+
+description     "pnp4nagios npcd daemon"
+author          "C. Lane lane@dchooz.org"
+
+oom score never
+
+start on (local-filesystems and net-device-up IFACE!=lo)
+stop on runlevel [!2345]
+
+reload signal SIGHUP
+
+expect fork
+respawn
+
+pre-start script
+    
+    @pkgsysconfdir@/verify_pnp_config -m bulk+npcd -p @pkgsysconfdir@/npcd.cfg -c @NAGIOS_CFG@
+end script
+
+exec @bindir@/npcd -f @pkgsysconfdir@/npcd.cfg

@@ -1,4 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * Captcha driver for "riddle" style.
  *
@@ -9,39 +17,39 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Riddle_Driver extends Captcha_Driver {
+class Captcha_Riddle_Driver extends Captcha_Driver
+{
+    private $riddle;
 
-	private $riddle;
+    /**
+     * Generates a new Captcha challenge.
+     *
+     * @return  string  the challenge answer
+     */
+    public function generate_challenge()
+    {
+        // Load riddles from the current language
+        $riddles = Kohana::lang('captcha.riddles');
 
-	/**
-	 * Generates a new Captcha challenge.
-	 *
-	 * @return  string  the challenge answer
-	 */
-	public function generate_challenge()
-	{
-		// Load riddles from the current language
-		$riddles = Kohana::lang('captcha.riddles');
+        // Pick a random riddle
+        $riddle = $riddles[array_rand($riddles)];
 
-		// Pick a random riddle
-		$riddle = $riddles[array_rand($riddles)];
+        // Store the question for output
+        $this->riddle = $riddle[0];
 
-		// Store the question for output
-		$this->riddle = $riddle[0];
+        // Return the answer
+        return $riddle[1];
+    }
 
-		// Return the answer
-		return $riddle[1];
-	}
-
-	/**
-	 * Outputs the Captcha riddle.
-	 *
-	 * @param   boolean  html output
-	 * @return  mixed
-	 */
-	public function render($html)
-	{
-		return $this->riddle;
-	}
-
-} // End Captcha Riddle Driver Class
+    /**
+     * Outputs the Captcha riddle.
+     *
+     * @param   boolean  html output
+     * @return  mixed
+     */
+    public function render($html)
+    {
+        return $this->riddle;
+    }
+}
+// End Captcha Riddle Driver Class

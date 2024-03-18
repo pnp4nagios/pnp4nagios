@@ -1,4 +1,11 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
 /**
  * Kohana event observer. Uses the SPL observer pattern.
  *
@@ -9,62 +16,63 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Event_Observer implements SplObserver {
+abstract class Event_Observer implements SplObserver
+{
+    // Calling object
+    protected $caller;
 
-	// Calling object
-	protected $caller;
+    /**
+     * Initializes a new observer and attaches the subject as the caller.
+     *
+     * @param   object  Event_Subject
+     * @return  void
+     */
+    public function __construct(SplSubject $caller)
+    {
+        // Update the caller
+        $this->update($caller);
+    }
 
-	/**
-	 * Initializes a new observer and attaches the subject as the caller.
-	 *
-	 * @param   object  Event_Subject
-	 * @return  void
-	 */
-	public function __construct(SplSubject $caller)
-	{
-		// Update the caller
-		$this->update($caller);
-	}
+    /**
+     * Updates the observer subject with a new caller.
+     *
+     * @chainable
+     * @param   object  Event_Subject
+     * @return  object
+     */
+    public function update(SplSubject $caller)
+    {
+        if (! ($caller instanceof Event_Subject)) {
+            throw new Kohana_Exception('event.invalid_subject', get_class($caller), get_class($this));
+        }
 
-	/**
-	 * Updates the observer subject with a new caller.
-	 *
-	 * @chainable
-	 * @param   object  Event_Subject
-	 * @return  object
-	 */
-	public function update(SplSubject $caller)
-	{
-		if ( ! ($caller instanceof Event_Subject))
-			throw new Kohana_Exception('event.invalid_subject', get_class($caller), get_class($this));
+        // Update the caller
+        $this->caller = $caller;
 
-		// Update the caller
-		$this->caller = $caller;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Detaches this observer from the subject.
+     *
+     * @chainable
+     * @return  object
+     */
+    public function remove()
+    {
+        // Detach this observer from the caller
+        $this->caller->detach($this);
 
-	/**
-	 * Detaches this observer from the subject.
-	 *
-	 * @chainable
-	 * @return  object
-	 */
-	public function remove()
-	{
-		// Detach this observer from the caller
-		$this->caller->detach($this);
+        return $this;
+    }
 
-		return $this;
-	}
-
-	/**
-	 * Notify the observer of a new message. This function must be defined in
-	 * all observers and must take exactly one parameter of any type.
-	 *
-	 * @param   mixed   message string, object, or array
-	 * @return  void
-	 */
-	abstract public function notify($message);
-
-} // End Event Observer
+    /**
+     * Notify the observer of a new message. This function must be defined in
+     * all observers and must take exactly one parameter of any type.
+     *
+     * @param   mixed   message string, object, or array
+     * @return  void
+     */
+    abstract public function notify($message);
+}
+// End Event Observer

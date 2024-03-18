@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * @package  Encrypt
  *
@@ -25,7 +29,7 @@
  */
 $config['default'] = array
 (
-	'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
-	'mode'   => MCRYPT_MODE_NOFB,
-	'cipher' => MCRYPT_RIJNDAEL_128
+    'key'    => 'K0H@NA+PHP_7hE-SW!FtFraM3w0R|<',
+    'mode'   => MCRYPT_MODE_NOFB,
+    'cipher' => MCRYPT_RIJNDAEL_128
 );

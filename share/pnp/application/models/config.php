@@ -1,7 +1,13 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
- * Retrieves the PNP config files 
+ * Retrieves the PNP config files
  */
 class Config_Model extends System_Model
 {
@@ -9,18 +15,19 @@ class Config_Model extends System_Model
     public $views = array();
     public $scheme = array();
 
-    public function read_config(){
-        if(getenv('PNP_CONFIG_FILE') != ""){
+    public function read_config()
+    {
+        if (getenv('PNP_CONFIG_FILE') != "") {
             $config = getenv('PNP_CONFIG_FILE');
-        }elseif(OMD){
-            $config = OMD_SITE_ROOT.'/etc/pnp4nagios/config';
-        }else{
-            $config = Kohana::config('core.pnp_etc_path')."/config";
+        } elseif (OMD) {
+            $config = OMD_SITE_ROOT . '/etc/pnp4nagios/config';
+        } else {
+            $config = Kohana::config('core.pnp_etc_path') . "/config";
         }
 
         # Default Values
         $conf['doc_language']           = Kohana::config('core.doc_language');
-	$conf['fontconfig_cache']	= Kohana::config('core.fontconfig_cache');
+        $conf['fontconfig_cache']   = Kohana::config('core.fontconfig_cache');
         $conf['graph_width']            = Kohana::config('core.graph_width');
         $conf['graph_height']           = Kohana::config('core.graph_height');
         $conf['zgraph_width']           = Kohana::config('core.zgraph_width');
@@ -38,15 +45,15 @@ class Config_Model extends System_Model
         $conf['auth_multisite_htpasswd']  = Kohana::config('core.auth_multisite_htpasswd');
         $conf['auth_multisite_secret']    = Kohana::config('core.auth_multisite_secret');
         $conf['auth_multisite_login_url'] = Kohana::config('core.auth_multisite_login_url');
-	
-	$scheme['Reds']     = array ('#FEE0D2','#FCBBA1','#FC9272','#FB6A4A','#EF3B2C','#CB181D','#A50F15','#67000D');
+
+        $scheme['Reds']     = array ('#FEE0D2','#FCBBA1','#FC9272','#FB6A4A','#EF3B2C','#CB181D','#A50F15','#67000D');
 
         $views = Kohana::config('core.views');
-        
+
         if (is_readable($config . ".php")) {
-            include ($config . ".php");
-        }else {
-            throw new Kohana_Exception('error.config-not-found', $config.'.php');
+            include($config . ".php");
+        } else {
+            throw new Kohana_Exception('error.config-not-found', $config . '.php');
         }
 
         // Load optional config files
@@ -57,19 +64,19 @@ class Config_Model extends System_Model
             $dh = opendir($config . ".d");
             while (($file = readdir($dh)) !== false) {
                 if ($file[0] != '.' && substr($file, -4) == '.php') {
-                    $custom_configs[] = $config . ".d/" .$file;
+                    $custom_configs[] = $config . ".d/" . $file;
                 }
             }
             closedir($dh);
         }
 
-	foreach($custom_configs AS $config_file) {
+        foreach ($custom_configs as $config_file) {
             if (is_readable($config_file)) {
                 $array_a = $views;
                 $views = array();
-                include ($config_file);
+                include($config_file);
                 $array_b = $views;
-                if(empty($views)){
+                if (empty($views)) {
                     $views = $array_a;
                 }
             }
@@ -78,10 +85,18 @@ class Config_Model extends System_Model
         // Use graph_height & graph_width from URL if present
         // Hint: In Kohana 3 Input class is removed
         $input = Input::instance();
-        if($input->get('h') != "" ) $conf['graph_height'] = intval($input->get('h'));
-        if($input->get('w') != "" ) $conf['graph_width']  = intval($input->get('w'));
-        if($input->get('graph_height') != "" ) $conf['graph_height'] = intval($input->get('graph_height'));
-        if($input->get('graph_width')  != "" ) $conf['graph_width']  = intval($input->get('graph_width'));
+        if ($input->get('h') != "") {
+            $conf['graph_height'] = intval($input->get('h'));
+        }
+        if ($input->get('w') != "") {
+            $conf['graph_width']  = intval($input->get('w'));
+        }
+        if ($input->get('graph_height') != "") {
+            $conf['graph_height'] = intval($input->get('graph_height'));
+        }
+        if ($input->get('graph_width')  != "") {
+            $conf['graph_width']  = intval($input->get('graph_width'));
+        }
         $this->conf = $conf;
         $this->views = $views;
         $this->scheme = $scheme;

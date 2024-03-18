@@ -32,7 +32,6 @@ MOD_CFLAGS=@MOD_CFLAGS@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 LIBDIR=@libdir@
@@ -113,6 +112,8 @@ devclean: distclean
 ###############################
 #
 #         Install
+#  leaving out npcdmod.o since
+# Nagios changed plugin API
 #
 ################################
 
@@ -129,9 +130,9 @@ install-basic:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(PERFDATA_DIR)
 	$(INSTALL) -m 775 $(INSTALL_OPTS) -d $(DESTDIR)$(PERFDATA_SPOOL_DIR)
-	$(INSTALL) -m 754 @npcd_name@ $(DESTDIR)$(BINDIR)
-	$(INSTALL) -m 754 $(INSTALL_OPTS) npcdmod.o $(DESTDIR)$(LIBDIR)
+	$(INSTALL) -m 755 npcd $(DESTDIR)$(BINDIR)
+	#$(INSTALL) -m 754 $(INSTALL_OPTS) npcdmod.o $(DESTDIR)$(LIBDIR)
 
 strip-post-install:
-	$(STRIP) $(DESTDIR)$(BINDIR)/@npcd_name@
-	$(STRIP) $(DESTDIR)$(LIBDIR)/npcdmod.o
+	$(STRIP) $(DESTDIR)$(BINDIR)/npcd
+	#$(STRIP) $(DESTDIR)$(LIBDIR)/npcdmod.o

@@ -1,4 +1,5 @@
 <?php
+
 /*
 License: GPL
 Copyright (c) 2009 op5 AB
@@ -27,18 +28,18 @@ Requires:
   check_esx3.pl from http://git.op5.org/git/?p=nagios/op5plugins.git;a=summary
 */
 
-include 'arrayfix.pnp';
+include 'arrayfix.php';
 
 $color_list = array(
-					1 => "#ff77ee", // Purple
-					2 => "#fed409", // Yellow
-					3 => "#007dd0", // Blue
-					4 => "#ee0a04", // Red
-					5 => "#56a901", // Green
-					6 => "#ff6600", // Orange
-					7 => "#a4a4a4", // Grey
+                    1 => "#ff77ee", // Purple
+                    2 => "#fed409", // Yellow
+                    3 => "#007dd0", // Blue
+                    4 => "#ee0a04", // Red
+                    5 => "#56a901", // Green
+                    6 => "#ff6600", // Orange
+                    7 => "#a4a4a4", // Grey
                     8 => "#336633"  // darker green
-				);
+                );
 
 $opt[1] = '';
 $def[1] = '';
@@ -49,23 +50,23 @@ $vlabel = "";
 
 // Specific settings based on first DataSource, if we want to customize it.
 switch ($NAME[1]) {
-	case "cpu_usage":
-		$vlabel = "Percent";
-		$opt[1] .= "--lower-limit=0 --upper-limit=105 ";
-		break;
-	case "mem_usage":
-		$vlabel = "Percent";
-		$opt[1] .= "--lower-limit=0 --upper-limit=105 ";
-		break;
-	case "net_receive":
-		$vlabel = "Kb/sec";
-		break;
-	case "cpu_usagemhz":
-		$vlabel = "CPU Usage";
-		$filled = 1;
-		break;
-	default:
-		break;
+    case "cpu_usage":
+        $vlabel = "Percent";
+        $opt[1] .= "--lower-limit=0 --upper-limit=105 ";
+        break;
+    case "mem_usage":
+        $vlabel = "Percent";
+        $opt[1] .= "--lower-limit=0 --upper-limit=105 ";
+        break;
+    case "net_receive":
+        $vlabel = "Kb/sec";
+        break;
+    case "cpu_usagemhz":
+        $vlabel = "CPU Usage";
+        $filled = 1;
+        break;
+    default:
+        break;
 }
 
 $opt[1] .= " --imgformat=PNG --title=\" $hostname / $servicedesc\" --base=$base --vertical-label=\"$vlabel\" --slope-mode ";
@@ -73,35 +74,34 @@ $opt[1] .= "--watermark=\"http://www.op5.com template: $TEMPLATE[1]\" ";
 $opt[1] .= "--units-exponent=0 ";
 
 for ($i = 1; $i <= count($DS); $i++) {
-	$def[1] .= "DEF:ds$i=$RRDFILE[$i]:$DS[$i]:AVERAGE " ;
-	$def[1] .= "CDEF:var$i=ds$i ";
+    $def[1] .= "DEF:ds$i=$RRDFILE[$i]:$DS[$i]:AVERAGE " ;
+    $def[1] .= "CDEF:var$i=ds$i ";
 
-	if (isset($color)) {
-		$color_list = $color;
-	}
+    if (isset($color)) {
+        $color_list = $color;
+    }
 
-	/* If we have few datasources we fill the area below with a semitransparent version of basecolor
-	   This makes the graph look more "modern" */
-	if ($filled || count($DS) <= 3) {
-		$def[1] .= "AREA:var$i". $color_list[$i] . "32 ";
-	}
-	$def[1] .= "LINE1:var$i" . $color_list[$i] . "FF:\"$NAME[$i]\t\" ";
-	$def[1] .= "GPRINT:var$i:LAST:\"Cur\\:%8.2lf $UNIT[$i]\" ";
-	$def[1] .= "GPRINT:var$i:AVERAGE:\"Avg\\:%8.2lf $UNIT[$i]\" ";
-	$def[1] .= "GPRINT:var$i:MAX:\"Max\\:%8.2lf $UNIT[$i]\\n\" ";
+    /* If we have few datasources we fill the area below with a semitransparent version of basecolor
+       This makes the graph look more "modern" */
+    if ($filled || count($DS) <= 3) {
+        $def[1] .= "AREA:var$i" . $color_list[$i] . "32 ";
+    }
+    $def[1] .= "LINE1:var$i" . $color_list[$i] . "FF:\"$NAME[$i]\t\" ";
+    $def[1] .= "GPRINT:var$i:LAST:\"Cur\\:%8.2lf $UNIT[$i]\" ";
+    $def[1] .= "GPRINT:var$i:AVERAGE:\"Avg\\:%8.2lf $UNIT[$i]\" ";
+    $def[1] .= "GPRINT:var$i:MAX:\"Max\\:%8.2lf $UNIT[$i]\\n\" ";
 }
 
 for ($i = 1; $i <= count($DS); $i++) {
-	if ($UNIT[$i] == "%%") {
-		$UNIT[$i] = "%";
-	}
+    if ($UNIT[$i] == "%%") {
+        $UNIT[$i] = "%";
+    }
 
-	if (isset($WARN[$i]) && $WARN[$i] != "") {
-		$def[1] .= "HRULE:$WARN[$i]#FFFF00:\"Warning ($NAME[$i])\: " . $WARN[$i] . " " . $UNIT[$i] . " \\n\" " ;
-	}
+    if (isset($WARN[$i]) && $WARN[$i] != "") {
+        $def[1] .= "HRULE:$WARN[$i]#FFFF00:\"Warning ($NAME[$i])\: " . $WARN[$i] . " " . $UNIT[$i] . " \\n\" " ;
+    }
 
-	if (isset($CRIT[$i]) && $CRIT[$i] != "") {
-		$def[1] .= "HRULE:$CRIT[$i]#FF0000:\"Critical ($NAME[$i])\: " . $CRIT[$i] . " " . $UNIT[$i] . " \\n\" " ;
-	}
+    if (isset($CRIT[$i]) && $CRIT[$i] != "") {
+        $def[1] .= "HRULE:$CRIT[$i]#FF0000:\"Critical ($NAME[$i])\: " . $CRIT[$i] . " " . $UNIT[$i] . " \\n\" " ;
+    }
 }
-?>

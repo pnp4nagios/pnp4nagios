@@ -1,0 +1,13 @@
+# files generated from .in by configure 
+Makefile
+rc.pnp_gearman_worker
+check_pnp_rrds.pl
+rc.npcd
+rrd_convert.pl
+rrd_modify.pl
+npcd.service
+pnp_gearman_worker.service
+npcd.upstart
+npcd.openrc
+process_perfdata.pl
+newbsd.npcd

@@ -1,4 +1,5 @@
 <?php
+
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_load
@@ -16,7 +17,7 @@ if ($WARN[1] != "") {
     $def[1] .= "HRULE:$WARN[1]#FFFF00 ";
 }
 if ($CRIT[1] != "") {
-    $def[1] .= "HRULE:$CRIT[1]#FF0000 ";       
+    $def[1] .= "HRULE:$CRIT[1]#FF0000 ";
 }
 $def[1] .= rrd::area("var3", "#ff0000", "load 15") ;
 $def[1] .= rrd::gprint("var3", array("LAST", "AVERAGE", "MAX"), "%6.2lf");
@@ -24,4 +25,3 @@ $def[1] .= rrd::area("var2", "#EA8F00", "Load 5 ") ;
 $def[1] .= rrd::gprint("var2", array("LAST", "AVERAGE", "MAX"), "%6.2lf");
 $def[1] .= rrd::area("var1", "#EACC00", "load 1 ") ;
 $def[1] .= rrd::gprint("var1", array("LAST", "AVERAGE", "MAX"), "%6.2lf");
-?>

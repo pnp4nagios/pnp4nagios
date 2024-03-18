@@ -1,0 +1,169 @@
+#! @PERL@
+use strict;
+use Getopt::Long;
+
+my $infile;
+my $outfile;
+my $mode = 'sync';
+my $help;
+my $nagver = '4.0';
+
+GetOptions("mode|m=s" => \$mode,
+           "input|i=s" => \$infile,
+           "output|o=s" => \$outfile,
+           "nagver|n=s" => \$nagver,
+           "help|h|?" => \$help,
+    ) or die "error in command arguments";
+
+if (defined($help)) {
+    help();
+    exit 0;
+}
+
+if ($mode =~ /^\s*sy/) {
+    $mode = 'sync';
+} elsif ($mode =~ /^\s*bu/) {
+    $mode = 'bulk';
+} elsif ($mode =~ /^\s*npcd/) {
+    $mode = 'npcd';
+} else {
+    die("invalid mode, must be one of sync, bulk, or npcd");
+}
+
+if (! $nagver =~ /^\d+(\.\d+)*$/) {
+    die ("invalid nagios version $nagver given, def: 4.0");
+}
+
+
+my ($IN,$OUT);
+
+$infile = shift unless defined $infile;
+
+if (defined($infile)) {
+    open($IN,"<$infile") || die "error opening $infile";
+} else {
+    $IN = *STDIN;
+}
+
+if (defined($outfile)) {
+    open($OUT,">$outfile") || die "error opening $outfile";
+} else {
+    $OUT = *STDOUT;
+}
+
+my (@cfg) = (<$IN>);
+
+my $got;
+
+$got = 0;
+my $lastcfgfile=$#cfg;
+for (my $j = 0; $j <= $#cfg; $j++) {
+    my $line = $cfg[$j];
+    if ($line =~ /^cfg_file=(\S+)/) {
+        my $sel = $1;
+        $lastcfgfile = $j;
+        if ($sel =~ /\/pnp-\w+\.cfg/) {
+            $cfg[$j] = '#'.$cfg[$j];
+        }
+    }
+}
+splice(@cfg,$lastcfgfile+1,0,"cfg_file=@NAGIOS_OBJ@/pnp-$mode.cfg\n");
+
+
+
+$got = 0;
+for (my $j = 0; $j <= $#cfg; $j++) {
+    my $line = $cfg[$j];
+    if ($line =~ /^process_performance_data=(\d)/) {
+        my $sel = $1;
+        $got = 1;
+        if ($sel == 0) {
+            $cfg[$j] = "#$line";
+            splice(@cfg,$j+1,0,"process_performance_data=1\n");
+        }
+        last;
+    }
+}
+push(@cfg,"process_performance_data=1\n") unless $got;
+
+if ($mode eq 'sync') {
+    if ($nagver ge v3.1) {
+        $got = 0;
+
+        for (my $j = 0; $j <= $#cfg; $j++) {
+            my $line = $cfg[$j];
+            if ($line =~ /^enable_environment_macros=(\d)/) {
+                my $sel = $1;
+                $got = 1;
+                if ($sel == 0) {
+                    $cfg[$j] = "#$line";
+                    splice(@cfg,$j+1,0,"enable_environment_macros=1\n");
+                }
+                last;
+            }
+        }
+        push(@cfg,"enable_environment_macros=1\n");
+    }
+
+    $got = 0;
+
+    for (my $j = 0; $j <= $#cfg; $j++) {
+        my $line = $cfg[$j];
+        if ($line =~ /^service_perfdata_command=(\S+)/) {
+            my $sel = $1;
+            $got = 1;
+            if ($sel ne 'process-service-perfdata') {
+                $cfg[$j] = "#$line";
+                splice(@cfg,$j+1,0,"service_perfdata_command=process-service-perfdata-pnp\n");
+            }
+            last;
+        }
+    }
+    push(@cfg,"service_perfdata_command=process-service-perfdata-pnp\n");
+
+    if ($nagver ge v3.0) {
+        $got = 0;
+
+        for (my $j = 0; $j <= $#cfg; $j++) {
+            my $line = $cfg[$j];
+            if ($line =~ /^host_perfdata_command=(\S+)/) {
+                my $sel = $1;
+                $got = 1;
+                if ($sel ne 'process-host-perfdata') {
+                    $cfg[$j] = "#$line";
+                    splice(@cfg,$j+1,0,"host_perfdata_command=process-host-perfdata-pnp\n");
+                }
+                last;
+            }
+        }
+        push(@cfg,"host_perfdata_command=process-host-perfdata-pnp\n");
+    }
+} elsif ($mode eq 'bulk' or $mode eq 'npcd') {
+
+    for (my $j = 0; $j <= $#cfg; $j++) {
+        my $line = $cfg[$j];
+        if ($line =~ /^(host|service)_perfdata_file(_template|_mode|_processing_interval|_processing_command)?=/) {
+     
+            $cfg[$j] = "#$line";
+        }
+    }
+    push(@cfg,
+         '# *** the template definition differs from the one in the original nagios.cfg'."\n",
+         '#'."\n",
+         'service_perfdata_file=@PERFDATA_SPOOL_DIR@/service-perfdata'."\n",
+         'service_perfdata_file_template=DATATYPE::SERVICEPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tSERVICEDESC::$SERVICEDESC$\tSERVICEPERFDATA::$SERVICEPERFDATA$\tSERVICECHECKCOMMAND::$SERVICECHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$\tSERVICESTATE::$SERVICESTATE$\tSERVICESTATETYPE::$SERVICESTATETYPE$'."\n",
+         'service_perfdata_file_mode=a'."\n",
+         'service_perfdata_file_processing_interval=15'."\n",
+         'service_perfdata_file_processing_command=process-service-perfdata-file'."\n",
+         '# *** the template definition differs from the one in the original nagios.cfg'."\n",
+         '#'."\n",
+         'host_perfdata_file=@PERFDATA_SPOOL_DIR@/host-perfdata'."\n",
+         'host_perfdata_file_template=DATATYPE::HOSTPERFDATA\tTIMET::$TIMET$\tHOSTNAME::$HOSTNAME$\tHOSTPERFDATA::$HOSTPERFDATA$\tHOSTCHECKCOMMAND::$HOSTCHECKCOMMAND$\tHOSTSTATE::$HOSTSTATE$\tHOSTSTATETYPE::$HOSTSTATETYPE$'."\n",
+         'host_perfdata_file_mode=a'."\n",
+         'host_perfdata_file_processing_interval=15'."\n",
+         'host_perfdata_file_processing_command=process-host-perfdata-file'."\n",
+        );
+
+}
+print $OUT @cfg;
+

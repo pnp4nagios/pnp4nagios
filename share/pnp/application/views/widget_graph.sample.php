@@ -1,4 +1,9 @@
-<!-- Widget Graph Start -->
+<!-- Widget Graph Start
+<?php
+
+//phpcs: disable
+?>
+-->
 <div class="ui-widget">
 <div class="p2 ui-widget-header ui-corner-top">
 Title

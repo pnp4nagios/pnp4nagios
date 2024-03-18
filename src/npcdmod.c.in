@@ -45,9 +45,9 @@ extern int process_performance_data;
 FILE *fp = NULL;
 
 void *npcdmod_module_handle = NULL;
-char *perfdata_file = "/usr/local/nagios/var/perfdata";
+char *perfdata_file = "@PERFDATA_DIR@/perf.data";
 char *perfdata_spool_filename = "perfdata";
-char *spool_dir = NULL;
+char *spool_dir = "@PERFDATA_SPOOL_DIR@";
 char *perfdata_file_processing_interval = "15";
 
 void npcdmod_file_roller();

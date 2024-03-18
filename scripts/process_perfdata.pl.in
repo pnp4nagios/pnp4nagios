@@ -27,25 +27,27 @@ if( $< == 0 ){
 use warnings;
 use strict;
 use POSIX;
-use Fcntl qw(:flock);
+use Fcntl;
 use Getopt::Long;
-use Time::HiRes qw(gettimeofday tv_interval);
-use vars qw ( $TEMPLATE %NAGIOS $t0 $t1 $rt $delayed_write $rrdfile @ds_create $count $line $name $ds_update $dstype %CTPL);
+use Time::HiRes qw(gettimeofday tv_interval usleep);
+use vars qw ( $TEMPLATE %NAGIOS $t0 $t1 $delayed_write $rrdfile @ds_create $count $line $name $ds_update $dstype %CTPL %conf);
 
-my %conf = (
+%conf = (
     TIMEOUT            => 15,
-    CFG_DIR            => "@sysconfdir@/",
+    CFG_DIR            => "@pkgsysconfdir@/",
     USE_RRDs           => 1,
     RRDPATH            => "@PERFDATA_DIR@",
     RRDTOOL            => "@RRDTOOL@",
     RRD_STORAGE_TYPE   => "SINGLE",
     RRD_HEARTBEAT      => 8640,
     RRA_STEP           => 60,
-    RRA_CFG            => "@sysconfdir@/rra.cfg",
-    STATS_DIR          => "@localstatedir@/stats",
+    RRA_CFG            => "@pkgsysconfdir@/rra.cfg",
+    STATS_DIR          => "@PNP_LOGDIR@/stats",
+    LOCKDIR            => "@PNP_LOGDIR@/lock/",
     LOG_FILE           => "@PERFDATA_LOG@",
     LOG_FILE_MAX_SIZE  => "10485760",               #Truncate after 10MB
-    LOG_LEVEL          => @DEBUG@,
+    LOG_LEVEL          => @DEBUG_LEVEL@,
+    MAXLOCK            => 30*60,             # kill older locks
     XML_ENC            => "UTF-8",
     XML_UPDATE_DELAY   => 0,                        # Write XML only if file is older then XML_UPDATE_DELAY seconds
     RRD_DAEMON_OPTS    => "",
@@ -54,7 +56,7 @@ my %conf = (
     REQUESTS_PER_CHILD => 20000,                   # Restart after a given count of requests
     ENCRYPTION         => 1,                       # Decrypt mod_gearman packets
     KEY                => 'should_be_changed',
-    KEY_FILE           => '@sysconfdir@/secret.key',
+    KEY_FILE           => '@pkgsysconfdir@/secret.key',
     UOM2TYPE           => { 'c' => 'DERIVE', 'd' => 'DERIVE' },
     IGNORE_HOST_PATTERN => '',
     IGNORE_SERVICE_PATTERN => '',
@@ -141,9 +143,9 @@ print_version() if ($opt_V);
 # Use the timeout specified on the command line and if none use what is in the configuration
 # If timeout is not in command line or the config file use the default
 $opt_t = $conf{TIMEOUT} if ( $opt_t == $opt_t_default && $opt_t != $conf{TIMEOUT} );
-print_log( "Default Timeout: $opt_t_default secs.", 2 );
-print_log( "Config Timeout: $conf{TIMEOUT} secs.", 2 );
-print_log( "Actual Timeout: $opt_t secs.", 2 );
+print_log( "INFO: Default Timeout: $opt_t_default secs.", 2 );
+print_log( "INFO: Config Timeout: $conf{TIMEOUT} secs.", 2 );
+print_log( "INFO: Actual Timeout: $opt_t secs.", 2 );
 
 init_signals();
 my %children = ();       # keys are current child process IDs
@@ -177,7 +179,7 @@ if( ! defined($opt_gm) ){
 # Main function to switch to the right mode.
 sub main {
     my $job = shift;
-    my $t0 = [gettimeofday];
+    $t0 = [gettimeofday];
     my $rt;
     my $lines = 0;
     # Gearman Worker
@@ -211,16 +213,16 @@ sub main {
         $lines = process_perfdata_stdin();
     } else {
         # Synchronous mode
-    $opt_t = 5 if $opt_t > 5; # maximum timeout
+        $opt_t = 5 if $opt_t > 5; # maximum timeout
         alarm($opt_t);
         print_log( "process_perfdata.pl-$const{VERSION} starting in SYNC Mode", 1 );
         %NAGIOS = parse_env();
         $lines = process_perfdata();
     }
-	$rt = tv_interval($t0, [gettimeofday]);
+    $rt = tv_interval($t0, [gettimeofday]);
     $stats{runtime} = $rt;
     $stats{rows} = $lines;
-    store_internals();
+    store_internals() if $lines > 0;
     print_log( "PNP exiting (runtime ${rt}s) ...", 1 );
     exit 0;
 }
@@ -259,7 +261,7 @@ sub parse_env {
 
         if ( ( !$ENV{NAGIOS_HOSTNAME} ) and ( !$ENV{ICINGA_HOSTNAME} ) ) {
             print_log( "Cant find Nagios Environment. Exiting ....", 1 );
-            exit 2;
+            exit 22;
         }
         foreach my $key ( sort keys %ENV ) {
             if ( $key =~ /^(NAGIOS|ICINGA)_(.*)/ ) {
@@ -346,50 +348,71 @@ sub process_perfdata_file {
     if ( $opt_b =~ /-PID-(\d+)/ ) {
         print_log( "Oops: $opt_b already processed by $1 - please check timeout settings", 0 );
     }
+    # no file?
+    if (! -e "$opt_b") {
+        print_log( "ERROR: File $opt_b not found", 1 );
+        return 0;
+    }
+
+    GetLock('file1.lock',10,0.2);
+    
+    # empty file?
+    my $n = (stat($opt_b))[7];
+    if (!defined($n) || $n == 0) {
+	print_log("empty file $opt_b",2);
+        if ($opt_b !~ /\-perfdata$/) {
+            my $iss = unlink $opt_b;
+            print_log("deleting $opt_b, OK=$iss",3);
+        }
+        ReleaseLock('file1.lock');
+	return 0;
+    }
 
     print_log( "searching for $opt_b", 2 );
-    if ( -e "$opt_b" ) {
-        my $pdfile = "$opt_b" . "-PID-" . $$;
-        print_log( "renaming $opt_b to $pdfile for bulk update", 2 );
-        unless ( rename "$opt_b", "$pdfile" ) {
-            print_log( "ERROR: rename $opt_b to $pdfile failed", 1 );
-            exit 4;
-        }
-
-        print_log( "reading $pdfile for bulk update", 2 );
-        open( PDFILE, "< $pdfile" );
-        my $count = 0;
-        while (<PDFILE>) {
-			my $job_data = $_;
-            $count++;
-            print_log( "Processing Line $count", 2 );
-            my @LINE = split(/\t/);
-            %NAGIOS = ();    # cleaning %NAGIOS Hash
-            #foreach my $k (@LINE) {
-            #    $k =~ /([A-Z 0-9_]+)::(.*)$/;
-            #    $ENV{ 'NAGIOS_' . $1 } = $2 if ($2);
-            #}
-            parse_env($job_data);
-            if ( $NAGIOS{SERVICEPERFDATA} || $NAGIOS{HOSTPERFDATA} ) {
-                process_perfdata();
-            } else {
-                print_log( "No Perfdata. Skipping line $count", 2 );
-                $stats{skipped}++;
-            }
-        }
-
-        print_log( "$count lines processed", 1 );
-
-        if ( unlink("$pdfile") == 1 ) {
-            print_log( "$pdfile deleted", 1 );
-        }else {
-            print_log( "Could not delete $pdfile:$!", 1 );
-        }
-    return $count;
+    my $pdfile = "$opt_b" . "-PID-" . $$;
+    print_log( "renaming $opt_b to $pdfile for bulk update", 2 );
+    unless ( rename "$opt_b", "$pdfile" ) {
+        print_log( "ERROR: rename $opt_b to $pdfile failed", 1 );
+        ReleaseLock('file1.lock');
+        exit 4;
     }
-    else {
-        print_log( "ERROR: File $opt_b not found", 1 );
+    ReleaseLock('file1.lock');
+    # make a new empty file for Nagios to fill
+    if ($opt_b =~ /\-perfdata$/) {
+	my $tmpfh;
+        print_log("create new, empty $opt_b file",3);
+	if (!sysopen($tmpfh, $opt_b,O_WRONLY|O_CREAT|O_EXCL,0644)) {
+	    print_log("failed to make new $opt_b",1);
+	}
+	close($tmpfh);
     }
+    
+    print_log( "reading $pdfile for bulk update", 2 );
+    open( PDFILE, "< $pdfile" );
+    my $count = 0;
+    while (<PDFILE>) {
+        my $job_data = $_;
+        $count++;
+        print_log( "Processing Line $count", 2 );
+        my @LINE = split(/\t/);
+        %NAGIOS = ();    # cleaning %NAGIOS Hash
+        parse_env($job_data);
+        if ( $NAGIOS{SERVICEPERFDATA} || $NAGIOS{HOSTPERFDATA} ) {
+            process_perfdata();
+        } else {
+            print_log( "No Perfdata. Skipping line $count", 2 );
+            $stats{skipped}++;
+        }
+    }
+
+    print_log( "$count lines processed", 1 );
+
+    if ( unlink("$pdfile") == 1 ) {
+        print_log( "$pdfile deleted", 1 );
+    }else {
+        print_log( "Could not delete $pdfile:$!", 1 );
+    }
+    return $count; 
 }
 
 #
@@ -1306,7 +1329,7 @@ sub handle_signal {
             kill $signal => keys %children;
             print_log( "*** process_perfdata.pl terminated on signal $signal", 0 );
             pidlock("remove");
-            exit;                           # clean up with dignity
+            exit 11;                           # clean up with dignity
         }
         print_log( "*** process_perfdata.pl received signal $signal (ignored)", 0 );
     }else{
@@ -1322,11 +1345,13 @@ sub handle_signal {
             }
             if ($opt_b && !$opt_s ) {
                 my $pdfile = "$opt_b" . "-PID-" . $$;
-                if ( unlink("$pdfile") == 1 ) {
-                    print_log( "*** TIMEOUT: $pdfile deleted", 0 );
-                }
-                else {
-                    print_log( "*** TIMEOUT: Could not delete $pdfile:$!", 0 );
+                if ( -f $pdfile) {
+                    if ( unlink("$pdfile") == 1 ) {
+                        print_log( "*** TIMEOUT: $pdfile deleted", 0 );
+                    }                    
+                    else {
+                        print_log( "*** TIMEOUT: Could not delete $pdfile:$!", 0 );
+                    }
                 }
             }
             my $temp_file = "$conf{RRDPATH}/$NAGIOS{HOSTNAME}/$NAGIOS{SERVICEDESC}.xml.$$";
@@ -1334,7 +1359,7 @@ sub handle_signal {
                 unlink($temp_file);
             }
             $t1 = [gettimeofday];
-            $rt = tv_interval $t0, $t1;
+            my $rt = tv_interval $t0, $t1;
             $stats{runtime} = $rt;
             print_log( "*** Timeout while processing Host: \"$NAGIOS{HOSTNAME}\" Service: \"$NAGIOS{SERVICEDESC}\"", 0 );
             print_log( "*** process_perfdata.pl terminated on signal $signal", 0 );
@@ -1366,31 +1391,11 @@ sub store_internals {
         print_log("*** ERROR: ".$conf{'STATS_DIR'}." is not writable or does not exist",0);
         return;
     }
-    my $lockfile = $conf{'STATS_DIR'}."/".'stats_lockfile';
-    open(LOCK, ">>$lockfile") or die "cannot create stats lock file ",$!;
-    my $lockstat;
-    my $locktries = 60;
-    while ($locktries > 0) {
-        $lockstat  = flock(LOCK, LOCK_EX|LOCK_NB);
-        last if $lockstat;
-        print_log("INFO: did not get stats lock, $locktries attempts remain",2);
-        $locktries--;
-        sleep(1) if $locktries > 0;
-    }
-    if (!$lockstat) {
-        print_log("ERROR: failed to get stats file lock, bailing",0);
-        return;
-    } else {
-	print_log("DEBUG: got stats file lock",3);
-    } 
-    
     my $statsfile = $conf{'STATS_DIR'}."/".(int $stats{timet} / 60);
     open( STAT, ">> $statsfile" ) or die "Cant create statistic file ", $!;
     printf(STAT "%d %f %d %d %d %d %d %d\n", $stats{timet},$stats{runtime},$stats{rows},$stats{update},$stats{create},$stats{error},$stats{invalid},$stats{skipped});
     close(STAT);
-    sleep(2);  # prevent rrd update too soon?
     check_internals();
-    close(LOCK);
 }
 
 #
@@ -1399,15 +1404,20 @@ sub store_internals {
 sub check_internals {
     my $file;
     my @files;
+
+    if (!GetLock('stats',20,0.25)) {
+        print_log("ERROR: failed to get stats file lock, bailing",0);
+        return;
+    }    
+
     opendir(STATS, $conf{'STATS_DIR'});
     while ( defined ( my $file = readdir STATS) ){
         next if $file =~ /^\.\.?$/; # skip . and ..
         next if $file =~ /-PID-/;   # skip temporary files
-        next if $file == (int $stats{timet} / 60); # skip our current file
-	next if $file =~ /stats_lockfile/;
+        next if $file =~ /^\d+$/ && $file == (int $stats{timet} / 60); # skip our current file
         push @files, $file;
     }
-    read_internals(@files);
+    read_internals(@files);  # releases lock after rename
 }
 
 #
@@ -1416,6 +1426,7 @@ sub check_internals {
 sub read_internals {
     my @files = @_;
     my @chunks;
+    my @nfiles;
     foreach my $file (sort { $a <=> $b} @files){
 	my $curfile = $conf{'STATS_DIR'}."/".$file;
 	my $newfile = $conf{'STATS_DIR'}."/".$file."-PID-".$$;
@@ -1427,7 +1438,12 @@ sub read_internals {
             print_log( "ERROR: renaming stats file $curfile to $newfile failed", 1 );
             next;
         }
-	#print_log("INFO: renamed stats file $curfile to $newfile",1);
+        push(@nfiles,$newfile);
+    }
+    ReleaseLock('stats'); 
+
+    foreach my $newfile (@nfiles) {
+        print_log("DEBUG: processing stats file $newfile",3);
         open( STAT, "< $newfile" );
         %stats = (
             timet       => 0,
@@ -1440,7 +1456,7 @@ sub read_internals {
             update      => 0,
         );
         while(<STAT>){
-	    #print_log("stat info: $_",3);
+	    #print_log("DEBUG: stat info: $_",3);
             @chunks = split();
             $stats{timet}    = $chunks[0];
             $stats{runtime} += $chunks[1];
@@ -1487,7 +1503,7 @@ sub daemonize {
         open STDOUT, '>>/dev/null' or die "Can't write to /dev/null: $!";
         open STDERR, '>>/dev/null' or die "Can't write to /dev/null: $!";
         defined( my $pid = fork )  or die "Can't fork: $!";
-        exit if $pid;
+        exit 12 if $pid;
         pidlock("create");
         setsid or die "Can't start a new session: $!";
     } else {
@@ -1557,7 +1573,7 @@ sub new_child {
         # this exit is VERY important, otherwise the child will become
         # a producer of more and more children, forking yourself into
         # process death.
-        exit;
+        exit 13;
     }
 }
 #
@@ -1649,7 +1665,7 @@ sub print_help {
     Hint the program, that it was invoked by NPCD
     -c, --config
     Optional process_perfdata config file
-    Default: @sysconfdir@/process_perfdata.cfg
+    Default: @pkgsysconfdir@/process_perfdata.cfg
 
   Gearman Worker Options:
     --gearman
@@ -1671,3 +1687,61 @@ sub print_version {
     print "Copyright (c) 2005-2010 Joerg Linge <pitchfork\@pnp4nagios.org>\n";
     exit 0;
 }
+
+# GetLock(file,ntries,WaitBetweenTries_usec)
+# wait is in seconds if < 10
+sub GetLock
+{
+    my $lockfile = shift;
+    $lockfile = 'ppd.lock' unless defined $lockfile;
+    my $dlockfile = $conf{LOCKDIR}.$lockfile;
+    my $tries = shift;
+    $tries = 10 unless defined $tries;
+    $tries = 10 if $tries < 1;
+    my $wait = shift;
+    $wait = $wait * 1000000 if defined($wait) && $wait < 10;
+    $wait = 1000000 unless defined $wait;
+    
+    my $FH;
+    my $madewhen;
+    while ($tries > 0) {
+        if (sysopen($FH,$dlockfile,O_WRONLY|O_CREAT|O_EXCL)) {
+            my $t = time();
+            print $FH "$t\n";
+            close($FH);
+            print_log("DEBUG: PID $$ got lock on $lockfile at $t",3);
+            return 1;
+        }
+        if (open($FH,"<$dlockfile")) {
+	    while (<$FH>) {
+		chomp;
+		next if /^\s*$/;
+		$madewhen = $_ unless defined $madewhen;
+            }
+	    close($FH);
+	    next unless defined $madewhen; 
+            my $dt = time() - $madewhen;
+            if ($dt > $conf{MAXLOCK}) {
+                print_log("DEBUG: old lock file $lockfile deleted",3);
+                unlink $dlockfile;
+                next;
+            }
+        }
+        $tries--;
+        print_log("DEBUG: PID $$ did not get lock on $lockfile, $tries remain",3);
+        usleep($wait);
+    }
+    print_log("WARN: PID $$ failed to get lock on $lockfile",1);
+    return 0;
+}
+
+sub ReleaseLock
+{
+    my $lockfile = shift;
+    $lockfile = 'ppd.lock' unless defined $lockfile;
+    my $dlockfile = $conf{LOCKDIR}.$lockfile;
+    
+    my $iss = unlink $dlockfile;
+    print_log("DEBUG: PID $$ release lock on $lockfile, OK=$iss",3);
+}
+

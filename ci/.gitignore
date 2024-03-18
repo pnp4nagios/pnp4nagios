@@ -1,0 +1,6 @@
+*~
+\#*
+#pnp4nagios.spec need for github build, dammit
+outputs
+*.tgz
+*.zip

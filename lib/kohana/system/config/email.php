@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * SwiftMailer driver, used with the email helper.
  *
@@ -19,4 +23,4 @@ $config['driver'] = 'native';
  * @param   string  sendmail: executable path, with -bs or equivalent attached
  * @param   array   smtp: hostname, (username), (password), (port), (auth), (encryption)
  */
-$config['options'] = NULL;
+$config['options'] = null;

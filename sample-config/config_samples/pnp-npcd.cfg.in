@@ -1,0 +1,28 @@
+#                                         -*- conf -*-
+# definitions for PNP processing commands
+# please choose one of the three files
+#   ( pnp-synchronous.cfg
+#     pnp-bulk.cfg
+#     pnp-npcd.cfg )
+#
+# copy to your nagios object config directory
+#    /etc/nagios/objects
+# then edit /etc/nagios/nagios.conf to load the config file
+#
+# OR copy to you nagios object config directory
+#   /etc/nagios/objects.d
+# where all of the config files are loaded.
+#
+
+#
+# Bulk with NPCD mode
+#
+define command {
+       command_name    process-service-perfdata-file
+       command_line    /bin/mv @PERFDATA_SPOOL_DIR@/service-perfdata @PERFDATA_SPOOL_DIR@/service-perfdata.$TIMET$
+}
+
+define command {
+       command_name    process-host-perfdata-file
+       command_line    /bin/mv @PERFDATA_SPOOL_DIR@/host-perfdata @PERFDATA_SPOOL_DIR@/host-perfdata.$TIMET$
+}

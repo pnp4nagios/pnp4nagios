@@ -5,12 +5,12 @@
 server.modules   += ( "mod_auth" )
 
 alias.url += (
-               "@BASE_URL@" => "@datarootdir@" 
+               "@PNP_URL@" => "@datarootdir@" 
              )
 
-$HTTP["url"] =~ "(^@BASE_URL@)" {
+$HTTP["url"] =~ "(^@PNP_URL@)" {
                     auth.backend = "htpasswd" 
-                    auth.backend.htpasswd.userfile = "/usr/local/nagios/etc/htpasswd.users" 
+                    auth.backend.htpasswd.userfile = "@NAGIOS_PWD@" 
                     auth.require = ( "" => (
                         "method" => "basic",
                         "realm" => "Nagios Access",

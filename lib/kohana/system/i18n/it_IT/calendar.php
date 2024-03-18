@@ -1,59 +1,63 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 
 $lang = array
 (
-	// Two letter days
-	'su'        => 'Do',
-	'mo'        => 'Lu',
-	'tu'        => 'Ma',
-	'we'        => 'Me',
-	'th'        => 'Gi',
-	'fr'        => 'Ve',
-	'sa'        => 'Sa',
+    // Two letter days
+    'su'        => 'Do',
+    'mo'        => 'Lu',
+    'tu'        => 'Ma',
+    'we'        => 'Me',
+    'th'        => 'Gi',
+    'fr'        => 'Ve',
+    'sa'        => 'Sa',
 
-	// Short day names
-	'sun'       => 'Dom',
-	'mon'       => 'Lun',
-	'tue'       => 'Mar',
-	'wed'       => 'Mer',
-	'thu'       => 'Gio',
-	'fri'       => 'Ven',
-	'sat'       => 'Sab',
+    // Short day names
+    'sun'       => 'Dom',
+    'mon'       => 'Lun',
+    'tue'       => 'Mar',
+    'wed'       => 'Mer',
+    'thu'       => 'Gio',
+    'fri'       => 'Ven',
+    'sat'       => 'Sab',
 
-	// Long day names
-	'sunday'    => 'Domenica',
-	'monday'    => 'Lunedì',
-	'tuesday'   => 'Martedì',
-	'wednesday' => 'Mercoledì',
-	'thursday'  => 'Giovedì',
-	'friday'    => 'Venerdì',
-	'saturday'  => 'Sabato',
+    // Long day names
+    'sunday'    => 'Domenica',
+    'monday'    => 'Lunedì',
+    'tuesday'   => 'Martedì',
+    'wednesday' => 'Mercoledì',
+    'thursday'  => 'Giovedì',
+    'friday'    => 'Venerdì',
+    'saturday'  => 'Sabato',
 
-	// Short month names
-	'jan'       => 'Gen',
-	'feb'       => 'Feb',
-	'mar'       => 'Mar',
-	'apr'       => 'Apr',
-	'may'       => 'Mag',
-	'jun'       => 'Giu',
-	'jul'       => 'Lug',
-	'aug'       => 'Ago',
-	'sep'       => 'Set',
-	'oct'       => 'Ott',
-	'nov'       => 'Nov',
-	'dec'       => 'Dic',
+    // Short month names
+    'jan'       => 'Gen',
+    'feb'       => 'Feb',
+    'mar'       => 'Mar',
+    'apr'       => 'Apr',
+    'may'       => 'Mag',
+    'jun'       => 'Giu',
+    'jul'       => 'Lug',
+    'aug'       => 'Ago',
+    'sep'       => 'Set',
+    'oct'       => 'Ott',
+    'nov'       => 'Nov',
+    'dec'       => 'Dic',
 
-	// Long month names
-	'january'   => 'Gennaio',
-	'february'  => 'Febbraio',
-	'march'     => 'Marzo',
-	'april'     => 'Aprile',
-	'mayl'      => 'Maggio',
-	'june'      => 'Giugno',
-	'july'      => 'Luglio',
-	'august'    => 'Agosto',
-	'september' => 'Settembre',
-	'october'   => 'Ottobre',
-	'november'  => 'Novembre',
-	'december'  => 'Dicembre'
+    // Long month names
+    'january'   => 'Gennaio',
+    'february'  => 'Febbraio',
+    'march'     => 'Marzo',
+    'april'     => 'Aprile',
+    'mayl'      => 'Maggio',
+    'june'      => 'Giugno',
+    'july'      => 'Luglio',
+    'august'    => 'Agosto',
+    'september' => 'Settembre',
+    'october'   => 'Ottobre',
+    'november'  => 'Novembre',
+    'december'  => 'Dicembre'
 );

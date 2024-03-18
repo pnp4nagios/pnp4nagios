@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * @package  Core
  *
@@ -18,12 +22,12 @@
  */
 $config['default'] = array
 (
-	'style'      => 'basic',
-	'width'      => 150,
-	'height'     => 50,
-	'complexity' => 4,
-	'background' => '',
-	'fontpath'   => SYSPATH.'fonts/',
-	'fonts'      => array('DejaVuSerif.ttf'),
-	'promote'    => FALSE,
+    'style'      => 'basic',
+    'width'      => 150,
+    'height'     => 50,
+    'complexity' => 4,
+    'background' => '',
+    'fontpath'   => SYSPATH . 'fonts/',
+    'fonts'      => array('DejaVuSerif.ttf'),
+    'promote'    => false,
 );

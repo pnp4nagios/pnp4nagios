@@ -1,14 +1,21 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * Zoom controller.
  *
  * @package    PNP4Nagios
- * @author     Joerg Linge 
+ * @author     Joerg Linge
  * @license    GPL
  */
-class Zoom_Controller extends System_Controller  {
-
-
+class Zoom_Controller extends System_Controller
+{
     public function __construct()
     {
         parent::__construct();
@@ -34,20 +41,22 @@ class Zoom_Controller extends System_Controller  {
         #
         $start_limit = strtotime("2000/01/01");
         $this->start = abs((int)$this->start);
-        if($this->start < $start_limit)
-        $this->start = $start_limit;
+        if ($this->start < $start_limit) {
+            $this->start = $start_limit;
+        }
         #
-        # Limit end to now + one hour 
-        #    
+        # Limit end to now + one hour
+        #
         $end_limit = time() + 3600;
         $this->end = abs((int)$this->end);
-        if($this->end > $end_limit)
+        if ($this->end > $end_limit) {
             $this->end = $end_limit;
+        }
 
-        $this->data->getTimeRange($this->start,$this->end,$this->view);
+        $this->data->getTimeRange($this->start, $this->end, $this->view);
 
-        if(isset($this->tpl) && $this->tpl != 'undefined' ){
-            if($this->start && $this->end ){
+        if (isset($this->tpl) && $this->tpl != 'undefined') {
+            if ($this->start && $this->end) {
                     $this->session->set("start", $this->start);
                     $this->session->set("end", $this->end);
             }
@@ -56,11 +65,11 @@ class Zoom_Controller extends System_Controller  {
             $this->template->source  = $this->source;
             $this->template->end     = $this->end;
             $this->template->start   = $this->start;
-            $this->url               = "?tpl=".$this->tpl;
+            $this->url               = "?tpl=" . $this->tpl;
             $this->template->graph_height = $this->graph_height;
             $this->template->graph_width  = $this->graph_width;
-        }elseif(isset($this->host) && isset($this->service)){
-            if($this->start && $this->end ){
+        } elseif (isset($this->host) && isset($this->service)) {
+            if ($this->start && $this->end) {
                 $this->session->set("start", $this->start);
                 $this->session->set("end", $this->end);
             }
@@ -70,10 +79,10 @@ class Zoom_Controller extends System_Controller  {
             $this->template->source  = $this->source;
             $this->template->end     = $this->end;
             $this->template->start   = $this->start;
-            $this->url               = "?host=".urlencode($this->host)."&srv=".urlencode($this->service);
+            $this->url               = "?host=" . urlencode($this->host) . "&srv=" . urlencode($this->service);
             $this->template->graph_height = $this->graph_height;
             $this->template->graph_width  = $this->graph_width;
-        }else{
+        } else {
             url::redirect("/graph");
         }
     }

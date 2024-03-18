@@ -1,4 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * Captcha driver for "word" style.
  *
@@ -9,29 +17,29 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Captcha_Word_Driver extends Captcha_Basic_Driver {
+class Captcha_Word_Driver extends Captcha_Basic_Driver
+{
+    /**
+     * Generates a new Captcha challenge.
+     *
+     * @return  string  the challenge answer
+     */
+    public function generate_challenge()
+    {
+        // Load words from the current language and randomize them
+        $words = Kohana::lang('captcha.words');
+        shuffle($words);
 
-	/**
-	 * Generates a new Captcha challenge.
-	 *
-	 * @return  string  the challenge answer
-	 */
-	public function generate_challenge()
-	{
-		// Load words from the current language and randomize them
-		$words = Kohana::lang('captcha.words');
-		shuffle($words);
+        // Loop over each word...
+        foreach ($words as $word) {
+            // ...until we find one of the desired length
+            if (abs(Captcha::$config['complexity'] - strlen($word)) < 2) {
+                return strtoupper($word);
+            }
+        }
 
-		// Loop over each word...
-		foreach ($words as $word)
-		{
-			// ...until we find one of the desired length
-			if (abs(Captcha::$config['complexity'] - strlen($word)) < 2)
-				return strtoupper($word);
-		}
-
-		// Return any random word as final fallback
-		return strtoupper($words[array_rand($words)]);
-	}
-
-} // End Captcha Word Driver Class
+        // Return any random word as final fallback
+        return strtoupper($words[array_rand($words)]);
+    }
+}
+// End Captcha Word Driver Class

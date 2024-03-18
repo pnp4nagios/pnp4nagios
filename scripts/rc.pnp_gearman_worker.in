@@ -12,9 +12,9 @@
 ### END INIT INFO
 
 DAEMON="@libexecdir@/process_perfdata.pl"
-CFG="@sysconfdir@/process_perfdata.cfg"
+CFG="@pkgsysconfdir@/process_perfdata.cfg"
 NAME=pnp_gearman_worker
-PIDFILE=@localstatedir@/${NAME}.pid
+PIDFILE=@piddir@/${NAME}.pid
 LOCKFILE=/var/lock/subsys/${NAME}
 USER=@nagios_user@
 USERID=`id -u`

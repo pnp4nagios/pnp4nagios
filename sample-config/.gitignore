@@ -1,0 +1,18 @@
+# created from .in files
+Makefile
+README_config.md
+SetLogLevels
+pnp4nagios_release
+config_tools/NagiosCfgMod.pl
+config_tools/verify_pnp_config
+config_tools/TemplateMod.pl
+config_samples/nagios.cfg
+config_samples/npcd.cfg
+config_samples/pnp-bulk.cfg
+config_samples/pnp-npcd.cfg
+config_samples/pnp-sync.cfg
+config_samples/process_perfdata.cfg
+config_samples/lighttpd.pnp4nagios.conf
+config_samples/nginx.pnp4nagios.conf
+config_samples/apache.pnp4nagios.conf
+config_samples/config.php

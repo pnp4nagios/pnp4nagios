@@ -1,14 +1,19 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 /**
  * Popup controller.
  *
  * @package    PNP4Nagios
- * @author     Joerg Linge 
+ * @author     Joerg Linge
  * @license    GPL
  */
-class Popup_Controller extends System_Controller  {
-
-
+class Popup_Controller extends System_Controller
+{
     public function __construct()
     {
         parent::__construct();
@@ -17,16 +22,16 @@ class Popup_Controller extends System_Controller  {
 
     public function index()
     {
-        if ( $this->view == "" ){
+        if ($this->view == "") {
             $this->view = $this->config->conf['overview-range'];
         }
 
-        $this->imgwidth = pnp::clean($this->input->get('width',$this->config->conf['popup-width']));
+        $this->imgwidth = pnp::clean($this->input->get('width', $this->config->conf['popup-width']));
 
-        $this->data->getTimeRange($this->start,$this->end,$this->view);
+        $this->data->getTimeRange($this->start, $this->end, $this->view);
 
-        if(isset($this->host) && isset($this->service)){
-            $this->data->buildDataStruct($this->host,$this->service,$this->view,$this->source);
+        if (isset($this->host) && isset($this->service)) {
+            $this->data->buildDataStruct($this->host, $this->service, $this->view, $this->source);
             $this->template->host      = $this->host;
             $this->template->srv       = $this->service;
             $this->template->view      = $this->view;
@@ -34,7 +39,7 @@ class Popup_Controller extends System_Controller  {
             $this->template->end       = $this->end;
             $this->template->start     = $this->start;
             $this->template->imgwidth  = $this->imgwidth;
-        }else{
+        } else {
             url::redirect("/graph");
         }
     }

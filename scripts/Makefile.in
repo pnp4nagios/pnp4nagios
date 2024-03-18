@@ -1,16 +1,28 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
+LOGDIR=@PNP_LOGDIR@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
 CGIDIR=@sbindir@
-INIT_DIR=@init_dir@
-INIT_OPTS=-o root -g root
 HTMLDIR=@datarootdir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
+
 PERFDATADIR=@PERFDATA_DIR@
+PERFDATA_SPOOL_DIR=@PERFDATA_SPOOL_DIR@
+
+INIT_TYPE=@init_type@
+INIT_DIR=@initdir@
+INIT_OPTS=@INIT_OPTS@
+INIT_FILE=@initname@
+SRC_INIT=@src_init@
+INIT_PERM=@INIT_PERM@
+
+HTTP_USER=@HTTP_USER@
+HTTP_GRP=@HTTP_GROUP@
+NAGIOS_USER=@nagios_user@
+NAGIOS_GRP=@nagios_group@
+MIX_OPTS=-o ${NAGIOS_USER} -g ${HTTP_GRP} 
 
 CP=@CP@
 
@@ -24,29 +36,43 @@ distclean: clean
 
 devclean: distclean
 
-install-init: 
-	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(INIT_DIR)
-	$(INSTALL) -m 755 $(INIT_OPTS) rc.npcd $(DESTDIR)$(INIT_DIR)/npcd
-	$(INSTALL) -m 755 $(INIT_OPTS) rc.pnp_gearman_worker $(DESTDIR)$(INIT_DIR)/pnp_gearman_worker
+install-init:
 
-install-processperfdata: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) process_perfdata.pl $(DESTDIR)$(LIBEXECDIR)
+install-daemoninit: install-init
+	@if [ x$(INIT_TYPE) = xsysv ]; then \
+                if which chkconfig >/dev/null 2>&1; then \
+                        chkconfig --add npcd; \
+                elif which update-rc.d >/dev/null 2>&1; then \
+                        update-rc.d npcd defaults; \
+                fi \
+        elif [ x$(INIT_TYPE) = xsystemd ]; then \
+                if which systemctl >/dev/null 2>&1; then \
+                        systemctl enable npcd.service ; \
+                fi; \
+                chmod 0644 $(INIT_DIR)/$(INIT_FILE); \
+        elif [ x$(INIT_TYPE) = xupstart ]; then \
+                if which initctl >/dev/null 2>&1; then \
+                        initctl reload-configuration; \
+                fi \
+        elif [ x$(INIT_TYPE) = xopenrc ]; then \
+                if which rc-update >/dev/null 2>&1; then \
+                        rc-update add npcd default; \
+                fi \
+        fi
 
-install-plugins: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) check_pnp_rrds.pl $(DESTDIR)$(LIBEXECDIR)
 
-install-rrdconvert: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_convert.pl $(DESTDIR)$(LIBEXECDIR)
-
-install-rrdmodify: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_modify.pl $(DESTDIR)$(LIBEXECDIR)
 
 install: 
-	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(PERFDATADIR)
+	$(INSTALL) -m 2755 $(MIX_OPTS) -d $(DESTDIR)$(PERFDATADIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LIBEXECDIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(PERFDATA_SPOOL_DIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/stats
-	$(MAKE) install-processperfdata
-	$(MAKE) install-plugins
-	$(MAKE) install-rrdconvert
-	$(MAKE) install-rrdmodify
-	
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/lock
+	$(INSTALL) -m 755 $(INIT_OPTS) -d $(DESTDIR)$(INIT_DIR)
+	$(INSTALL) -m $(INIT_PERM) $(INIT_OPTS) $(SRC_INIT) $(DESTDIR)$(INIT_DIR)/$(INIT_FILE)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) process_perfdata.pl $(DESTDIR)$(LIBEXECDIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) check_pnp_rrds.pl $(DESTDIR)$(LIBEXECDIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_convert.pl $(DESTDIR)$(LIBEXECDIR)
+	$(INSTALL) -m 755 $(INSTALL_OPTS) rrd_modify.pl $(DESTDIR)$(LIBEXECDIR)
+

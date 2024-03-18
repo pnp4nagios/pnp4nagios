@@ -1,0 +1,16 @@
+[Unit]
+Description=gearman rrd processor for pnp4nagios
+Documentation=https://github.com/pnp4nagios/docs
+After=network.target local-fs.target
+
+[Service]
+Type=exec
+User=@nagios_user@
+Group=@nagios_grp@
+PIDFile=@piddir@/gearman_worker.pid
+Environment="CONFIG_FILE=@pkgsysconfdir@/process_perfdata.cfg"
+ExecStart="@libexecdir@/process_perfdata.pl  --config=${CONFIG_FILE} --gearman --pidfile=@piddir@/gearman_worker.pid"
+ExecStop=/bin/kill -s QUIT "$MAINPID"
+
+[Install]
+WantedBy=nagios.service

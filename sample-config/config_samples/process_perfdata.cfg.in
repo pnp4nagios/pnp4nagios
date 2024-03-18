@@ -26,7 +26,7 @@ RRDTOOL = @RRDTOOL@
 #
 # Location of PNP config files
 #
-CFG_DIR = @sysconfdir@
+CFG_DIR = @pkgsysconfdir@
 
 #
 # Use a single RRD database per service 
@@ -47,7 +47,7 @@ RRD_HEARTBEAT = 8460
 #
 # File with RRA options used to create new RRD files
 #
-RRA_CFG = @sysconfdir@/rra.cfg
+RRA_CFG = @pkgsysconfdir@/rra.cfg
 
 #
 # Interval at which PDPs are generated
@@ -62,7 +62,7 @@ LOG_FILE = @PERFDATA_LOG@
 #
 # Loglevel 0=silent 1=normal 2=debug
 #
-LOG_LEVEL = @DEBUG@
+LOG_LEVEL = @DEBUG_LEVEL@
 
 #
 # XML encoding
@@ -88,7 +88,7 @@ RRD_DAEMON_OPTS =
 #
 # Spool directory used for internal statistics
 #
-STATS_DIR = @localstatedir@/stats
+STATS_DIR = @PERFDATA_STATS@
 
 #
 # Ignore certain performance data based on host name
@@ -153,4 +153,4 @@ KEY = should_be_changed
 # The shared password will be read from this file.
 # Only the first 32 characters will be used.
 #
-# KEY_FILE = @sysconfdir@/secret.key 
+#KEY_FILE = @pkgsysconfdir@/secret.key 

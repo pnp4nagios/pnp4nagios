@@ -23,7 +23,9 @@ if($INSTALL =~ /^\.\//){
     $INSTALL =~ s/^\.\//\.\.\//;
 }
 my $INSTALL_OPTS="@INSTALL_OPTS@";
-my $DEBUG="@DEBUG@";
+my $DEBUG_LEVEL="@DEBUG_LEVEL@";
+my $SELINUX="@SELINUX@";
+my $PNP_LOGDIR="@PNP_LOGDIR@";
 my $PERFDATA_DIR="@PERFDATA_DIR@";
 my $PERFDATA_LOG="@PERFDATA_LOG@";
 my $PERFDATA_SPOOL_DIR="@PERFDATA_SPOOL_DIR@";
@@ -33,9 +35,11 @@ my $XML_STRUCTURE_VERSION="@XML_STRUCTURE_VERSION@";
 my $PKG_REL_DATE="@PKG_REL_DATE@";
 my $PACKAGE_VERSION="@PACKAGE_VERSION@";
 my $PACKAGE_NAME="@PACKAGE_NAME@";
-my $BASE_URL="@BASE_URL@";
-my $HTTPD_CONF="@HTTPD_CONF@";
-my $init_dir="@init_dir@";
+my $PNP_URL="@PNP_URL@";
+my $NAGIOS_CFG="@NAGIOS_CFG@";
+my $NAGIOS_VER="@NAGIOS_VER@";
+my $HTTP_CONFDIR="@HTTP_CONFDIR@";
+my $initdir="@initdir@";
 my $npcd_name="@npcd_name@";
 my $pp_pl_name="@pp_pl_name@";
 my $nagios_user="@nagios_user@";
@@ -46,6 +50,7 @@ my $KOHANA="@KOHANA@";
 my $KOHANA_SYSTEM="@KOHANA_SYSTEM@";
 my $libdir="@libdir@";
 my $sysconfdir="@sysconfdir@";
+my $pkgsysconfdir="@pkgsysconfdir@";
 my $host_os="@host_os@";
 my $ac_configure_args="@ac_configure_args@";
 
@@ -86,7 +91,9 @@ while ($f = shift @ARGV) {
 		s|\@STRIP\@|$STRIP|g;
 		s|\@INSTALL\@|$INSTALL|g;
 		s|\@INSTALL_OPTS\@|$INSTALL_OPTS|g;
-		s|\@DEBUG\@|$DEBUG|g;
+		s|\@DEBUG_LEVEL\@|$DEBUG_LEVEL|g;
+                s|\@SELINUX\@|$SELINUX|g;
+		s|\@PNP_LOGDIR\@|$PNP_LOGDIR|g;
 		s|\@PERFDATA_DIR\@|$PERFDATA_DIR|g;
 		s|\@PERFDATA_LOG\@|$PERFDATA_LOG|g;
 		s|\@PERFDATA_SPOOL_DIR\@|$PERFDATA_SPOOL_DIR|g;
@@ -96,8 +103,10 @@ while ($f = shift @ARGV) {
 		s|\@PKG_REL_DATE\@|$PKG_REL_DATE|g;
 		s|\@PACKAGE_VERSION\@|$PACKAGE_VERSION|g;
 		s|\@PACKAGE_NAME\@|$PACKAGE_NAME|g;
-		s|\@BASE_URL\@|$BASE_URL|g;
-		s|\@HTTPD_CONF\@|$HTTPD_CONF|g;
+		s|\@PNP_URL\@|$PNP_URL|g;
+                s|\@NAGIOS_CFG\@|$NAGIOS_CFG|g;
+                s|\@NAGIOS_VER\@|$NAGIOS_VER|g;
+                s|\@HTTP_CONFDIR\@|$HTTP_CONFDIR|g;
 		s|\@npcd_name\@|$npcd_name|g;
 		s|\@pp_pl_name\@|$pp_pl_name|g;
 		s|\@nagios_user\@|$nagios_user|g;
@@ -107,8 +116,9 @@ while ($f = shift @ARGV) {
 		s|\@KOHANA\@|$KOHANA|g;
 		s|\@KOHANA_SYSTEM\@|$KOHANA_SYSTEM|g;
 		s|\@libdir\@|$libdir|g;
-		s|\@init_dir\@|$init_dir|g;
+		s|\@initdir\@|$initdir|g;
 		s|\@sysconfdir\@|$sysconfdir|g;
+		s|\@pkgsysconfdir\@|$pkgsysconfdir|g;
 		s|\@datarootdir\@|$datarootdir|g;
 		s|\@datadir\@|$datadir|g;
 		s|\@sbindir\@|$sbindir|g;

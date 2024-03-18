@@ -1,12 +1,14 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
+LOGDIR=@PNP_LOGDIR@
+CFGDIR=@pkgsysconfdir@
 BINDIR=@bindir@
 CGIDIR=@sbindir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
+HTTP_INSTALL_OPTS=@HTTP_INSTALL_OPTS@
 DATAROOTDIR=@datarootdir@
+
 
 CP=@CP@
 
@@ -22,7 +24,7 @@ distclean: clean
 devclean: distclean
 
 install:
-	$(INSTALL) -m 777 $(INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/kohana
+	$(INSTALL) -m 755 $(HTTP_INSTALL_OPTS) -d $(DESTDIR)$(LOGDIR)/kohana
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/documents/_media
@@ -170,4 +172,6 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/templates
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/index.php $(DESTDIR)$(DATAROOTDIR)
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/install.php $(DESTDIR)$(DATAROOTDIR)
+	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/install.ignore.not $(DESTDIR)$(DATAROOTDIR)
+
 

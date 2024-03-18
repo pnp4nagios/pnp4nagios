@@ -1,4 +1,6 @@
-#!/usr/bin/perl
+#!@PERL@
+# @datarootdir@  just to keep configure from bitching about it.
+#
 # Copyright (c) 2005-2011 PNP4Nagios Developer Team (http://www.pnp4nagios.org)
 #
 # This program is free software; you can redistribute it and/or
@@ -24,10 +26,20 @@ use File::Find;
 use File::Glob;
 use Term::ANSIColor;
 
-my $version = 'pnp4nagios-head';
+my $version = '@PACKAGE_VERSION@';
 
 # process command line parameters
-use vars qw ( $help $debug $mode $vInfo $PNPCfg $MainCfg $last_check $object $user $group);
+use vars qw ( $help $debug $mode $vInfo $PNPCfg $MainCfg $last_check $object $user $group $http_user $http_group
+$dist_type $opsys);
+
+# use 'config' to set defaults
+$MainCfg='@NAGIOS_CFG@';
+$PNPCfg='@pkgsysconfdir@';
+$http_user='@HTTP_USER@';
+$http_group='@HTTP_GROUP@';
+$dist_type='@dist_type@'; 
+$opsys='@opsys@';
+
 my $start_options = $0 . " " . join(" ", @ARGV);
 Getopt::Long::Configure('bundling');
 GetOptions(
@@ -41,7 +53,13 @@ GetOptions(
 	"g|group=s"  => \$group,
 );
 
-my @modes    = ("bulk", "bulk+npcd", "sync", "npcdmod");
+if ($help) {
+    usage();
+    exit 0;
+}
+
+
+my @modes    = ("bulk", "npcd", "sync","npcdmod");
 my @products = ("nagios", "icinga", "icinga2");
 my @states   = ("OK", "WARN", "CRIT", "UNKN", "INFO", "HINT", "DBG");
 my @colors   = ("bold green", "bold yellow", "bold red", "bold blue", "bold blue", "bold yellow", "black on_red");
@@ -50,7 +68,7 @@ my %stats = ( 0 => 0, 1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 =>0 );
 my %sizing = (
 	50     => 'sync', 
 	200    => 'bulk',
-	5000   => 'bulk+npcd',
+	5000   => 'npcd',
 	10000  => 'npcdmod',
 );
 
@@ -61,9 +79,22 @@ if ( ! $MainCfg ){
 }
 
 if ( ! $mode ){
-	usage();
+    if (open(N,"<$MainCfg")) {
+        while (<N>) {
+            if (/^cfg_file=\/.*\/pnp-(\w+)\.cfg/) {
+                $mode = $1;
+                last;
+            }
+        }
+        close(N);
+    } else {
+        die "error opening $MainCfg for reading";
+    }
+    if (! $mode) {
+        usage();
 	usage_no_mode();
 	exit;
+    }
 }
 
 if ( ! $PNPCfg ){
@@ -91,6 +122,8 @@ my %commands = ();
 my %modules  = ();
 my $uid      = 0;
 my $gid      = 0;
+my $http_uid = 0;
+my $http_gid = 0;
 my $process_perfdata_cfg = 0;
 my $OMD_ROOT = $ENV{OMD_ROOT} || "";
 
@@ -118,8 +151,8 @@ if( $product eq 0 ){
 }else{
 	info("Running product is '$product'", 0);
 }
-if($product eq "icinga2" and $mode ne "bulk+npcd"){
-	info_and_exit ("Icinga2 only supports 'bulk+npcd' mode", 2);
+if($product eq "icinga2" and $mode ne "npcd"){
+	info_and_exit ("Icinga2 only supports 'npcd' mode", 2);
 }
 
 #
@@ -165,7 +198,7 @@ process_perfdata_cfg($ppcfg);
 #
 if( -r "$PNPCfg/pnp4nagios_release" ){ 
 	process_pnp4nagios_release("$PNPCfg/pnp4nagios_release");
-	info("Found PNP4Nagios version ".get_config_var('PKG_VERSION'), 0);
+	info("Found PNP4Nagios version ".get_config_var('PACKAGE_VERSION'), 0);
 	info("./configure Options ".get_config_var('CONFIGURE_ARGS'), 0) if get_config_var('CONFIGURE_ARGS');
 }else{
 	info("No pnp4nagios_release file found. This might be an older version of PNP4Nagios", 0);
@@ -219,6 +252,31 @@ if($group){
 	}
 }else{
 	info_and_exit("Option '".$product."_group' not found in $MainCfg", 2);
+}
+
+
+if ($http_user) { 
+	$http_uid  = getpwnam($http_user);
+	if(defined $http_uid){
+		info( "Effective User for http server is '$http_user'", 0);
+		info("User $http_user exists with ID '$http_uid'", 0 );
+	}else{
+			info_and_exit("User $http_user does not exist", 2 );
+	}
+}else{
+	info_and_exit("Option '"."http_user' not found in $MainCfg", 2);
+}
+
+if ($http_group) { 
+	$http_gid  = getgrnam($http_group);
+	if(defined $http_gid){
+		info( "Effective group for http server is '$http_group'", 0);
+		info("User $http_group exists with GID '$http_gid'", 0 );
+	}else{
+			info_and_exit("User $http_group does not exist", 2 );
+	}
+}else{
+	info_and_exit("Option '"."http_group' not found in $MainCfg", 2);
 }
 
 #
@@ -297,8 +355,8 @@ if($mode eq "bulk"){
 	check_process_perfdata_pl($command_line);
 }
 
-if($mode eq "bulk+npcd"){
-	info("========== Checking Bulk Mode + NPCD Config  ============",4);
+if($mode eq "npcd"){
+	info("========== Checking Mode NPCD Config  ============",4);
 	
 	if($product eq "icinga2"){
 		my $ena = `icinga2 feature list | grep 'Enabled features' 2>&1 | grep perfdata`;
@@ -562,7 +620,7 @@ if($product eq "icinga2"){
 }
 
 if ( get_config_var('LOG_LEVEL') gt 0 ){
-	info("Logging is enabled in process_perfdata.cfg. This will reduce the overall performance of PNP4Nagios",1)
+    info("Logging is enabled in process_perfdata.cfg. This will reduce the overall performance of PNP4Nagios",1);
 }
 
 info("==== System sizing ====",4);
@@ -570,6 +628,12 @@ print_sizing();
 
 info("==== Check statistics ====",4);
 print_stats();
+
+if (-e "@datadir@/install.php" &&
+    ! -e "@datadir@/install.ignore" ) {
+    info("Showing pnp4nagios config on webserver. Do ' mv @datarootdir@/install.ignore.not @datarootdir@/install.ignore ' to show graphs",1);
+}
+   
 exit;
 
 #
@@ -634,13 +698,13 @@ sub check_command_definition {
 		}
 	}
 	if($mode eq "bulk"){
-		if( $val =~ m/process_perfdata.pl\s+--bulk=/){
+		if( $val =~ m/process_perfdata.pl\s+--bulk[=\s]/){
 			info ( "Command looks good",0 );
 		}else{
 			info_and_exit ( "Command looks suspect ($val)",2 );
 		}
 	}
-	if($mode eq "bulk+npcd"){
+	if($mode eq "npcd"){
 		my $dump_file = get_config_var( $option =~m/(.*)_processing_command/ );
 		my $perfdata_spool_dir = get_config_var( 'perfdata_spool_dir');
 		my ($file) = $dump_file =~ m|.*(/.+)|;
@@ -814,33 +878,81 @@ sub check_rrdtool {
 
 sub check_proc_npcd {
 	my $user = shift;
-	my $out = `ps -u $user -o cmd | grep /npcd | grep -v grep`;
-	my $rc = $?;
-	chomp $out;
-	info("Check process: 'ps -u $user -o cmd | grep /npcd | grep -v grep'", 6);
-	info("Result: $out", 6);
-	info("Returncode: $rc", 6);
-	#extract npcd.cfg 
-	$out =~ /-f\s?(\S+)/;
-	my $npcd_cfg = $1;
-	if($rc == 0){
+        # may need to get cases based on $opsys,
+        # but this handles linux and bsd, maybe others
+        if (!open(PS,"ps -A -o user -o command|")) {
+           info("error running 'ps -A -o user -o command'",0);
+           return;
+        }
+        my $cfgfile;
+        
+        while (<PS>) {
+          chomp;
+          my ($psuser,$pscomm,@psargs) = split(/\s+/);
+          next unless $psuser eq $user;
+          next unless $pscomm =~ /\/npcd(\s|$)/;
+          info("Check process matched: $_",6);
+          while (my $token = shift(@psargs)) {
+              if ($token eq '-f') {
+                 $cfgfile=shift(@psargs);
+                 last;
+              }
+          }
+          last if defined $cfgfile;
+        }
+        close(PS);
+        
+	if(defined($cfgfile)){
 		info("npcd daemon is running",0);
-	}else{
+	} else {
 		info("npcd daemon is not running",2);
 		info_and_exit("A running npcd daemon is needed to process data.",4);
 	}
-	return $npcd_cfg;
+	return $cfgfile;
 }
+
+# process a nagios config file
+
+sub process_nagios_file {
+    my $file = shift;
+    my $NFILE;
+    
+    info("Reading $file", 4);
+    open ($NFILE, "<$file") || info_and_exit("Failed to open '$file'. $! ", 2);
+    while (<$NFILE>) {
+        if (/^\s*cfg_file\s*=(.*)/) {
+            my $subfile = $1;
+            $subfile =~ s/#.*$//;
+            $subfile =~ s/^\s+//;
+            $subfile =~ s/\s+$//;
+            process_objects_file($subfile);
+        } elsif (/^\s*cfg_dir\s*=(.*)/) {
+            my $subdir = $1;
+            $subdir =~ s/#.*$//;
+            $subdir =~ s/^\s+//;
+            $subdir =~ s/\s+$//;
+            my $SDIR;
+            opendir($SDIR,"$subdir") || info_and_exit("failed to open nagios config dir '$subdir'. $!",2); 
+            my $subfile;
+            while (readdir $SDIR) {
+                next if /^./;
+                next unless /\.cfg$/;
+                process_objects_file("$subdir/$_");
+            }
+            closedir($SDIR);
+        } else {
+            process_main_cfg_line();    
+	}
+    }
+    close ($NFILE);
+}
+    
+
 
 # process nagios.cfg
 sub process_nagios_cfg {
-	info ("Reading $MainCfg", 4);
-	open (NFILE, "$MainCfg") || info_and_exit("Failed to open '$MainCfg'. $! ", 2);
-	while (<NFILE>) {
-		process_main_cfg_line();
-	}
-	close (NFILE);
-}
+    process_nagios_file($MainCfg);
+}        
 
 # process process_perfdata.cfg
 sub process_perfdata_cfg {
@@ -912,7 +1024,9 @@ sub process_main_cfg_line {
 	return if (/^$/);
 	return if (/^#/);
 	s/#.*//;
+        s/;.*$//;
 	s/\s*$//;
+        s/^\s*//;
 	if (my ($par, $val) = /([^=]+)\s?=\s?(.*)/){
 		$par = trim($par);
 		$val = trim($val);;
@@ -1026,12 +1140,19 @@ sub process_status_file {
                         if ($perf ne ""){
                              info ("$perf, ppd=$ppd", 4);
                         }
-                }		
+                }
+                if(/^programstatus/) {
+		    $hst = 'internal';
+		    $srv = '';
+		    $perfdata_found = 1;
+                }
                 if(/^hoststatus /){
-			$process_perf_data_stats{'hosts'}++;
+                    $process_perf_data_stats{'hosts'}++;
+                    $perfdata_found=0;
 		}
 		if(/^servicestatus /){
-			$process_perf_data_stats{'services'}++;
+                    $process_perf_data_stats{'services'}++;
+                    $perfdata_found=0;
 		}
 	}
 	close (CFILE);
@@ -1104,7 +1225,8 @@ sub check_usrgrp {
 	if ($gid) {
 		my $fgid = (stat("$file"))[5];
 		my $fgroup = getgrgid($fgid);
-		info ("$file: group is $fgroup", 2, $break) if ($fgid != $gid);
+		info ("$file: group is $fgroup", 2, $break)
+                    unless  ($fgid == $gid || $fgid == $http_gid);
 	}
 }
 
@@ -1153,7 +1275,7 @@ sub in_array{
 sub usage{
 print <<EOF;
 
-verify_pnp_config -m|--mode=[sync|bulk|bulk+npcd|npcdmod]
+verify_pnp_config -m|--mode=[sync|bulk|npcd|npcdmod]
                   -c|--config=[location of nagios.cfg]
                   -p|--pnpcfg=[path to PNP config dir]
                   -o|--object="[host][;service]" (optional)

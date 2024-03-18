@@ -1,0 +1,11 @@
+This file can control whether pnp4nagios
+webpages show a configuration summary, or
+nagios graphs.
+
+To show graphs:
+
+rename this file to "install.ignore"
+
+To show configuration:
+
+rename this file to "install.ignore.not"

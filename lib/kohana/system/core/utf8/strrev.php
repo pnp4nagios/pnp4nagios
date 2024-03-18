@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * utf8::strrev
  *
@@ -10,9 +14,10 @@
  */
 function _strrev($str)
 {
-	if (utf8::is_ascii($str))
-		return strrev($str);
+    if (utf8::is_ascii($str)) {
+        return strrev($str);
+    }
 
-	preg_match_all('/./us', $str, $matches);
-	return implode('', array_reverse($matches[0]));
+    preg_match_all('/./us', $str, $matches);
+    return implode('', array_reverse($matches[0]));
 }

@@ -1,4 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * File-based Cache driver.
  *
@@ -9,253 +17,235 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_File_Driver implements Cache_Driver {
+class Cache_File_Driver implements Cache_Driver
+{
+    protected $directory = '';
 
-	protected $directory = '';
+    /**
+     * Tests that the storage location is a directory and is writable.
+     */
+    public function __construct($directory)
+    {
+        // Find the real path to the directory
+        $directory = str_replace('\\', '/', realpath($directory)) . '/';
 
-	/**
-	 * Tests that the storage location is a directory and is writable.
-	 */
-	public function __construct($directory)
-	{
-		// Find the real path to the directory
-		$directory = str_replace('\\', '/', realpath($directory)).'/';
+        // Make sure the cache directory is writable
+        if (! is_dir($directory) or ! is_writable($directory)) {
+            throw new Kohana_Exception('cache.unwritable', $directory);
+        }
 
-		// Make sure the cache directory is writable
-		if ( ! is_dir($directory) OR ! is_writable($directory))
-			throw new Kohana_Exception('cache.unwritable', $directory);
+        // Directory is valid
+        $this->directory = $directory;
+    }
 
-		// Directory is valid
-		$this->directory = $directory;
-	}
+    /**
+     * Finds an array of files matching the given id or tag.
+     *
+     * @param  string  cache id or tag
+     * @param  bool    search for tags
+     * @return array   of filenames matching the id or tag
+     */
+    public function exists($id, $tag = false)
+    {
+        if ($id === true) {
+            // Find all the files
+            return glob($this->directory . '*~*~*');
+        } elseif ($tag === true) {
+            // Find all the files that have the tag name
+            $paths = glob($this->directory . '*~*' . $id . '*~*');
 
-	/**
-	 * Finds an array of files matching the given id or tag.
-	 *
-	 * @param  string  cache id or tag
-	 * @param  bool    search for tags
-	 * @return array   of filenames matching the id or tag
-	 */
-	public function exists($id, $tag = FALSE)
-	{
-		if ($id === TRUE)
-		{
-			// Find all the files
-			return glob($this->directory.'*~*~*');
-		}
-		elseif ($tag === TRUE)
-		{
-			// Find all the files that have the tag name
-			$paths = glob($this->directory.'*~*'.$id.'*~*');
+            // Find all tags matching the given tag
+            $files = array();
+            foreach ($paths as $path) {
+                // Split the files
+                $tags = explode('~', basename($path));
 
-			// Find all tags matching the given tag
-			$files = array();
-			foreach ($paths as $path)
-			{
-				// Split the files
-				$tags = explode('~', basename($path));
+                // Find valid tags
+                if (count($tags) !== 3 or empty($tags[1])) {
+                    continue;
+                }
 
-				// Find valid tags
-				if (count($tags) !== 3 OR empty($tags[1]))
-					continue;
+                // Split the tags by plus signs, used to separate tags
+                $tags = explode('+', $tags[1]);
 
-				// Split the tags by plus signs, used to separate tags
-				$tags = explode('+', $tags[1]);
+                if (in_array($tag, $tags)) {
+                    // Add the file to the array, it has the requested tag
+                    $files[] = $path;
+                }
+            }
 
-				if (in_array($tag, $tags))
-				{
-					// Add the file to the array, it has the requested tag
-					$files[] = $path;
-				}
-			}
+            return $files;
+        } else {
+            // Find the file matching the given id
+            return glob($this->directory . $id . '~*');
+        }
+    }
 
-			return $files;
-		}
-		else
-		{
-			// Find the file matching the given id
-			return glob($this->directory.$id.'~*');
-		}
-	}
+    /**
+     * Sets a cache item to the given data, tags, and lifetime.
+     *
+     * @param   string   cache id to set
+     * @param   string   data in the cache
+     * @param   array    cache tags
+     * @param   integer  lifetime
+     * @return  bool
+     */
+    public function set($id, $data, array $tags = null, $lifetime)
+    {
+        // Remove old cache files
+        $this->delete($id);
 
-	/**
-	 * Sets a cache item to the given data, tags, and lifetime.
-	 *
-	 * @param   string   cache id to set
-	 * @param   string   data in the cache
-	 * @param   array    cache tags
-	 * @param   integer  lifetime
-	 * @return  bool
-	 */
-	public function set($id, $data, array $tags = NULL, $lifetime)
-	{
-		// Remove old cache files
-		$this->delete($id);
+        // Cache File driver expects unix timestamp
+        if ($lifetime !== 0) {
+            $lifetime += time();
+        }
 
-		// Cache File driver expects unix timestamp
-		if ($lifetime !== 0)
-		{
-			$lifetime += time();
-		}
+        if (! empty($tags)) {
+            // Convert the tags into a string list
+            $tags = implode('+', $tags);
+        }
 
-		if ( ! empty($tags))
-		{
-			// Convert the tags into a string list
-			$tags = implode('+', $tags);
-		}
+        // Write out a serialized cache
+        return (bool) file_put_contents($this->directory . $id . '~' . $tags . '~' . $lifetime, serialize($data));
+    }
 
-		// Write out a serialized cache
-		return (bool) file_put_contents($this->directory.$id.'~'.$tags.'~'.$lifetime, serialize($data));
-	}
+    /**
+     * Finds an array of ids for a given tag.
+     *
+     * @param  string  tag name
+     * @return array   of ids that match the tag
+     */
+    public function find($tag)
+    {
+        // An array will always be returned
+        $result = array();
 
-	/**
-	 * Finds an array of ids for a given tag.
-	 *
-	 * @param  string  tag name
-	 * @return array   of ids that match the tag
-	 */
-	public function find($tag)
-	{
-		// An array will always be returned
-		$result = array();
+        if ($paths = $this->exists($tag, true)) {
+            // Length of directory name
+            $offset = strlen($this->directory);
 
-		if ($paths = $this->exists($tag, TRUE))
-		{
-			// Length of directory name
-			$offset = strlen($this->directory);
+            // Find all the files with the given tag
+            foreach ($paths as $path) {
+                // Get the id from the filename
+                list($id, $junk) = explode('~', basename($path), 2);
 
-			// Find all the files with the given tag
-			foreach ($paths as $path)
-			{
-				// Get the id from the filename
-				list($id, $junk) = explode('~', basename($path), 2);
+                if (($data = $this->get($id)) !== false) {
+                    // Add the result to the array
+                    $result[$id] = $data;
+                }
+            }
+        }
 
-				if (($data = $this->get($id)) !== FALSE)
-				{
-					// Add the result to the array
-					$result[$id] = $data;
-				}
-			}
-		}
+        return $result;
+    }
 
-		return $result;
-	}
+    /**
+     * Fetches a cache item. This will delete the item if it is expired or if
+     * the hash does not match the stored hash.
+     *
+     * @param   string  cache id
+     * @return  mixed|NULL
+     */
+    public function get($id)
+    {
+        if ($file = $this->exists($id)) {
+            // Use the first file
+            $file = current($file);
 
-	/**
-	 * Fetches a cache item. This will delete the item if it is expired or if
-	 * the hash does not match the stored hash.
-	 *
-	 * @param   string  cache id
-	 * @return  mixed|NULL
-	 */
-	public function get($id)
-	{
-		if ($file = $this->exists($id))
-		{
-			// Use the first file
-			$file = current($file);
+            // Validate that the cache has not expired
+            if ($this->expired($file)) {
+                // Remove this cache, it has expired
+                $this->delete($id);
+            } else {
+                // Turn off errors while reading the file
+                $ER = error_reporting(0);
 
-			// Validate that the cache has not expired
-			if ($this->expired($file))
-			{
-				// Remove this cache, it has expired
-				$this->delete($id);
-			}
-			else
-			{
-				// Turn off errors while reading the file
-				$ER = error_reporting(0);
+                if (($data = file_get_contents($file)) !== false) {
+                    // Unserialize the data
+                    $data = unserialize($data);
+                } else {
+                    // Delete the data
+                    unset($data);
+                }
 
-				if (($data = file_get_contents($file)) !== FALSE)
-				{
-					// Unserialize the data
-					$data = unserialize($data);
-				}
-				else
-				{
-					// Delete the data
-					unset($data);
-				}
+                // Turn errors back on
+                error_reporting($ER);
+            }
+        }
 
-				// Turn errors back on
-				error_reporting($ER);
-			}
-		}
+        // Return NULL if there is no data
+        return isset($data) ? $data : null;
+    }
 
-		// Return NULL if there is no data
-		return isset($data) ? $data : NULL;
-	}
+    /**
+     * Deletes a cache item by id or tag
+     *
+     * @param   string   cache id or tag, or TRUE for "all items"
+     * @param   boolean  use tags
+     * @return  boolean
+     */
+    public function delete($id, $tag = false)
+    {
+        $files = $this->exists($id, $tag);
 
-	/**
-	 * Deletes a cache item by id or tag
-	 *
-	 * @param   string   cache id or tag, or TRUE for "all items"
-	 * @param   boolean  use tags
-	 * @return  boolean
-	 */
-	public function delete($id, $tag = FALSE)
-	{
-		$files = $this->exists($id, $tag);
+        if (empty($files)) {
+            return false;
+        }
 
-		if (empty($files))
-			return FALSE;
+        // Disable all error reporting while deleting
+        $ER = error_reporting(0);
 
-		// Disable all error reporting while deleting
-		$ER = error_reporting(0);
+        foreach ($files as $file) {
+            // Remove the cache file
+            if (! unlink($file)) {
+                Kohana::log('error', 'Cache: Unable to delete cache file: ' . $file);
+            }
+        }
 
-		foreach ($files as $file)
-		{
-			// Remove the cache file
-			if ( ! unlink($file))
-				Kohana::log('error', 'Cache: Unable to delete cache file: '.$file);
-		}
+        // Turn on error reporting again
+        error_reporting($ER);
 
-		// Turn on error reporting again
-		error_reporting($ER);
+        return true;
+    }
 
-		return TRUE;
-	}
+    /**
+     * Deletes all cache files that are older than the current time.
+     *
+     * @return void
+     */
+    public function delete_expired()
+    {
+        if ($files = $this->exists(true)) {
+            // Disable all error reporting while deleting
+            $ER = error_reporting(0);
 
-	/**
-	 * Deletes all cache files that are older than the current time.
-	 *
-	 * @return void
-	 */
-	public function delete_expired()
-	{
-		if ($files = $this->exists(TRUE))
-		{
-			// Disable all error reporting while deleting
-			$ER = error_reporting(0);
+            foreach ($files as $file) {
+                if ($this->expired($file)) {
+                    // The cache file has already expired, delete it
+                    if (! unlink($file)) {
+                        Kohana::log('error', 'Cache: Unable to delete cache file: ' . $file);
+                    }
+                }
+            }
 
-			foreach ($files as $file)
-			{
-				if ($this->expired($file))
-				{
-					// The cache file has already expired, delete it
-					if ( ! unlink($file))
-						Kohana::log('error', 'Cache: Unable to delete cache file: '.$file);
-				}
-			}
+            // Turn on error reporting again
+            error_reporting($ER);
+        }
+    }
 
-			// Turn on error reporting again
-			error_reporting($ER);
-		}
-	}
+    /**
+     * Check if a cache file has expired by filename.
+     *
+     * @param  string  filename
+     * @return bool
+     */
+    protected function expired($file)
+    {
+        // Get the expiration time
+        $expires = (int) substr($file, strrpos($file, '~') + 1);
 
-	/**
-	 * Check if a cache file has expired by filename.
-	 *
-	 * @param  string  filename
-	 * @return bool
-	 */
-	protected function expired($file)
-	{
-		// Get the expiration time
-		$expires = (int) substr($file, strrpos($file, '~') + 1);
-
-		// Expirations of 0 are "never expire"
-		return ($expires !== 0 AND $expires <= time());
-	}
-
-} // End Cache File Driver
+        // Expirations of 0 are "never expire"
+        return ($expires !== 0 and $expires <= time());
+    }
+}
+// End Cache File Driver

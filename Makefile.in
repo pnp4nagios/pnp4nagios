@@ -1,7 +1,7 @@
 ###############################
 # Makefile for PNP
 #
-# Last Modified: 10-05-2023
+# Last Modified: 11-13-2023
 ###############################
 
 VERSION=@PACKAGE_VERSION@
@@ -24,15 +24,19 @@ LDFLAGS=@LDFLAGS@ @LIBS@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 LOGDIR=@localstatedir@
-CFGDIR=@sysconfdir@
 BINDIR=@bindir@
 LIBEXECDIR=@libexecdir@
-LIBDIR=@libdir@
 KOHANA=@KOHANA@
 CGIDIR=@sbindir@
 INSTALL=@INSTALL@
 INSTALL_OPTS=@INSTALL_OPTS@
+HTTP_INSTALL_OPTS=@HTTP_INSTALL_OPTS@
 DATAROOTDIR=@datarootdir@
+NAGIOS_VERSION=@NAGIOS_VER@
+CACHE_DIR=@CACHE_DIR@
+
+SELINUX=@SELINUX@
+SELINUX_DEVELDIR=@SELINUX_DEVELDIR@
 
 CP=@CP@
 PERL=@PERL@
@@ -41,24 +45,28 @@ PERL=@PERL@
 
 none:
 	@echo "Please supply a command line argument (i.e. 'make all').  Other targets are:"
-	@echo "   clean"
-	@echo "   install install-init install-config install-processperfdata install-html fullinstall"
-	@echo "   install-plugins"
+	@echo "   clean distclean dist"
+	@echo "   install install-init install-selinux fullinstall"
 
 all:
-	cd $(SRC_BASE) && $(MAKE)
-	cd $(SRC_SHARE) && $(MAKE)
-	cd $(SRC_SCRIPTS) && $(MAKE)
+	cd $(SRC_BASE) && $(MAKE) $@
+	cd $(SRC_SHARE) && $(MAKE) $@
+	cd $(SRC_SCRIPTS) && $(MAKE) $@
+	cd $(SRC_CONFIG) && $(MAKE) $@
 	chmod a+r $(SRC_CONTRIB)/ssi/status-header.ssi
 
 	@echo ""
 	@echo "*** Compile finished ***"
 	@echo ""
 	@echo "  make install"
-	@echo "     - This installs the main program and HTML files"
+	@echo "     - This installs directories, binaries and php files"
+	@echo ""
+	@echo "  make install-selinux"
+	@echo "     - This installs the selinux setup (if you are using selinux)"
+	@echo ""
 	@echo ""
 	@echo "  make fullinstall"
-	@echo "     - This installs the main program, runlevel scripts, config and HTML files"
+	@echo "    -  install everything "
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
@@ -86,10 +94,11 @@ config.status: configure
 
 
 scripts:
-	cd $(SRC_SCRIPTS) && $(MAKE)
+	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 share:
-	cd $(SRC_SHARE) && $(MAKE)
+	cd $(SRC_SHARE) && $(MAKE) $@
+
 
 clean:
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -101,6 +110,8 @@ clean:
 	-rm -f *.cfg core
 	-rm -f *~ *.*~ */*~ */*.*~
 	-rm -f config.log config.status config.cache
+@SE@	rm -f pnp4nagios.fc 
+@SE@	rm -f pnp4nagios.if pnp4nagios.pp* tmp
 
 distclean: 
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -115,56 +126,16 @@ distclean:
 	rm -f Makefile include/stamp-h1 include/config.h config.status config.log
 	rm -f subst summary
 	rm -f $(SRC_CONTRIB)/ssi/status-header.ssi
+	rm -f $(SRC_CONTRIB)/fedora/pnp4nagios.logrotate.conf
+	rm -f $(SRC_CONTRIB)/fedora/logwatch/conf/logfiles/pnp4nagios.conf
+@SE@	rm -f pnp4nagios.fc pnp4nagios.if pnp4nagios.pp* tmp
 
 devclean: distclean
 
-install-html:
-	cd $(SRC_SHARE) && $(MAKE) install
-
-install-base:
-	cd $(SRC_BASE) && $(MAKE) install
-
-install-man:
-	cd $(SRC_MAN) && $(MAKE) install
-
-install-processperfdata:
-	cd $(SRC_SCRIPTS) && $(MAKE) install
 
 install-init:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
-install-config:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-	@echo ""
-	@echo "*** PNP4Nagios sample config files installed ***"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
-	@echo ""
-	@echo ""
-	@echo ""
-
-install-webconf:
-	cd $(SRC_CONFIG) && $(MAKE) $@
-
-
-	@echo ""
-	@echo "*** Apache config file installed ***"
-	@echo ""
-	@echo "Restart your apache webserver to activete your changes."
-	@echo ""
-	@echo "Please run 'make install-config' to install sample"
-	@echo "configuration files"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
-	@echo ""
-	@echo ""
-	@echo ""
-
-install-plugins:
-	cd $(SRC_SCRIPTS) && $(MAKE) $@
 
 install:
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -173,24 +144,36 @@ install:
 	if [ x$(KOHANA) = xyes ]; then \
 		cd $(SRC_LIB) && $(MAKE) $@; \
 	fi
-
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	cd $(SRC_CONFIG) && $(MAKE) $@
-
+	$(INSTALL) $(HTTP_INSTALL_OPTS) -d $(DESTDIR)$(CACHE_DIR)
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
 	@echo ""
-	@echo "Please run 'make install-webconf' to install the"
-	@echo "web configuration file"
-	@echo ""
-	@echo "Please run 'make install-config' to install sample"
-	@echo "configuration files"
-	@echo ""
-	@echo "Please run 'make install-init' if you want to use"
-	@echo "BULK Mode with NPCD"
 	@echo ""
 	@echo ""
-	@echo ""
+
+# Nagios might have some pnp4nagios selinux entries
+# so mask out duplicates.
+
+install-selinux: 
+@SE@	-rm nagios.pp
+@SE@	-semodule -E nagios 2>/dev/null >/dev/null
+@SE@	if [ -e nagios.pp ]  ; then \
+@SE@	  semodule_unpackage nagios.pp nagios.mod nagios.fc ; \
+@SE@	  for pnpdir in /etc/pnp4nagios /var/log/pnp4nagios /var/lib/pnp4nagios /usr/lib/pnp4nagios ; \
+@SE@	  do \
+@SE@	      if grep -q "^$pnpdir" nagios.fc ; \
+@SE@	      then \
+@SE@	          sed -i "\\|^$pnpdir|s/^/#/" pnp4nagios.fc ; \
+@SE@	      fi \
+@SE@	  done \
+@SE@	fi
+@SE@	$(MAKE) -f $(SELINUX_DEVELDIR)/Makefile load
+@SE@	fixfiles restore @datadir@ @pkgsysconfdir@ 
+@SE@	fixfiles restore @PERFDATA_DIR@ @logdir@
+@SE@	fixfiles restore @PERFDATA_SPOOL_DIR@ @piddir@
+
 
 install-unstripped:
 	cd $(SRC_BASE) && $(MAKE) $@
@@ -198,17 +181,25 @@ install-unstripped:
 	cd $(SRC_SCRIPTS) && $(MAKE) $@
 	$(MAKE) install-basic
 
-fullinstall: install install-webconf install-config install-init
 
+fullinstall:
+	$(MAKE) install 
+	$(MAKE) install-selinux 
 	$(PERL) summary fullinstall
 	@echo ""
 	@echo "*** Main program, Scripts and HTML files installed ***"
+	@echo "Config files in: @pkgsysconfdir@ might need updating."
+	@echo ""
 	@echo ""
 	@echo "Enjoy."
 	@echo ""
 
+
 dist:
 	ci/maketar.sh $(VERSION)
+	mv ci/pnp4nagios*.tgz .
+	mv ci/pnp4nagios*.zip .
+
 
 
 

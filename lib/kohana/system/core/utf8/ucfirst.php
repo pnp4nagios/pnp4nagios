@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * utf8::ucfirst
  *
@@ -10,9 +14,10 @@
  */
 function _ucfirst($str)
 {
-	if (utf8::is_ascii($str))
-		return ucfirst($str);
+    if (utf8::is_ascii($str)) {
+        return ucfirst($str);
+    }
 
-	preg_match('/^(.?)(.*)$/us', $str, $matches);
-	return utf8::strtoupper($matches[1]).$matches[2];
+    preg_match('/^(.?)(.*)$/us', $str, $matches);
+    return utf8::strtoupper($matches[1]) . $matches[2];
 }

@@ -1,4 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * APC-based Cache driver.
  *
@@ -9,56 +17,51 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class Cache_Apc_Driver implements Cache_Driver {
+class Cache_Apc_Driver implements Cache_Driver
+{
+    public function __construct()
+    {
+        if (! extension_loaded('apc')) {
+            throw new Kohana_Exception('cache.extension_not_loaded', 'apc');
+        }
+    }
 
-	public function __construct()
-	{
-		if ( ! extension_loaded('apc'))
-			throw new Kohana_Exception('cache.extension_not_loaded', 'apc');
-	}
+    public function get($id)
+    {
+        return (($return = apc_fetch($id)) === false) ? null : $return;
+    }
 
-	public function get($id)
-	{
-		return (($return = apc_fetch($id)) === FALSE) ? NULL : $return;
-	}
+    public function set($id, $data, array $tags = null, $lifetime)
+    {
+        if (! empty($tags)) {
+            Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+        }
 
-	public function set($id, $data, array $tags = NULL, $lifetime)
-	{
-		if ( ! empty($tags))
-		{
-			Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
-		}
+        return apc_store($id, $data, $lifetime);
+    }
 
-		return apc_store($id, $data, $lifetime);
-	}
+    public function find($tag)
+    {
+        Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
 
-	public function find($tag)
-	{
-		Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+        return array();
+    }
 
-		return array();
-	}
+    public function delete($id, $tag = false)
+    {
+        if ($tag === true) {
+            Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
+            return false;
+        } elseif ($id === true) {
+            return apc_clear_cache('user');
+        } else {
+            return apc_delete($id);
+        }
+    }
 
-	public function delete($id, $tag = FALSE)
-	{
-		if ($tag === TRUE)
-		{
-			Kohana::log('error', 'Cache: tags are unsupported by the APC driver');
-			return FALSE;
-		}
-		elseif ($id === TRUE)
-		{
-			return apc_clear_cache('user');
-		}
-		else
-		{
-			return apc_delete($id);
-		}
-	}
-
-	public function delete_expired()
-	{
-		return TRUE;
-	}
-
-} // End Cache APC Driver
+    public function delete_expired()
+    {
+        return true;
+    }
+}
+// End Cache APC Driver

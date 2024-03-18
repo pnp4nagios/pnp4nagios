@@ -652,32 +652,52 @@ ac_includes_default="\
 ac_header_c_list=
 ac_func_c_list=
 ac_subst_vars='LTLIBOBJS
-RRDS
 MOD_LDFLAGS
 MOD_CFLAGS
+PAPERSIZE
+PNP_URL
+CACHE_DIR
+HTTP_CONFDIR
+HTTP_INSTALL_OPTS
+HTTP_GROUP
+HTTP_USER
+HTTP_UNIT
+HTTP_SERVER
 pp_pl_name
 npcd_name
 pnpsender_name
-init_dir
-BASE_URL
-HTTPD_CONF
-DEBUG
 PERFDATA_SPOOL_DIR
 PERFDATA_DIR
+PERFDATA_STATS
 PERFDATA_LOG
-RRDTOOL
-PERL_LIB_PATH
-PERL
+PNP_LOGDIR
 INSTALL_OPTS
 nagios_grp
 nagios_user
+NAGIOS_OBJ
+NAGIOS_PWD
+NAGIOS_UNIT
+NAGIOS_VER
+NAGIOS_CFG
+SE
+SELINUX_DEVELDIR
+SELINUX
+RRDTOOL
+INIT_OPTS
+root_grp
+CPP
+LIBOBJS
 KOHANA_SYSTEM
 KOHANA
-LIBOBJS
+RRDS
+PERL_LIB_PATH
+PERL
+CP
+LN_S
+SED
+AWK
 EGREP
 GREP
-CPP
-CP
 STRIP
 SET_MAKE
 OBJEXT
@@ -687,6 +707,44 @@ CPPFLAGS
 LDFLAGS
 CFLAGS
 CC
+INSTALL_SUFFIX
+INSTALL_DATA
+INSTALL_SCRIPT
+INSTALL_PROGRAM
+bsd_enable
+src_tmpfile
+src_inetd
+src_init
+subsyslockfile
+subsyslockdir
+tmpfilesd
+inetddir
+initdiroverridden
+initdir
+spooldir
+pipedir
+piddir
+logdir
+pkglocalstatedir
+privatesysconfdir
+webdir
+cgibindir
+brokersdir
+pluginsdir
+inetdname
+initname
+objsysconfdir
+pkgsysconfdir
+INIT_PERM
+init_type
+dist_ver
+dist_type
+arch
+opsys
+target_os
+target_vendor
+target_cpu
+target
 host_os
 host_vendor
 host_cpu
@@ -695,10 +753,7 @@ build_os
 build_vendor
 build_cpu
 build
-INSTALL
-INSTALL_DATA
-INSTALL_SCRIPT
-INSTALL_PROGRAM
+DEBUG_LEVEL
 XML_STRUCTURE_VERSION
 ac_configure_args
 PKG_REL_DATE
@@ -745,20 +800,49 @@ SHELL'
 ac_subst_files=''
 ac_user_opts='
 enable_option_checking
-with_layout
+with_debug_level
+with_opsys
+with_dist_type
+with_init_type
+enable_install_method
+enable_showdirs_only
+with_pkgsysconfdir
+with_objsysconfdir
+with_privatesysconfdir
+with_webdir
+with_pluginsdir
+with_brokersdir
+with_cgibindir
+with_logdir
+with_piddir
+with_pipedir
+with_initdir
+with_libdir
+with_perl_lib_path
 with_kohana
 with_kohana_system
+with_root_group
+with_rrdtool
+enable_selinux
+with_selinux_develdir
+with_nagios_cfg
+with_nagios_version
+with_nagios_unit
+with_nagios_pwd
+with_nagios_objects
 with_nagios_user
 with_nagios_group
-with_perl_lib_path
-with_rrdtool
-with_perfdata_logfile
+with_pnp_logdir
 with_perfdata_dir
 with_perfdata_spool_dir
-with_debug
-with_httpd_conf
-with_base_url
-with_init_dir
+with_http_server
+with_http_server_base
+with_http_user
+with_http_group
+with_http_confdir
+with_cache_dir
+with_pnp_url
+with_papersize
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1378,6 +1462,7 @@ _ACEOF
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
+  --target=TARGET   configure for building compilers for TARGET [HOST]
 _ACEOF
 fi
 
@@ -1387,23 +1472,72 @@ if test -n "$ac_init_help"; then
    esac
   cat <<\_ACEOF
 
+Optional Features:
+  --disable-option-checking  ignore unrecognized --enable/--with options
+  --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+  --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-install-method=<method>
+                          sets the install method to use: 'default' (the
+                          default) will install to /usr/local/nagios, 'os'
+                          will try to determine which method to use based on
+                          OS type and distribution. Fine tuning using the
+                          '--bindir', etc. overrides above will still work
+  --enable-showdirs-only=yes
+                          This option will cause 'configure' to stop after
+                          determining the install locations based on
+                          '--enable-install-method', so you can see the
+                          destinations before a full './configure', 'make',
+                          'make install' process.
+  --disable-selinux       Disable selinux build
+
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-layout=\default,debian\ sets directory layout
+ --with-debug_level=<debuglevel>
+  --with-opsys=OS         specify operating system (linux, osx, bsd, solaris,
+                          irix, cygwin, aix, hp-ux, etc.)
+  --with-dist-type=type   specify distribution type (suse, rh, debian, etc.)
+  --with-init-type=type   specify init type (bsd, sysv, systemd, launchd,
+                          smf10, smf11, upstart, openrc, etc.)
+  --with-pkgsysconfdir=DIR
+                          where configuration files should be placed
+  --with-objsysconfdir=DIR
+                          where object configuration files should be placed
+  --with-privatesysconfdir=DIR
+                          where private configuration files should be placed
+  --with-webdir=DIR       where the website files should be placed
+  --with-pluginsdir=DIR   where the plugins should be placed
+  --with-brokersdir=DIR   where the broker modules should be placed
+  --with-cgibindir=DIR    where the CGI programs should be placed
+  --with-logdir=DIR       where log files should be placed
+  --with-piddir=DIR       where the PID file should be placed
+  --with-pipedir=DIR      where socket and pipe files should be placed
+  --with-initdir=<path>   overrides path for initdir
+ --with-libdir=<$libdir> pnp4nagios libs are kept
+  --with-perl_lib_path=<path_to_perl_libs> sets path to rrdtool RRDs perl modules.
   --without-kohana does not install the kohana framework
   --with-kohana_system=<existing kohana system dir> Points to an already installed kohana framework
+  --with-root-group=<grp> sets group name for installing init
+  --with-rrdtool=<path_to_rrdtool> sets path to rrdtool
+ --with-selinux_develdir=<location of selinux policy Makefile
+ --with-nagios-cfg=<nagios_cfg_dir> sets path to nagios.cfg file
+ --with-nagios-version=<nagios_version> nagios version string, like 3.1 etc
+ --with-nagios_unit=<nagios_unit_name> sets name of unit for nagios service
+ --with-nagios-pwd=<nagios_pwd_file> sets path to Nagios password file
+ --with-nagios-objects=<nagios_objects_directory> location of nagios object config files
   --with-nagios-user=<user> sets user name to run nagios
   --with-nagios-group=<grp> sets group name to run nagios
-  --with-perl_lib_path=<path_to_perl_libs> sets path to rrdtool RRDs perl modules.
-  --with-rrdtool=<path_to_rrdtool> sets path to rrdtool
-  --with-perfdata-logfile=<perfdata_logfile> Tell me where I should store the 'process_perfdata.pl' Logfile
+ --with-pnp-logdir=<location of pnp4nagios log files and directories
   --with-perfdata-dir=<path_to_perfdata> Tell me where I should store the RRD Database Files
   --with-perfdata-spool-dir=<path_to_perfdata_spool_dir> Tell me where I should store perfdata files for bulk mode with npcd
-  --with-debug Enable debuging for process_perfdata.pl
-  --with-httpd-conf=<path_to_conf> sets path to Apache conf.d directory
-  --with-base-url=/${PACKAGE_NAME}
-  --with-init-dir=<path> sets directory to place init script into
+ --with-http_server=(http,apache,apache2,lighttpd,nginx) http server software
+ --with-http_server_base=(http server base dir)
+  --with-http_user=<user> sets user name for http server
+  --with-http_group=<grp> sets group name for http server
+  --with-http_confdir=<path_to_conf_dir> sets path to http server conf.d directory
+ --with-cache_dir=<path to cache dir>
+--with-pnp_url=<pnp4nagios-url>
+  --with-papersize=<paper_size>  paper size to use A4 or letter
 
 Some influential environment variables:
   CC          C compiler command
@@ -1536,86 +1670,6 @@ fi
 
 } # ac_fn_c_try_compile
 
-# ac_fn_c_try_link LINENO
-# -----------------------
-# Try to link conftest.$ac_ext, and return whether this succeeded.
-ac_fn_c_try_link ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  rm -f conftest.$ac_objext conftest.beam conftest$ac_exeext
-  if { { ac_try="$ac_link"
-case "(($ac_try" in
-  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
-  *) ac_try_echo=$ac_try;;
-esac
-eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
-printf "%s\n" "$ac_try_echo"; } >&5
-  (eval "$ac_link") 2>conftest.err
-  ac_status=$?
-  if test -s conftest.err; then
-    grep -v '^ *+' conftest.err >conftest.er1
-    cat conftest.er1 >&5
-    mv -f conftest.er1 conftest.err
-  fi
-  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } && {
-	 test -z "$ac_c_werror_flag" ||
-	 test ! -s conftest.err
-       } && test -s conftest$ac_exeext && {
-	 test "$cross_compiling" = yes ||
-	 test -x conftest$ac_exeext
-       }
-then :
-  ac_retval=0
-else $as_nop
-  printf "%s\n" "$as_me: failed program was:" >&5
-sed 's/^/| /' conftest.$ac_ext >&5
-
-	ac_retval=1
-fi
-  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
-  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
-  # interfere with the next link command; also delete a directory that is
-  # left behind by Apple's compiler.  We do this before executing the actions.
-  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-  as_fn_set_status $ac_retval
-
-} # ac_fn_c_try_link
-
-# ac_fn_c_check_header_compile LINENO HEADER VAR INCLUDES
-# -------------------------------------------------------
-# Tests whether HEADER exists and can be compiled using the include files in
-# INCLUDES, setting the cache variable VAR accordingly.
-ac_fn_c_check_header_compile ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
-printf %s "checking for $2... " >&6; }
-if eval test \${$3+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$4
-#include <$2>
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  eval "$3=yes"
-else $as_nop
-  eval "$3=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-eval ac_res=\$$3
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_header_compile
-
 # ac_fn_c_check_type LINENO TYPE VAR INCLUDES
 # -------------------------------------------
 # Tests whether TYPE exists after having included INCLUDES, setting cache
@@ -1673,20 +1727,54 @@ printf "%s\n" "$ac_res" >&6; }
 
 } # ac_fn_c_check_type
 
-# ac_fn_c_try_cpp LINENO
-# ----------------------
-# Try to preprocess conftest.$ac_ext, and return whether this succeeded.
-ac_fn_c_try_cpp ()
+# ac_fn_c_check_header_compile LINENO HEADER VAR INCLUDES
+# -------------------------------------------------------
+# Tests whether HEADER exists and can be compiled using the include files in
+# INCLUDES, setting the cache variable VAR accordingly.
+ac_fn_c_check_header_compile ()
 {
   as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  if { { ac_try="$ac_cpp conftest.$ac_ext"
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2" >&5
+printf %s "checking for $2... " >&6; }
+if eval test \${$3+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$4
+#include <$2>
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  eval "$3=yes"
+else $as_nop
+  eval "$3=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+eval ac_res=\$$3
+	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+printf "%s\n" "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_header_compile
+
+# ac_fn_c_try_link LINENO
+# -----------------------
+# Try to link conftest.$ac_ext, and return whether this succeeded.
+ac_fn_c_try_link ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  rm -f conftest.$ac_objext conftest.beam conftest$ac_exeext
+  if { { ac_try="$ac_link"
 case "(($ac_try" in
   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
   *) ac_try_echo=$ac_try;;
 esac
 eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
 printf "%s\n" "$ac_try_echo"; } >&5
-  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.err
+  (eval "$ac_link") 2>conftest.err
   ac_status=$?
   if test -s conftest.err; then
     grep -v '^ *+' conftest.err >conftest.er1
@@ -1694,9 +1782,12 @@ printf "%s\n" "$ac_try_echo"; } >&5
     mv -f conftest.er1 conftest.err
   fi
   printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
-  test $ac_status = 0; } > conftest.i && {
-	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
+  test $ac_status = 0; } && {
+	 test -z "$ac_c_werror_flag" ||
 	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext && {
+	 test "$cross_compiling" = yes ||
+	 test -x conftest$ac_exeext
        }
 then :
   ac_retval=0
@@ -1704,72 +1795,17 @@ else $as_nop
   printf "%s\n" "$as_me: failed program was:" >&5
 sed 's/^/| /' conftest.$ac_ext >&5
 
-    ac_retval=1
+	ac_retval=1
 fi
+  # Delete the IPA/IPO (Inter Procedural Analysis/Optimization) information
+  # created by the PGI compiler (conftest_ipa8_conftest.oo), as it would
+  # interfere with the next link command; also delete a directory that is
+  # left behind by Apple's compiler.  We do this before executing the actions.
+  rm -rf conftest.dSYM conftest_ipa8_conftest.oo
   eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
   as_fn_set_status $ac_retval
 
-} # ac_fn_c_try_cpp
-
-# ac_fn_c_check_member LINENO AGGR MEMBER VAR INCLUDES
-# ----------------------------------------------------
-# Tries to find if the field MEMBER exists in type AGGR, after including
-# INCLUDES, setting cache variable VAR accordingly.
-ac_fn_c_check_member ()
-{
-  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2.$3" >&5
-printf %s "checking for $2.$3... " >&6; }
-if eval test \${$4+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$5
-int
-main (void)
-{
-static $2 ac_aggr;
-if (ac_aggr.$3)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  eval "$4=yes"
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-$5
-int
-main (void)
-{
-static $2 ac_aggr;
-if (sizeof ac_aggr.$3)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  eval "$4=yes"
-else $as_nop
-  eval "$4=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-eval ac_res=\$$4
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
-
-} # ac_fn_c_check_member
+} # ac_fn_c_try_link
 
 # ac_fn_c_check_func LINENO FUNC VAR
 # ----------------------------------
@@ -1875,6 +1911,104 @@ fi
   as_fn_set_status $ac_retval
 
 } # ac_fn_c_try_run
+
+# ac_fn_c_try_cpp LINENO
+# ----------------------
+# Try to preprocess conftest.$ac_ext, and return whether this succeeded.
+ac_fn_c_try_cpp ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  if { { ac_try="$ac_cpp conftest.$ac_ext"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+printf "%s\n" "$ac_try_echo"; } >&5
+  (eval "$ac_cpp conftest.$ac_ext") 2>conftest.err
+  ac_status=$?
+  if test -s conftest.err; then
+    grep -v '^ *+' conftest.err >conftest.er1
+    cat conftest.er1 >&5
+    mv -f conftest.er1 conftest.err
+  fi
+  printf "%s\n" "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+  test $ac_status = 0; } > conftest.i && {
+	 test -z "$ac_c_preproc_warn_flag$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       }
+then :
+  ac_retval=0
+else $as_nop
+  printf "%s\n" "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+    ac_retval=1
+fi
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+  as_fn_set_status $ac_retval
+
+} # ac_fn_c_try_cpp
+
+# ac_fn_c_check_member LINENO AGGR MEMBER VAR INCLUDES
+# ----------------------------------------------------
+# Tries to find if the field MEMBER exists in type AGGR, after including
+# INCLUDES, setting cache variable VAR accordingly.
+ac_fn_c_check_member ()
+{
+  as_lineno=${as_lineno-"$1"} as_lineno_stack=as_lineno_stack=$as_lineno_stack
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $2.$3" >&5
+printf %s "checking for $2.$3... " >&6; }
+if eval test \${$4+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$5
+int
+main (void)
+{
+static $2 ac_aggr;
+if (ac_aggr.$3)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  eval "$4=yes"
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+$5
+int
+main (void)
+{
+static $2 ac_aggr;
+if (sizeof ac_aggr.$3)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  eval "$4=yes"
+else $as_nop
+  eval "$4=no"
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+eval ac_res=\$$4
+	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+printf "%s\n" "$ac_res" >&6; }
+  eval $as_lineno_stack; ${as_lineno_stack:+:} unset as_lineno
+
+} # ac_fn_c_check_member
 ac_configure_args_raw=
 for ac_arg
 do
@@ -2153,22 +2287,6 @@ See \`config.log' for more details" "$LINENO" 5; }
   fi
 done
 
-if test -r "$cache_file"; then
-  # Some versions of bash will fail to source /dev/null (special files
-  # actually), so we avoid doing that.  DJGPP emulates it as a regular file.
-  if test /dev/null != "$cache_file" && test -f "$cache_file"; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: loading cache $cache_file" >&5
-printf "%s\n" "$as_me: loading cache $cache_file" >&6;}
-    case $cache_file in
-      [\\/]* | ?:[\\/]* ) . "$cache_file";;
-      *)                      . "./$cache_file";;
-    esac
-  fi
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: creating cache $cache_file" >&5
-printf "%s\n" "$as_me: creating cache $cache_file" >&6;}
-  >$cache_file
-fi
 
 # Test code for whether the C compiler supports C89 (global declarations)
 ac_c_conftest_c89_globals='
@@ -2492,7 +2610,7 @@ as_fn_append ac_func_c_list " fork HAVE_FORK"
 as_fn_append ac_func_c_list " vfork HAVE_VFORK"
 
 # Auxiliary files required by this configure script.
-ac_aux_files="config.guess config.sub install-sh"
+ac_aux_files="install-sh config.guess config.sub"
 
 # Locations in which to look for auxiliary files.
 ac_aux_dir_candidates="${srcdir}${PATH_SEPARATOR}${srcdir}/..${PATH_SEPARATOR}${srcdir}/../.."
@@ -2657,16 +2775,8 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
-
-ac_config_headers="$ac_config_headers include/config.h:include/config.h.in"
-
-
-
-
-printf "%s\n" "#define DEFAULT_NAGIOS_USER nagios" >>confdefs.h
-
-
-printf "%s\n" "#define DEFAULT_NAGIOS_GROUP nagios" >>confdefs.h
+PKG_NAME="$PACKAGE_NAME"
+PKG_VERSION="$PACKAGE_VERSION"
 
 #
 # release and release_date
@@ -2676,13 +2786,1405 @@ PACKAGE_RELEASE="4"
 PKG_REL_DATE="2023-10-15"
 
 
+
+
+ac_config_headers="$ac_config_headers include/config.h:include/config.h.in"
+
+
 #
-#
+if echo $PATH | grep -qv '/sbin' ; then
+  echo "PATH variable doesn't include sbin, probable failure"
+  exit 1
+fi
 #
 
 XML_STRUCTURE_VERSION="4"
 
 
+DEBUG_LEVEL=0
+
+# Check whether --with-debug_level was given.
+if test ${with_debug_level+y}
+then :
+  withval=$with_debug_level; DEBUG_LEVEL=$withval
+else $as_nop
+  DEBUG_LEVEL=0
+fi
+
+if test $DEBUG_LEVEL -gt 0 ; then
+CFLAGS="${CFLAGS} -O0 -ggdb3 -g3"
+fi
+
+
+#dnl What OS are we running?
+
+
+
+  # Make sure we can run config.sub.
+$SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
+  as_fn_error $? "cannot run $SHELL ${ac_aux_dir}config.sub" "$LINENO" 5
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
+printf %s "checking build system type... " >&6; }
+if test ${ac_cv_build+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_build_alias=$build_alias
+test "x$ac_build_alias" = x &&
+  ac_build_alias=`$SHELL "${ac_aux_dir}config.guess"`
+test "x$ac_build_alias" = x &&
+  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
+ac_cv_build=`$SHELL "${ac_aux_dir}config.sub" $ac_build_alias` ||
+  as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $ac_build_alias failed" "$LINENO" 5
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
+printf "%s\n" "$ac_cv_build" >&6; }
+case $ac_cv_build in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
+esac
+build=$ac_cv_build
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_build
+shift
+build_cpu=$1
+build_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+build_os=$*
+IFS=$ac_save_IFS
+case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
+printf %s "checking host system type... " >&6; }
+if test ${ac_cv_host+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test "x$host_alias" = x; then
+  ac_cv_host=$ac_cv_build
+else
+  ac_cv_host=`$SHELL "${ac_aux_dir}config.sub" $host_alias` ||
+    as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $host_alias failed" "$LINENO" 5
+fi
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
+printf "%s\n" "$ac_cv_host" >&6; }
+case $ac_cv_host in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
+esac
+host=$ac_cv_host
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_host
+shift
+host_cpu=$1
+host_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+host_os=$*
+IFS=$ac_save_IFS
+case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
+
+
+#dnl kinda doubt much cross-compiling, but just in case...
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking target system type" >&5
+printf %s "checking target system type... " >&6; }
+if test ${ac_cv_target+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  if test "x$target_alias" = x; then
+  ac_cv_target=$ac_cv_host
+else
+  ac_cv_target=`$SHELL "${ac_aux_dir}config.sub" $target_alias` ||
+    as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $target_alias failed" "$LINENO" 5
+fi
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target" >&5
+printf "%s\n" "$ac_cv_target" >&6; }
+case $ac_cv_target in
+*-*-*) ;;
+*) as_fn_error $? "invalid value of canonical target" "$LINENO" 5;;
+esac
+target=$ac_cv_target
+ac_save_IFS=$IFS; IFS='-'
+set x $ac_cv_target
+shift
+target_cpu=$1
+target_vendor=$2
+shift; shift
+# Remember, the first character of IFS is used to create $*,
+# except with old shells:
+target_os=$*
+IFS=$ac_save_IFS
+case $target_os in *\ *) target_os=`echo "$target_os" | sed 's/ /-/g'`;; esac
+
+
+# The aliases save the names the user supplied, while $host etc.
+# will get canonicalized.
+test -n "$target_alias" &&
+  test "$program_prefix$program_suffix$program_transform_name" = \
+    NONENONEs,x,x, &&
+  program_prefix=${target_alias}-
+
+
+INIT_PROG=npcd
+
+
+
+
+
+#
+# Get user hints
+#
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking what the operating system is " >&5
+printf %s "checking what the operating system is ... " >&6; }
+
+# Check whether --with-opsys was given.
+if test ${with_opsys+y}
+then :
+  withval=$with_opsys;
+			#
+			# Run this if --with was specified
+			#
+			if test "x$withval" = x -o x$withval = xno; then
+				opsys_wanted=yes
+			else
+				opsys_wanted=no
+				opsys="$withval"
+				{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $opsys" >&5
+printf "%s\n" "$opsys" >&6; }
+			fi
+
+else $as_nop
+
+			#
+			# Run this if --with was not specified
+			#
+			opsys_wanted=yes
+
+fi
+
+
+		if test x$opsys = xno; then
+			opsys=""
+			opsys_wanted=yes
+		elif test x$opsys = xyes; then
+			as_fn_error $? "you must enter an O/S type if '--with-opsys' is specified" "$LINENO" 5
+		fi
+
+		#
+		# Determine operating system if it wasn't supplied
+		#
+		if test $opsys_wanted=yes; then
+			opsys=`uname -s | tr "[A-Z]" "[a-z]"`
+			if test x"$opsys" = "x"; then opsys="unknown"; fi
+			case $opsys in #(
+  darwin*) :
+    opsys="osx" ;; #(
+  *bsd*) :
+    opsys="bsd" ;; #(
+  dragonfly) :
+    opsys="bsd" ;; #(
+  sunos) :
+    opsys="solaris" ;; #(
+  gnu/hurd) :
+    opsys="linux" ;; #(
+  irix*) :
+    opsys="irix" ;; #(
+  cygwin*) :
+    opsys="cygwin" ;; #(
+  mingw*) :
+    opsys="mingw" ;; #(
+  msys*) :
+    opsys="msys" ;; #(
+  *) :
+     ;;
+esac
+		fi
+
+		arch=`uname -m | tr "[A-Z]" "[a-z]"`
+
+		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $opsys" >&5
+printf "%s\n" "$opsys" >&6; }
+
+
+
+
+
+
+#
+# Get user hints for possible cross-compile
+#
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking what the distribution type is " >&5
+printf %s "checking what the distribution type is ... " >&6; }
+
+# Check whether --with-dist-type was given.
+if test ${with_dist_type+y}
+then :
+  withval=$with_dist_type;
+			#
+			# Run this if --with was specified
+			#
+			if test "x$withval" = x -o x$withval = xno; then
+				dist_type_wanted=yes
+			else
+				dist_type_wanted=no
+				dist_type="$withval"
+				dist_ver="unknown"
+				{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $dist_type" >&5
+printf "%s\n" "$dist_type" >&6; }
+			fi
+
+else $as_nop
+
+			#
+			# Run this if --with was not specified
+			#
+			dist_type_wanted=yes
+
+fi
+
+
+		if test x$dist_type = xno; then
+			dist_type_wanted=yes
+		elif test x$dist_type = xyes; then
+			as_fn_error $? "you must enter a distribution type if '--with-dist-type' is specified" "$LINENO" 5
+		fi
+
+		#
+		# Determine distribution type if it wasn't supplied
+		#
+		dist_ver="unknown"
+
+		if test $dist_type_wanted=yes; then
+			dist_type="unknown"
+
+			if test "$opsys" != "linux"; then
+				dist_type="$opsys"
+				case $opsys in #(
+  bsd) :
+    dist_type=`uname -s | tr "A-Z" "a-z"`
+						dist_ver=`uname -r` ;; #(
+  aix) :
+    dist_ver="`uname -v`.`uname -r`" ;; #(
+  hp-ux) :
+    dist_ver=`uname -r | cut -d'.' -f1-3` ;; #(
+  solaris) :
+    dist_ver=`uname -r | cut -d'.' -f2` ;; #(
+  *) :
+    dist_ver=$OSTYPE
+				 ;; #(
+  *) :
+     ;;
+esac
+
+			else
+
+				if test -r "/etc/gentoo-release"; then
+					dist_type="gentoo"
+					dist_ver=`cat /etc/gentoo-release`
+
+				elif test -r "/etc/os-release"; then
+					. /etc/os-release
+					if test x"$ID_LIKE" != x; then
+						dist_type=`echo $ID_LIKE | cut -d' ' -f1 | tr "[A-Z]" "[a-z]"`
+					elif test x"$ID" = xol; then
+						dist_type=rh
+					else
+						dist_type=`echo $ID | tr "[A-Z]" "[a-z]"`
+					fi
+					if test x"$dist_type" = sles; then
+						dist_type=suse
+					fi
+					if test x"$VERSION_ID" != x; then
+						dist_ver=$VERSION_ID
+					elif test x"$VERSION" != x; then
+						dist_ver=`echo $VERSION | cut -d'.' -f1 | tr -d :alpha::blank::punct:`
+					fi
+
+				elif test -r "/etc/redhat-release"; then
+					dist_type=rh
+					dist_ver=`cat /etc/redhat-release`
+
+				elif test -r "/etc/debian_version"; then
+					dist_type="debian"
+					if test -r "/etc/lsb-release"; then
+						. /etc/lsb-release
+						dist_ver=`echo "$DISTRIB_RELEASE"`
+					else
+						dist_ver=`cat /etc/debian_version`
+					fi
+
+				elif test -r "/etc/SuSE-release"; then
+					dist_type=suse
+					dist_ver=`grep VERSION /etc/SuSE-release`
+
+				fi
+
+			fi
+
+			if test "$dist_ver" != "unknown"; then
+				dist_ver=`echo "$dist_ver" | cut -d'.' -f1 | tr -d :alpha::blank::punct:`
+			fi
+		fi
+
+		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $dist_type" >&5
+printf "%s\n" "$dist_type" >&6; }
+
+
+
+
+
+#
+# Get user hints for possible cross-compile
+#
+	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking what init system is being used " >&5
+printf %s "checking what init system is being used ... " >&6; }
+
+# Check whether --with-init_type was given.
+if test ${with_init_type+y}
+then :
+  withval=$with_init_type;
+			#
+			# Run this if --with was specified
+			#
+			if test "x$withval" = x -o x$withval = xno; then
+					init_type_wanted=yes
+			else
+					init_type_wanted=no
+					init_type="$withval"
+					{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $init_type" >&5
+printf "%s\n" "$init_type" >&6; }
+			fi
+
+else $as_nop
+
+			#
+			# Run this if --with was not specified
+			#
+			init_type_wanted=yes
+
+fi
+
+
+		if test x$init_type = xno; then
+			init_type_wanted=yes
+		elif test x$init_type = xyes; then
+			as_fn_error $? "you must enter an init type if '--with-init-type' is specified" "$LINENO" 5
+		fi
+
+		#
+		# Determine init type if it wasn't supplied
+		#
+		if test $init_type_wanted = yes; then
+			init_type=""
+
+			if test x"$opsys" = x; then
+				init_type="unknown"
+				init_type_wanted=no
+			elif test x"$dist_type" = x; then
+				init_type="unknown"
+				init_type_wanted=no
+			elif test "$opsys" = "osx"; then
+				init_type="launchd"
+				init_type_wanted=no
+			elif test "$opsys" = "bsd"; then
+				init_type="newbsd"
+				init_type_wanted=no
+			elif test "$dist_type" = "solaris"; then
+				if test -d "/lib/svc/manifest"; then
+					init_type="smf11"
+					init_type_wanted=no
+				elif test -d "/lib/svc/monitor"; then
+					init_type="smf10"
+					init_type_wanted=no
+				else
+					init_type="sysv"
+					init_type_wanted=no
+				fi
+			elif test "$dist_type" = "slackware"; then
+				init_type="bsd"
+				init_type_wanted=no
+			elif test "$dist_type" = "aix"; then
+				init_type="bsd"
+				init_type_wanted=no
+			elif test "$dist_type" = "hp-ux"; then
+				init_type="unknown"
+				init_type_wanted=no
+			fi
+		fi
+
+		PSCMD="ps -p1 -o args"
+		if test $dist_type = solaris; then
+			PSCMD="env UNIX95=1; ps -p1 -o args"
+		fi
+
+		if test "$init_type_wanted" = yes; then
+			pid1=`$PSCMD | grep -vi COMMAND | cut -d' ' -f1`
+			if test x"$pid1" = "x"; then
+				init_type="unknown"
+				init_type_wanted=no
+			fi
+			if `echo $pid1 | grep "systemd" > /dev/null`; then
+				init_type="systemd"
+				init_type_wanted=no
+			fi
+
+			if test "$init_type_wanted" = yes; then
+				if test "$pid1" = "init"; then
+					if test -e "/sbin/init"; then
+						pid1="/sbin/init";
+					elif test -e "/usr/sbin/init"; then
+						pid1="/usr/sbin/init"
+					else
+						init_type="unknown"
+						init_type_wanted=no
+					fi
+				fi
+				if test -L "$pid1"; then
+					pid1=`readlink "$pid1"`
+				fi
+			fi
+
+			if test "$init_type_wanted" = yes; then
+				if `echo $pid1 | grep "systemd" > /dev/null`; then
+					init_type="systemd"
+					init_type_wanted=no
+				elif test -f "/sbin/rc"; then
+					if test -f /sbin/runscript; then
+						init_type_wanted=no
+						if `/sbin/start-stop-daemon -V | grep "OpenRC" > /dev/null`; then
+							init_type="openrc"
+						else
+							init_type="gentoo"
+						fi
+					fi
+				fi
+			fi
+
+			if test "$init_type_wanted" = yes; then
+				if test "$pid1" = "/sbin/init" -o "$pid1" = "/usr/sbin/init"; then
+					if `$pid1 --version 2>/dev/null | grep "upstart" >/dev/null`; then
+						init_type="upstart"
+						init_type_wanted=no
+					elif test -f "/etc/rc" -a ! -L "/etc/rc"; then
+						init_type="newbsd"
+						init_type_wanted=no
+					else
+						init_type="sysv"
+						init_type_wanted=no
+					fi
+				fi
+			fi
+
+			if test "$init_type_wanted" = yes; then
+				init_type="unknown"
+			fi
+		fi
+
+		{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $init_type" >&5
+printf "%s\n" "$init_type" >&6; }
+
+
+if test $init_type = systemd ; then
+   INIT_PERM=0644
+else
+   INIT_PERM=0755
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if test x$DBG_PATHS != x; then
+	echo
+	echo Incoming paths:
+	echo "    prefix        $prefix"
+	echo "    exec_prefix   $exec_prefix"
+	echo "    bindir        $bindir"
+	echo "    libexecdir    $libexecdir"
+	echo "    sysconfdir    $sysconfdir"
+	echo "    localstatedir $localstatedir"
+	echo "    datarootdir   $datarootdir"
+	echo "    datadir       $datadir"
+	echo "    localedir     $localedir"
+	echo
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for which paths to use " >&5
+printf %s "checking for which paths to use ... " >&6; }
+
+# Check whether --enable-install_method was given.
+if test ${enable_install_method+y}
+then :
+  enableval=$enable_install_method; install_method=$enableval
+else $as_nop
+  install_method=default
+
+fi
+
+
+# Check whether --enable-showdirs_only was given.
+if test ${enable_showdirs_only+y}
+then :
+  enableval=$enable_showdirs_only; showdirs_only=$enableval
+else $as_nop
+  showdirs_only=no
+
+fi
+
+
+case $install_method in #(
+  yes) :
+    install_method="os" ;; #(
+  no) :
+    install_method="default" ;; #(
+  default|os) :
+    : ;; #(
+  *) :
+    echo >&6; as_fn_error $? "'--enable-install-method=$install_method' is invalid" "$LINENO" 5
+ ;; #(
+  *) :
+     ;;
+esac
+
+if test $showdirs_only != "no"; then showdirs_only="yes"; fi
+
+case $dist_type in #(
+  *solaris*|*hp-ux*|*aix*|*osx*) :
+    opsys=unix ;; #(
+  *) :
+     ;;
+esac
+
+
+						# Does this package need to know:
+need_cgi=no				# where the cgi-bin directory is
+need_web=no				# where the website directory is
+need_brk=no				# where the event broker modules directory is
+need_plg=no				# where the plugins directory is
+need_pipe=no			# where the pipe directory is
+need_spl=no				# where the spool directory is
+need_loc=no				# where the locale directory is
+need_log_subdir=no		# where the loc sub-directory is
+need_etc_subdir=no		# where the etc sub-directory is
+need_pls_dir=no			# where the package locate state directory is
+
+if test x"$INIT_PROG" = x; then
+	INIT_PROG="$PKG_NAME"
+fi
+
+case $PKG_NAME in #(
+  nagios) :
+    need_log_subdir=yes
+		need_etc_subdir=yes
+		need_pls_dir=yes
+		need_brk=yes
+		need_pipe=yes
+		need_spl=yes
+		need_loc=yes
+		need_cgi=yes
+		need_web=yes ;; #(
+  ndoutils) :
+    need_brk=yes
+		need_spl=yes ;; #(
+  nrpe) :
+    need_plg=yes ;; #(
+  nsca) :
+    need_cgi=no ;; #(
+  plugins) :
+    need_loc=yes
+		need_plg=yes
+ ;; #(
+  *) :
+     ;;
+esac
+
+
+# Check whether --with-pkgsysconfdir was given.
+if test ${with_pkgsysconfdir+y}
+then :
+  withval=$with_pkgsysconfdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		pkgsysconfdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-objsysconfdir was given.
+if test ${with_objsysconfdir+y}
+then :
+  withval=$with_objsysconfdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		objsysconfdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-privatesysconfdir was given.
+if test ${with_privatesysconfdir+y}
+then :
+  withval=$with_privatesysconfdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		privatesysconfdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-webdir was given.
+if test ${with_webdir+y}
+then :
+  withval=$with_webdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		webdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-pluginsdir was given.
+if test ${with_pluginsdir+y}
+then :
+  withval=$with_pluginsdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		pluginsdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-brokersdir was given.
+if test ${with_brokersdir+y}
+then :
+  withval=$with_brokersdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		brokersdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-cgibindir was given.
+if test ${with_cgibindir+y}
+then :
+  withval=$with_cgibindir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		cgibindir="$withval"
+	fi
+fi
+
+
+# Check whether --with-logdir was given.
+if test ${with_logdir+y}
+then :
+  withval=$with_logdir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		logdir="$withval"
+	fi
+fi
+
+
+# Check whether --with-piddir was given.
+if test ${with_piddir+y}
+then :
+  withval=$with_piddir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		piddir="$withval"
+	fi
+fi
+
+
+# Check whether --with-pipedir was given.
+if test ${with_pipedir+y}
+then :
+  withval=$with_pipedir; if test x$withval != x -a x$withval != xno -a x$withval != xyes; then
+		pipedir="$withval"
+	fi
+fi
+
+
+
+#
+# Setup the base directory
+#
+
+if test $install_method = "default"; then
+	if test $opsys = "unix"; then
+		if test x"$prefix" = "xNONE"; then prefix="/usr/local/nagios"; fi
+	else
+		if test x"$prefix" = "xNONE"; then prefix=${ac_default_prefix}; fi
+	fi
+	datarootdir=${datarootdir="$prefix"}
+
+else
+	if test x"$datadir" = x'${datarootdir}'; then { datadir=; unset datadir;}; fi
+	if test x"$sysconfdir" = x'${prefix}/etc'; then { sysconfdir=; unset sysconfdir;}; fi
+
+	if test x"$prefix" = "xNONE"; then
+		if test $dist_type = freebsd -o $dist_type = openbsd -o $dist_type = osx; then
+			prefix="/usr/local"
+		elif test $dist_type = netbsd; then
+			prefix="/usr/pkg"
+		else
+			prefix="/usr"
+		fi
+	fi
+	if test x"$exec_prefix" = "xNONE"; then exec_prefix=$prefix; fi
+	if test x"$localstatedir" = x'${prefix}/var'; then
+		if test $dist_type = "osx"; then
+			localstatedir="/private/var"
+		else
+			localstatedir="/var"
+		fi
+	fi
+
+	if test $opsys = "unix"; then
+		if test x"$datarootdir" = x'${prefix}/share'; then
+			if test $dist_type = "hp-ux"; then
+				datarootdir="/usr/local/share"
+				if test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+					libexecdir="/usr/nagios"
+				fi
+			elif test $dist_type = "osx"; then
+				datarootdir="/usr/local/share"
+				if test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+					libexecdir="/usr/local/nagios"
+				fi
+			elif test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+				libexecdir="/usr/lib/nagios"
+			fi
+		fi
+		if test $dist_type = "osx"; then
+			if test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+				libexecdir="/usr/local/libexec/nagios"
+			fi
+		fi
+	elif test $opsys = "bsd"; then
+		if test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+			libexecdir=${exec_prefix}/libexec/nagios;
+		fi
+	elif test x"$libexecdir" = x'${exec_prefix}/lib'; then
+		libexecdir=${libexecdir}/nagios;
+	elif test x"$libexecdir" = x'${exec_prefix}/libexec'; then
+		libexecdir=${exec_prefix}/lib/nagios;
+	fi
+
+fi
+
+if test x"$exec_prefix" = "xNONE"; then exec_prefix=${prefix}; fi
+
+tmpfilesd=${tmpfilesd="/usr/lib/tmpfiles.d"}
+if test ! -d "$tmpfilesd"; then
+	tmpfilesd="N/A"
+else
+	tmpfilesd="$tmpfilesd/$INIT_PROG.conf"
+fi
+subsyslockdir=${subsyslockdir="/run"}
+if test ! -d "$subsyslockdir"; then
+	subsyslockdir="N/A"
+	subsyslockfile="N/A"
+else
+	subsyslockfile="$subsyslockdir/$INIT_PROG.lock"
+fi
+if test "$need_loc" = no; then
+	localedir="N/A"
+fi
+
+if test $install_method = "default" ; then
+	#
+	# Do the default setup
+	#
+	datadir=${datadir="$datarootdir"}
+	if test $need_web = yes; then
+		webdir=${webdir="$datadir"}
+	else
+		webdir="N/A"
+	fi
+	if test $opsys = "unix"; then
+		sysconfdir=${sysconfdir="/etc/opt"}
+	fi
+	pkgsysconfdir=${pkgsysconfdir="$sysconfdir"}
+	if test $need_etc_subdir = yes; then
+		objsysconfdir=${objsysconfdir="$pkgsysconfdir/objects"}
+	else
+		objsysconfdir="N/A"
+	fi
+	privatesysconfdir=${privatesysconfdir="$pkgsysconfdir"}
+	logdir=${logdir="$localstatedir"}
+	piddir=${piddir="$localstatedir"}
+	if test "$need_pipe" = yes; then
+		pipedir=${pipedir="$localstatedir/rw"}
+	else
+		pipedir="N/A"
+	fi
+	if test "$need_pls_dir" = yes; then
+		pkglocalstatedir=${pkglocalstatedir="$localstatedir"}
+	else
+		pkglocalstatedir="N/A"
+	fi
+	if test "$need_spl" = yes; then
+		spooldir=${spooldir="$localstatedir/var"}
+	else
+		spooldir="N/A"
+	fi
+	if test $need_brk = yes; then
+		brokersdir=${brokersdir="$bindir"}
+	else
+		brokersdir="N/A"
+	fi
+	if test $need_plg = yes; then
+		pluginsdir=${pluginsdir="$libexecdir"}
+	else
+		pluginsdir="N/A"
+	fi
+	if test $need_cgi = yes; then
+		cgibindir=${cgibindir="$prefix/sbin"}
+	else
+		cgibindir="N/A"
+	fi
+
+elif test $opsys = "linux"; then
+
+	#
+	# Linux "Standard" install
+	#
+	install_method="$install_method : FHS"
+	datadir=${datadir="$datarootdir/nagios"}
+	if test $need_web = yes; then
+		webdir=${webdir="$datadir/html"}
+	else
+		webdir="N/A"
+	fi
+	sysconfdir=${sysconfdir="/etc"}
+	pkgsysconfdir=${pkgsysconfdir="$sysconfdir/nagios"}
+	if test $need_etc_subdir = yes; then
+		objsysconfdir=${objsysconfdir="$pkgsysconfdir/objects"}
+	else
+		objsysconfdir="N/A"
+	fi
+	privatesysconfdir=${privatesysconfdir="$pkgsysconfdir/private"}
+	if test $need_log_subdir = yes; then
+		logdir=${logdir="$localstatedir/log/$INIT_PROG"}
+	else
+		logdir=${logdir="$localstatedir/log"}
+	fi
+	piddir=${piddir="$localstatedir/run/${INIT_PROG}"}
+	if test "$need_pipe" = yes; then
+		pipedir=${pipedir="$localstatedir/run/${INIT_PROG}"}
+	else
+		pipedir="N/A"
+	fi
+	if test "$need_pls_dir" = yes; then
+		pkglocalstatedir=${pkglocalstatedir="$localstatedir/lib/$INIT_PROG"}
+	else
+		pkglocalstatedir="N/A"
+	fi
+	if test "$need_spl" = yes; then
+		spooldir=${spooldir="$localstatedir/spool/$INIT_PROG"}
+	else
+		spooldir="N/A"
+	fi
+	if test $need_brk = yes; then
+		brokersdir=${brokersdir="$libexecdir/brokers"}
+	else
+		brokersdir="N/A"
+	fi
+	if test $need_plg = yes; then
+		pluginsdir=${pluginsdir="$libexecdir/plugins"}
+	else
+		pluginsdir="N/A"
+	fi
+	if test $need_cgi = yes; then
+		cgibindir=${cgibindir="$libexecdir/cgi-bin"}
+	else
+		cgibindir="N/A"
+	fi
+
+elif test $opsys = "unix"; then
+
+	#
+	# "Standard" Unix install
+	#
+	install_method="$install_method : Unix Standard"
+	if test $dist_type = osx; then
+		install_method="$install_method : OS X Standard"
+	fi
+	datadir=${datadir="$datarootdir/nagios"}
+	if test $need_web = yes; then
+		webdir=${webdir="$datadir/html"}
+	else
+		webdir="N/A"
+	fi
+	if test $dist_type = osx; then
+		sysconfdir=${sysconfdir="/private/etc"}
+	else
+		sysconfdir=${sysconfdir="/etc"}
+	fi
+	pkgsysconfdir=${pkgsysconfdir="$sysconfdir/nagios"}
+	if test $need_etc_subdir = yes; then
+		objsysconfdir=${objsysconfdir="$pkgsysconfdir/objects"}
+	else
+		objsysconfdir="N/A"
+	fi
+	privatesysconfdir=${privatesysconfdir="$pkgsysconfdir/private"}
+	if test "$need_pls_dir" = yes; then
+		pkglocalstatedir=${pkglocalstatedir="$localstatedir/lib/$INIT_PROG"}
+	else
+		pkglocalstatedir="N/A"
+	fi
+	if test "$need_loc" = yes; then
+		localedir=${localedir="/usr/local/share/locale/<lang>/LC_MESSAGES/nagios-plugins.mo"}
+	fi
+	if test "$need_spl" = yes; then
+		spooldir=${spooldir="$localstatedir/spool/$INIT_PROG"}
+	else
+		spooldir="N/A"
+	fi
+	if test $need_brk = yes; then
+		brokersdir=${brokersdir="$libexecdir/brokers"}
+	else
+		brokersdir="N/A"
+	fi
+	if test $need_plg = yes; then
+		pluginsdir=${pluginsdir="$libexecdir/plugins"}
+	else
+		pluginsdir="N/A"
+	fi
+	if test $need_cgi = yes; then
+		cgibindir=${cgibindir="$libexecdir/cgi-bin"}
+	else
+		cgibindir="N/A"
+	fi
+	case $dist_type in #(
+  *hp-ux*) :
+    piddir=${piddir="$pkgsysconfdir"}
+			pipedir=${pipedir="$pkglocalstatedir"}
+			logdir=${logdir="$pkglocalstatedir/log"} ;; #(
+  *) :
+    piddir=${piddir="$localstatedir/run/${INIT_PROG}"}
+			if test "$need_pipe" = yes; then
+				pipedir=${pipedir="$localstatedir/run/${INIT_PROG}"}
+			else
+				pipedir="N/A"
+			fi
+			if test $need_log_subdir = yes; then
+				logdir=${logdir="$localstatedir/log/$INIT_PROG"}
+			else
+				logdir=${logdir="$localstatedir/log"}
+			fi
+	 ;; #(
+  *) :
+     ;;
+esac
+
+elif test $opsys = "bsd"; then
+
+	#
+	# "Standard" BSD install
+	#
+	install_method="$install_method : BSD"
+	if test $dist_type = freebsd -o $dist_type = openbsd; then
+		prefix=${prefix="/usr/local"}
+		exec_prefix=${exec_prefix="/usr/local"}
+		if test $dist_type = freebsd; then
+			install_method="$install_method : FreeBSD"
+		else
+			install_method="$install_method : OpenBSD"
+		fi
+	elif test $dist_type = netbsd; then
+		prefix=${prefix="/usr/pkg"}
+		exec_prefix=${exec_prefix="/usr/pkg"}
+		install_method="$install_method : NetBSD"
+	fi
+	datadir=${datadir="$datarootdir/nagios"}
+	if test $need_web = yes -o $need_cgi = yes; then
+		if test $dist_type = freebsd; then
+			webdir=${webdir="$prefix/www/nagios"}
+		elif test $dist_type = netbsd; then
+			webdir=${webdir="$prefix/share/nagios"}
+		elif test $dist_type = openbsd; then
+			webdir=${webdir="/var/www/nagios"}
+		fi
+	else
+		webdir="N/A"
+	fi
+	if test $dist_type = freebsd; then
+		sysconfdir=${sysconfdir="/usr/local/etc"}
+	else
+		sysconfdir=${sysconfdir="/etc"}
+	fi
+	pkgsysconfdir=${pkgsysconfdir="$sysconfdir/nagios"}
+	if test $need_etc_subdir = yes; then
+		objsysconfdir=${objsysconfdir="$pkgsysconfdir/objects"}
+	else
+		objsysconfdir="N/A"
+	fi
+	privatesysconfdir=${privatesysconfdir="$pkgsysconfdir/private"}
+	if test "$need_pls_dir" = yes; then
+		pkglocalstatedir=${pkglocalstatedir="$localstatedir/lib/$INIT_PROG"}
+	else
+		pkglocalstatedir="N/A"
+	fi
+	if test "$need_loc" = yes; then
+		localedir=${localedir="/usr/local/share/locale/<lang>/LC_MESSAGES/nagios-plugins.mo"}
+	fi
+	if test "$need_spl" = yes; then
+		spooldir=${spooldir="$localstatedir/spool/$INIT_PROG"}
+	else
+		spooldir="N/A"
+	fi
+	if test $need_brk = yes; then
+		brokersdir=${brokersdir="$libexecdir/brokers"}
+	else
+		brokersdir="N/A"
+	fi
+	if test $need_plg = yes; then
+		pluginsdir=${pluginsdir="$libexecdir/plugins"}
+	else
+		pluginsdir="N/A"
+	fi
+	if test $need_cgi = yes; then
+		if test $dist_type = freebsd; then
+			cgibindir=${cgibindir="$webdir/cgi-bin"}
+		elif test $dist_type = netbsd; then
+			cgibindir=${pluginsdir="$libexecdir/cgi-bin"}
+		elif test $dist_type = openbsd; then
+			cgibindir=${pluginsdir="/var/www/cgi-bin/nagios"}
+		fi
+	else
+		cgibindir="N/A"
+	fi
+	piddir=${piddir="$localstatedir/run/${INIT_PROG}"}
+	if test "$need_pipe" = yes; then
+		pipedir=${pipedir="$localstatedir/run/${INIT_PROG}"}
+	else
+		pipedir="N/A"
+	fi
+	if test $need_log_subdir = yes; then
+		logdir=${logdir="$localstatedir/log/$INIT_PROG"}
+	else
+		logdir=${logdir="$localstatedir/log"}
+	fi
+
+else
+
+	#
+	# Unknown install
+	#
+	install_method="unknown"
+	webdir=unknown
+	pkgsysconfdir=unknown
+	objsysconfdir=unknown
+	privatesysconfdir=unknown
+	logdir=unknown
+	piddir=unknown
+	pipedir=unknown
+	pkglocalstatedir=unknown
+	spooldir=unknown
+	brokersdir=unknown
+	pluginsdir=unknown
+	cgibindir=unknown
+
+fi
+
+eval prefix=$prefix
+eval exec_prefix=$exec_prefix
+eval bindir=$bindir
+eval datarootdir=$datarootdir
+eval datadir=$datadir
+eval libexecdir=$libexecdir
+eval brokersdir=$brokersdir
+eval pluginsdir=$pluginsdir
+eval cgibindir=$cgibindir
+eval localstatedir=$localstatedir
+eval pkglocalstatedir=$pkglocalstatedir
+eval webdir=$webdir
+eval localedir=$localedir
+eval sysconfdir=$sysconfdir
+eval pkgsysconfdir=$pkgsysconfdir
+eval piddir=$piddir
+
+
+# We test systemd first because in case
+# someone tries to install Nagios on a
+# system with a newer version, that doesn't
+# have the defined versions ..we can just
+# (hopefully) fall back to SysV
+# And if that doesn't work, well...
+case $init_type in #(
+  systemd) :
+    if test -d "/lib/systemd/system"; then
+			initdir=${initdir="/lib/systemd/system"}
+		elif test -d "/usr/lib/systemd/system"; then
+			initdir=${initdir="/usr/lib/systemd/system"}
+		elif test -d "/usr/local/lib/systemd/system"; then
+			initdir=${initdir="/usr/local/lib/systemd/system"}
+		elif test -d "/run/systemd/system"; then
+			initdir=${initdir="/run/systemd/system"}
+		elif test -d "/etc/systemd/system"; then
+			initdir=${initdir="/etc/systemd/system"}
+		elif test -d "/etc/systemd/user"; then
+			initdir=${initdir="/etc/systemd/user"}
+		elif test -d "/run/systemd/user"; then
+			initdir=${initdir="/run/systemd/user"}
+		elif test -d "/usr/lib/systemd/user"; then
+			initdir=${initdir="/usr/lib/systemd/user"}
+		elif test -d "/usr/local/lib/systemd/user"; then
+			initdir=${initdir="/usr/local/lib/systemd/user"}
+		elif test -d "/usr/share/systemd/user"; then
+			initdir=${initdir="/usr/share/systemd/user"}
+		elif test -d "/usr/local/share/systemd/user"; then
+			initdir=${initdir="/usr/local/share/systemd/user"}
+		elif test -d "$HOME/.config/systemd/user"; then
+			initdir=${initdir="$HOME/.config/systemd/user"}
+		elif test -d "$HOME/.local/share/systemd/user"; then
+			initdir=${initdir="$HOME/.local/share/systemd/user"}
+		elif test -d "$XDG_CONFIG_HOME/systemd/user/"; then
+			initdir=${initdir="$XDG_CONFIG_HOME/systemd/user/"}
+		elif test -d "$XDG_RUNTIME_DIR/systemd/user/"; then
+			initdir=${initdir="$XDG_RUNTIME_DIR/systemd/user/"}
+		elif test -d "$XDG_DATA_HOME/systemd/user/"; then
+			initdir=${initdir="$XDG_DATA_HOME/systemd/user/"}
+		else
+			init_type="sysv"
+		fi
+		initname=${initname="$INIT_PROG.service"} ;; #(
+  *) :
+     ;;
+esac
+
+#
+# Init scripts/files
+#
+case $init_type in #(
+  sysv) :
+    if test $dist_type = "hp-ux"; then
+			initdir=${initdir="/sbin/init.d"}
+		else
+			initdir=${initdir="/etc/init.d"}
+		fi
+		initname=${initname="$INIT_PROG"}
+		initconfdir=${initconfdir="/etc/conf.d"}
+		initconf=${initconf="$initconfdir/$INIT_PROG"} ;; #(
+  bsd) :
+    if test $dist_type = "aix"; then
+			initdir=${initdir="/sbin/rc.d/init.d"}
+			initname=${initname="$INIT_PROG"}
+		else
+			initdir=${initdir="/etc/rc.d"}
+			initname=${initname="rc.$INIT_PROG"}
+		fi ;; #(
+  newbsd) :
+    initdir=${initdir="/usr/local/etc/rc.d"}
+		initname=${initname="$INIT_PROG"} ;; #(
+  gentoo) :
+    initdir=${initdir="/etc/init.d"}
+		initname=${initname="$INIT_PROG"}
+		initconfdir=${initconfdir="/etc/init.d"}
+		initconf=${initconf="$initconfdir/$INIT_PROG"} ;; #(
+  openrc) :
+    initdir=${initdir="/etc/init.d"}
+		initname=${initname="$INIT_PROG"}
+		initconfdir=${initconfdir="/etc/conf.d"}
+		initconf=${initconf="$initconfdir/$INIT_PROG"} ;; #(
+  smf*) :
+    if test $init_type = smf10; then
+			initdir=${initdir="/var/svc/manifest/network/nagios"}
+		else
+			initdir=${initdir="/lib/svc/manifest/network/nagios"}
+		fi
+		initname=${initname="$INIT_PROG.xml"}
+		initconfdir=unknown
+		initconf=unknown ;; #(
+  upstart) :
+    initdir=${initdir="/etc/init"}
+		initname=${initname="$INIT_PROG.conf"}
+		initconfdir=${initconfdir="/etc/default"}
+		initconf=${initconf="$initconfdir/$INIT_PROG"} ;; #(
+  launchd) :
+    initdir=${initdir="/Library/LaunchDaemons"}
+		initname=${initname="org.nagios.$INIT_PROG.plist"} ;; #(
+  #		initconfdir=${initconfdir="/private/etc"}
+#		initconf=${initconf="$initconfdir/$INIT_PROG"},
+
+	systemd) :
+    init_type=systemd ;; #(
+  *) :
+    initdir=unknown
+		initname=unknown ;; #(
+  *) :
+     ;;
+esac
+
+# Now see if they supplied any overwriting values
+initdiroverridden=no
+
+# Check whether --with-initdir was given.
+if test ${with_initdir+y}
+then :
+  withval=$with_initdir; initdir=$withval
+	initdiroverridden=yes
+else $as_nop
+  initdir=$initdir
+
+fi
+
+
+#
+# Inetd (per connection) scripts/files
+#
+case $inetd_type in #(
+  inetd*) :
+    inetddir=${inetddir="/etc"}
+		inetdname=${inetdname="inetd.conf"} ;; #(
+  xinetd) :
+    inetddir=${inetddir="/etc/xinetd.d"}
+		inetdname=${inetdname="$INIT_PROG"} ;; #(
+  systemd) :
+    if test $dist_type = "debian"; then
+			inetddir=${inetddir="/lib/systemd/system"}
+		else
+			inetddir=${inetddir="/usr/lib/systemd/system"}
+		fi
+		netdname=${inetdname="$INIT_PROG.socket"} ;; #(
+  smf*) :
+    if test $init_type = smf10; then
+			inetddir=${inetddir="/var/svc/manifest/network/nagios"}
+		else
+			inetddir=${inetddir="/lib/svc/manifest/network/nagios"}
+		fi
+		inetdname=${inetdname="$INIT_PROG.xml"} ;; #(
+  #	[upstart],
+#		inetddir=${inetddir="/etc/init.d"}
+#		inetdname=${inetdname="$INIT_PROG"},
+
+	launchd) :
+    inetddir=${inetddir="/Library/LaunchDaemons"}
+		inetdname=${inetdname="org.nagios.$INIT_PROG.plist"} ;; #(
+  *) :
+    inetddir=${inetddir="unknown"}
+		inetdname=${inetdname="unknown"} ;; #(
+  *) :
+     ;;
+esac
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $install_method" >&5
+printf "%s\n" "$install_method" >&6; }
+
+
+
+
+
+
+
+
+src_inetd=""
+src_init=""
+bsd_enable=""
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for which init file to use " >&5
+printf %s "checking for which init file to use ... " >&6; }
+
+case $init_type in #(
+  sysv) :
+    src_init=default-init ;; #(
+  systemd) :
+    src_tmpfile=tmpfile.conf
+		src_init=default-service ;; #(
+  bsd) :
+    src_init=bsd-init ;; #(
+  newbsd) :
+    if test $dist_type = freebsd ; then
+			bsd_enable="_enable"
+			src_init=default-init
+		elif test $dist_type = openbsd ; then
+			bsd_enable="_flags"
+			src_init=openbsd-init
+		elif test $dist_type = netbsd ; then
+			bsd_enable=""
+			src_init=newbsd-init
+		fi ;; #(
+  #	[gentoo],
+
+	openrc) :
+    src_init=openrc-init ;; #(
+  smf*) :
+    src_init="solaris-init.xml"
+		src_inetd="solaris-inetd.xml" ;; #(
+  upstart) :
+    if test $dist_type = rh ; then
+			src_init=rh-upstart-init
+		else
+			src_init=upstart-init
+		fi ;; #(
+  launchd) :
+    src_init="mac-init.plist" ;; #(
+  *) :
+    src_init="unknown"
+ ;; #(
+  *) :
+     ;;
+esac
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $src_init" >&5
+printf "%s\n" "$src_init" >&6; }
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for which inetd files to use " >&5
+printf %s "checking for which inetd files to use ... " >&6; }
+
+if test x$src_inetd = x; then
+
+	case $inetd_type in #(
+  inetd*) :
+    src_inetd=default-inetd ;; #(
+  xinetd) :
+    src_inetd=default-xinetd ;; #(
+  systemd) :
+    src_inetd=default-socket ;; #(
+  launchd) :
+    src_inetd="mac-inetd.plist" ;; #(
+  *) :
+    src_inetd="unknown"
+	 ;; #(
+  *) :
+     ;;
+esac
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $src_inetd" >&5
+printf "%s\n" "$src_inetd" >&6; }
+
+
+if test $opsys = bsd -a $dist_type = netbsd ; then
+   sysconfdir="${prefix}/etc"
+   pkgsysconfdir="${sysconfdir}/pnp4nagios"
+   datarootdir="${datarootdir}/pnp4nagios"
+   libdir="${prefix}/lib/pnp4nagios"
+   libexecdir="${prefix}/libexec/pnp4nagios"
+   if test $initdiroverridden = no -a $init_type = newbsd ; then
+      initdir=/etc/rc.d
+   fi
+fi
+
+
+# for some reason AX_NAGIOS_GET_PATHS doesn't AC_SUBST this...
 
 
 
@@ -2784,83 +4286,11 @@ test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
 
 test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
-
-
-#dnl What OS are we running?
-
-
-  # Make sure we can run config.sub.
-$SHELL "${ac_aux_dir}config.sub" sun4 >/dev/null 2>&1 ||
-  as_fn_error $? "cannot run $SHELL ${ac_aux_dir}config.sub" "$LINENO" 5
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking build system type" >&5
-printf %s "checking build system type... " >&6; }
-if test ${ac_cv_build+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_build_alias=$build_alias
-test "x$ac_build_alias" = x &&
-  ac_build_alias=`$SHELL "${ac_aux_dir}config.guess"`
-test "x$ac_build_alias" = x &&
-  as_fn_error $? "cannot guess build type; you must specify one" "$LINENO" 5
-ac_cv_build=`$SHELL "${ac_aux_dir}config.sub" $ac_build_alias` ||
-  as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $ac_build_alias failed" "$LINENO" 5
-
+INSTALL_SUFFIX="-S"
+inbk=`install --help 2>&1|grep -o -e '-B suffix'|head -n 1`
+if test "$inbk" = "-B suffix" ; then
+  INSTALL_SUFFIX="-B"
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_build" >&5
-printf "%s\n" "$ac_cv_build" >&6; }
-case $ac_cv_build in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical build" "$LINENO" 5;;
-esac
-build=$ac_cv_build
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_build
-shift
-build_cpu=$1
-build_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-build_os=$*
-IFS=$ac_save_IFS
-case $build_os in *\ *) build_os=`echo "$build_os" | sed 's/ /-/g'`;; esac
-
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking host system type" >&5
-printf %s "checking host system type... " >&6; }
-if test ${ac_cv_host+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  if test "x$host_alias" = x; then
-  ac_cv_host=$ac_cv_build
-else
-  ac_cv_host=`$SHELL "${ac_aux_dir}config.sub" $host_alias` ||
-    as_fn_error $? "$SHELL ${ac_aux_dir}config.sub $host_alias failed" "$LINENO" 5
-fi
-
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_host" >&5
-printf "%s\n" "$ac_cv_host" >&6; }
-case $ac_cv_host in
-*-*-*) ;;
-*) as_fn_error $? "invalid value of canonical host" "$LINENO" 5;;
-esac
-host=$ac_cv_host
-ac_save_IFS=$IFS; IFS='-'
-set x $ac_cv_host
-shift
-host_cpu=$1
-host_vendor=$2
-shift; shift
-# Remember, the first character of IFS is used to create $*,
-# except with old shells:
-host_os=$*
-IFS=$ac_save_IFS
-case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
-
 
 
 
@@ -3936,618 +5366,6 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-
-
-
-# Extract the first word of "cp", so it can be a program name with args.
-set dummy cp; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_CP+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  case $CP in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_CP="$CP" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_CP="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  ;;
-esac
-fi
-CP=$ac_cv_path_CP
-if test -n "$CP"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CP" >&5
-printf "%s\n" "$CP" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-
-# Checks for libraries.
-
-# Checks for header files.
-
-
-ac_header_dirent=no
-for ac_hdr in dirent.h sys/ndir.h sys/dir.h ndir.h; do
-  as_ac_Header=`printf "%s\n" "ac_cv_header_dirent_$ac_hdr" | $as_tr_sh`
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_hdr that defines DIR" >&5
-printf %s "checking for $ac_hdr that defines DIR... " >&6; }
-if eval test \${$as_ac_Header+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <$ac_hdr>
-
-int
-main (void)
-{
-if ((DIR *) 0)
-return 0;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  eval "$as_ac_Header=yes"
-else $as_nop
-  eval "$as_ac_Header=no"
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-eval ac_res=\$$as_ac_Header
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_Header"\" = x"yes"
-then :
-  cat >>confdefs.h <<_ACEOF
-#define `printf "%s\n" "HAVE_$ac_hdr" | $as_tr_cpp` 1
-_ACEOF
-
-ac_header_dirent=$ac_hdr; break
-fi
-
-done
-# Two versions of opendir et al. are in -ldir and -lx on SCO Xenix.
-if test $ac_header_dirent = dirent.h; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing opendir" >&5
-printf %s "checking for library containing opendir... " >&6; }
-if test ${ac_cv_search_opendir+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-char opendir ();
-int
-main (void)
-{
-return opendir ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' dir
-do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"
-then :
-  ac_cv_search_opendir=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext
-  if test ${ac_cv_search_opendir+y}
-then :
-  break
-fi
-done
-if test ${ac_cv_search_opendir+y}
-then :
-
-else $as_nop
-  ac_cv_search_opendir=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_opendir" >&5
-printf "%s\n" "$ac_cv_search_opendir" >&6; }
-ac_res=$ac_cv_search_opendir
-if test "$ac_res" != no
-then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-fi
-
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing opendir" >&5
-printf %s "checking for library containing opendir... " >&6; }
-if test ${ac_cv_search_opendir+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  ac_func_search_save_LIBS=$LIBS
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-char opendir ();
-int
-main (void)
-{
-return opendir ();
-  ;
-  return 0;
-}
-_ACEOF
-for ac_lib in '' x
-do
-  if test -z "$ac_lib"; then
-    ac_res="none required"
-  else
-    ac_res=-l$ac_lib
-    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
-  fi
-  if ac_fn_c_try_link "$LINENO"
-then :
-  ac_cv_search_opendir=$ac_res
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext
-  if test ${ac_cv_search_opendir+y}
-then :
-  break
-fi
-done
-if test ${ac_cv_search_opendir+y}
-then :
-
-else $as_nop
-  ac_cv_search_opendir=no
-fi
-rm conftest.$ac_ext
-LIBS=$ac_func_search_save_LIBS
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_opendir" >&5
-printf "%s\n" "$ac_cv_search_opendir" >&6; }
-ac_res=$ac_cv_search_opendir
-if test "$ac_res" != no
-then :
-  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
-
-fi
-
-fi
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sys/wait.h that is POSIX.1 compatible" >&5
-printf %s "checking for sys/wait.h that is POSIX.1 compatible... " >&6; }
-if test ${ac_cv_header_sys_wait_h+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
-#include <sys/wait.h>
-#ifndef WEXITSTATUS
-# define WEXITSTATUS(stat_val) ((unsigned int) (stat_val) >> 8)
-#endif
-#ifndef WIFEXITED
-# define WIFEXITED(stat_val) (((stat_val) & 255) == 0)
-#endif
-
-int
-main (void)
-{
-  int s;
-  wait (&s);
-  s = WIFEXITED (s) ? WEXITSTATUS (s) : 1;
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  ac_cv_header_sys_wait_h=yes
-else $as_nop
-  ac_cv_header_sys_wait_h=no
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_sys_wait_h" >&5
-printf "%s\n" "$ac_cv_header_sys_wait_h" >&6; }
-if test $ac_cv_header_sys_wait_h = yes; then
-
-printf "%s\n" "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
-
-fi
-
-#AC_CHECK_HEADERS(netinet/in.h string.h sys/socket.h unistd.h stdio.h stdlib.h getopt.h signal.h)
-ac_header= ac_cache=
-for ac_item in $ac_header_c_list
-do
-  if test $ac_cache; then
-    ac_fn_c_check_header_compile "$LINENO" $ac_header ac_cv_header_$ac_cache "$ac_includes_default"
-    if eval test \"x\$ac_cv_header_$ac_cache\" = xyes; then
-      printf "%s\n" "#define $ac_item 1" >> confdefs.h
-    fi
-    ac_header= ac_cache=
-  elif test $ac_header; then
-    ac_cache=$ac_item
-  else
-    ac_header=$ac_item
-  fi
-done
-
-
-
-
-
-
-
-
-if test $ac_cv_header_stdlib_h = yes && test $ac_cv_header_string_h = yes
-then :
-
-printf "%s\n" "#define STDC_HEADERS 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "dirent.h" "ac_cv_header_dirent_h" "$ac_includes_default"
-if test "x$ac_cv_header_dirent_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_DIRENT_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "stdio.h" "ac_cv_header_stdio_h" "$ac_includes_default"
-if test "x$ac_cv_header_stdio_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_STDIO_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "errno.h" "ac_cv_header_errno_h" "$ac_includes_default"
-if test "x$ac_cv_header_errno_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_ERRNO_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
-if test "x$ac_cv_header_unistd_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_UNISTD_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "syslog.h" "ac_cv_header_syslog_h" "$ac_includes_default"
-if test "x$ac_cv_header_syslog_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYSLOG_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "signal.h" "ac_cv_header_signal_h" "$ac_includes_default"
-if test "x$ac_cv_header_signal_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SIGNAL_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
-if test "x$ac_cv_header_stdlib_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_STDLIB_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "dirent.h" "ac_cv_header_dirent_h" "$ac_includes_default"
-if test "x$ac_cv_header_dirent_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_DIRENT_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "string.h" "ac_cv_header_string_h" "$ac_includes_default"
-if test "x$ac_cv_header_string_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_STRING_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "pthread.h" "ac_cv_header_pthread_h" "$ac_includes_default"
-if test "x$ac_cv_header_pthread_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_PTHREAD_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "getopt.h" "ac_cv_header_getopt_h" "$ac_includes_default"
-if test "x$ac_cv_header_getopt_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_GETOPT_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "grp.h" "ac_cv_header_grp_h" "$ac_includes_default"
-if test "x$ac_cv_header_grp_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_GRP_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "pwd.h" "ac_cv_header_pwd_h" "$ac_includes_default"
-if test "x$ac_cv_header_pwd_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_PWD_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_mman_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_MMAN_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/types.h" "ac_cv_header_sys_types_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_types_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_TYPES_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/wait.h" "ac_cv_header_sys_wait_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_wait_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/stat.h" "ac_cv_header_sys_stat_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_stat_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_STAT_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/socket.h" "ac_cv_header_sys_socket_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_socket_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_SOCKET_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "sys/loadavg.h" "ac_cv_header_sys_loadavg_h" "$ac_includes_default"
-if test "x$ac_cv_header_sys_loadavg_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_SYS_LOADAVG_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "netinet/in.h" "ac_cv_header_netinet_in_h" "$ac_includes_default"
-if test "x$ac_cv_header_netinet_in_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_NETINET_IN_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "fcntl.h" "ac_cv_header_fcntl_h" "$ac_includes_default"
-if test "x$ac_cv_header_fcntl_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_FCNTL_H 1" >>confdefs.h
-
-fi
-ac_fn_c_check_header_compile "$LINENO" "limits.h" "ac_cv_header_limits_h" "$ac_includes_default"
-if test "x$ac_cv_header_limits_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_LIMITS_H 1" >>confdefs.h
-
-fi
-
-
-# Checks for typedefs, structures, and compiler characteristics.
-
-  ac_fn_c_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default
-"
-if test "x$ac_cv_type_pid_t" = xyes
-then :
-
-else $as_nop
-                                          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-          #if defined _WIN64 && !defined __CYGWIN__
-          LLP64
-          #endif
-
-int
-main (void)
-{
-
-  ;
-  return 0;
-}
-
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  ac_pid_type='int'
-else $as_nop
-  ac_pid_type='__int64'
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
-
-printf "%s\n" "#define pid_t $ac_pid_type" >>confdefs.h
-
-
-fi
-
-
-#m4_warn([obsolete],
-#[your code may safely assume C89 semantics that RETSIGTYPE is void.
-#Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
-#AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
-#[AC_LANG_PROGRAM([#include <sys/types.h>
-#include <signal.h>
-#],
-#		 [return *(signal (0, 0)) (0) == 1;])],
-#		   [ac_cv_type_signal=int],
-#		   [ac_cv_type_signal=void])])
-#AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
-#		    (`int' or `void').])
-
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking how to run the C preprocessor" >&5
-printf %s "checking how to run the C preprocessor... " >&6; }
-# On Suns, sometimes $CPP names a directory.
-if test -n "$CPP" && test -d "$CPP"; then
-  CPP=
-fi
-if test -z "$CPP"; then
-  if test ${ac_cv_prog_CPP+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-      # Double quotes because $CC needs to be expanded
-    for CPP in "$CC -E" "$CC -E -traditional-cpp" cpp /lib/cpp
-    do
-      ac_preproc_ok=false
-for ac_c_preproc_warn_flag in '' yes
-do
-  # Use a header file that comes with gcc, so configuring glibc
-  # with a fresh cross-compiler works.
-  # On the NeXT, cc -E runs the code through the compiler's parser,
-  # not just through cpp. "Syntax error" is here to catch this case.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <limits.h>
-		     Syntax error
-_ACEOF
-if ac_fn_c_try_cpp "$LINENO"
-then :
-
-else $as_nop
-  # Broken: fails on valid input.
-continue
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-
-  # OK, works on sane cases.  Now check whether nonexistent headers
-  # can be detected and how.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ac_nonexistent.h>
-_ACEOF
-if ac_fn_c_try_cpp "$LINENO"
-then :
-  # Broken: success on invalid input.
-continue
-else $as_nop
-  # Passes both tests.
-ac_preproc_ok=:
-break
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-
-done
-# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
-rm -f conftest.i conftest.err conftest.$ac_ext
-if $ac_preproc_ok
-then :
-  break
-fi
-
-    done
-    ac_cv_prog_CPP=$CPP
-
-fi
-  CPP=$ac_cv_prog_CPP
-else
-  ac_cv_prog_CPP=$CPP
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CPP" >&5
-printf "%s\n" "$CPP" >&6; }
-ac_preproc_ok=false
-for ac_c_preproc_warn_flag in '' yes
-do
-  # Use a header file that comes with gcc, so configuring glibc
-  # with a fresh cross-compiler works.
-  # On the NeXT, cc -E runs the code through the compiler's parser,
-  # not just through cpp. "Syntax error" is here to catch this case.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <limits.h>
-		     Syntax error
-_ACEOF
-if ac_fn_c_try_cpp "$LINENO"
-then :
-
-else $as_nop
-  # Broken: fails on valid input.
-continue
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-
-  # OK, works on sane cases.  Now check whether nonexistent headers
-  # can be detected and how.
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ac_nonexistent.h>
-_ACEOF
-if ac_fn_c_try_cpp "$LINENO"
-then :
-  # Broken: success on invalid input.
-continue
-else $as_nop
-  # Passes both tests.
-ac_preproc_ok=:
-break
-fi
-rm -f conftest.err conftest.i conftest.$ac_ext
-
-done
-# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
-rm -f conftest.i conftest.err conftest.$ac_ext
-if $ac_preproc_ok
-then :
-
-else $as_nop
-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "C preprocessor \"$CPP\" fails sanity check
-See \`config.log' for more details" "$LINENO" 5; }
-fi
-
-ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
 printf %s "checking for grep that handles long lines and -e... " >&6; }
 if test ${ac_cv_path_GREP+y}
@@ -4690,75 +5508,415 @@ printf "%s\n" "$ac_cv_path_EGREP" >&6; }
  EGREP="$ac_cv_path_EGREP"
 
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for uid_t in sys/types.h" >&5
-printf %s "checking for uid_t in sys/types.h... " >&6; }
-if test ${ac_cv_type_uid_t+y}
+for ac_prog in gawk mawk nawk awk
+do
+  # Extract the first word of "$ac_prog", so it can be a program name with args.
+set dummy $ac_prog; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_AWK+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <sys/types.h>
+  if test -n "$AWK"; then
+  ac_cv_prog_AWK="$AWK" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_AWK="$ac_prog"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
 
-_ACEOF
-if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
-  $EGREP "uid_t" >/dev/null 2>&1
+fi
+fi
+AWK=$ac_cv_prog_AWK
+if test -n "$AWK"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $AWK" >&5
+printf "%s\n" "$AWK" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+  test -n "$AWK" && break
+done
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for a sed that does not truncate output" >&5
+printf %s "checking for a sed that does not truncate output... " >&6; }
+if test ${ac_cv_path_SED+y}
 then :
-  ac_cv_type_uid_t=yes
+  printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_type_uid_t=no
+            ac_script=s/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/
+     for ac_i in 1 2 3 4 5 6 7; do
+       ac_script="$ac_script$as_nl$ac_script"
+     done
+     echo "$ac_script" 2>/dev/null | sed 99q >conftest.sed
+     { ac_script=; unset ac_script;}
+     if test -z "$SED"; then
+  ac_path_SED_found=false
+  # Loop through the user's path and test for each of PROGNAME-LIST
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_prog in sed gsed
+   do
+    for ac_exec_ext in '' $ac_executable_extensions; do
+      ac_path_SED="$as_dir$ac_prog$ac_exec_ext"
+      as_fn_executable_p "$ac_path_SED" || continue
+# Check for GNU ac_path_SED and select it if it is found.
+  # Check for GNU $ac_path_SED
+case `"$ac_path_SED" --version 2>&1` in
+*GNU*)
+  ac_cv_path_SED="$ac_path_SED" ac_path_SED_found=:;;
+*)
+  ac_count=0
+  printf %s 0123456789 >"conftest.in"
+  while :
+  do
+    cat "conftest.in" "conftest.in" >"conftest.tmp"
+    mv "conftest.tmp" "conftest.in"
+    cp "conftest.in" "conftest.nl"
+    printf "%s\n" '' >> "conftest.nl"
+    "$ac_path_SED" -f conftest.sed < "conftest.nl" >"conftest.out" 2>/dev/null || break
+    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
+    as_fn_arith $ac_count + 1 && ac_count=$as_val
+    if test $ac_count -gt ${ac_path_SED_max-0}; then
+      # Best one so far, save it but keep looking for a better one
+      ac_cv_path_SED="$ac_path_SED"
+      ac_path_SED_max=$ac_count
+    fi
+    # 10*(2^10) chars as input seems more than enough
+    test $ac_count -gt 10 && break
+  done
+  rm -f conftest.in conftest.tmp conftest.nl conftest.out;;
+esac
+
+      $ac_path_SED_found && break 3
+    done
+  done
+  done
+IFS=$as_save_IFS
+  if test -z "$ac_cv_path_SED"; then
+    as_fn_error $? "no acceptable sed could be found in \$PATH" "$LINENO" 5
+  fi
+else
+  ac_cv_path_SED=$SED
 fi
-rm -rf conftest*
 
 fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_type_uid_t" >&5
-printf "%s\n" "$ac_cv_type_uid_t" >&6; }
-if test $ac_cv_type_uid_t = no; then
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_path_SED" >&5
+printf "%s\n" "$ac_cv_path_SED" >&6; }
+ SED="$ac_cv_path_SED"
+  rm -f conftest.sed
 
-printf "%s\n" "#define uid_t int" >>confdefs.h
-
-
-printf "%s\n" "#define gid_t int" >>confdefs.h
-
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether ln -s works" >&5
+printf %s "checking whether ln -s works... " >&6; }
+LN_S=$as_ln_s
+if test "$LN_S" = "ln -s"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no, using $LN_S" >&5
+printf "%s\n" "no, using $LN_S" >&6; }
 fi
 
-
-# Checks for structure members
-#AC_CHECK_MEMBER([struct dirent.d_type], [AC_MSG_RESULT([We successfully have a `dirent_d_type'!])],
-#		[AC_MSG_ERROR([We need `dirent.d_type'!])],
-#		[#include <dirent.h>])
-
-
-
-  ac_fn_c_check_member "$LINENO" "struct dirent" "d_type" "ac_cv_member_struct_dirent_d_type" "
-#include <sys/types.h>
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-#else
-# define dirent direct
-# ifdef HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# ifdef HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# ifdef HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
-
-"
-if test "x$ac_cv_member_struct_dirent_d_type" = xyes
+# Extract the first word of "cp", so it can be a program name with args.
+set dummy cp; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_CP+y}
 then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $CP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_CP="$CP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_CP="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
 
-printf "%s\n" "#define HAVE_STRUCT_DIRENT_D_TYPE 1" >>confdefs.h
+  ;;
+esac
+fi
+CP=$ac_cv_path_CP
+if test -n "$CP"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CP" >&5
+printf "%s\n" "$CP" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
 
+
+# Extract the first word of "perl", so it can be a program name with args.
+set dummy perl; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_PERL+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $PERL in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PERL="$PERL" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_PERL="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PERL=$ac_cv_path_PERL
+if test -n "$PERL"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PERL" >&5
+printf "%s\n" "$PERL" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+
+eval sbindir=$sbindir
+
+# Checks for libraries.
+if test "q$target_cpu" = "qx86_64"
+then :
+  x64="64"
+else $as_nop
+  x64=""
+fi
+
+if test x$libdir = x ; then
+   if test -d "/usr/lib${x64}" ; then
+      libdir="${prefix}/usr/lib${x64}/${PACKAGE_NAME}"
+   elif test -d "/lib${x64}"; then
+      libdir="${prefix}/lib${x64}/${PACKAGE_NAME}"
+   elif test -d "/usr/lib" ; then
+      libdir="${prefix}/usr/lib/${PACKAGE_NAME}"
+   else
+      libdir="${prefix}/lib/${PACKAGE_NAME}"
+   fi
+fi
+
+# Check whether --with-libdir was given.
+if test ${with_libdir+y}
+then :
+  withval=$with_libdir; libdir=$withval
 
 fi
 
+
+
+# Check for Perl lib path
+PERL_LIB_PATH=no
+
+# Check whether --with-perl_lib_path was given.
+if test ${with_perl_lib_path+y}
+then :
+  withval=$with_perl_lib_path; PERL_LIB_PATH=$withval
+else $as_nop
+  PERL_LIB_PATH=no
+fi
+
+
+
+#
+# Checking for Perl Modules
+#
+foo=`$PERL -V`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $foo" >&5
+printf "%s\n" "$foo" >&6; }
+bar=`rpm -qa`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $bar" >&5
+printf "%s\n" "$bar" >&6; }
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Time::HiRes" >&5
+printf %s "checking for Perl Module Time::HiRes... " >&6; }
+$PERL -MTime::HiRes -e exit >/dev/null 2>&1
+if test $? -ne 0; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+    as_fn_error $? "Perl Module Time::HiRes not available" "$LINENO" 5
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Getopt::Long" >&5
+printf %s "checking for Perl Module Getopt::Long... " >&6; }
+$PERL -MGetopt::Long -e exit >/dev/null 2>&1
+if test $? -ne 0; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+    as_fn_error $? "Perl Module Getopt::Long not available" "$LINENO" 5
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+fi
+
+RRDS=0
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for optional Perl Module RRDs" >&5
+printf %s "checking for optional Perl Module RRDs... " >&6; }
+$PERL -I${PERL_LIB_PATH} -MRRDs -e exit >/dev/null 2>&1
+if test $? -ne 0; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Perl Module RRDs not available" >&5
+printf "%s\n" "$as_me: WARNING: Perl Module RRDs not available" >&2;}
+    RRDS=0
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+    RRDS=1
+fi
+
+
+
+# Check whether --with-kohana was given.
+if test ${with_kohana+y}
+then :
+  withval=$with_kohana; KOHANA=no
+else $as_nop
+  KOHANA=yes
+fi
+
+
+
+# Check whether --with-kohana_system was given.
+if test ${with_kohana_system+y}
+then :
+  withval=$with_kohana_system; KOHANA_SYSTEM=$withval
+else $as_nop
+  KOHANA_SYSTEM="${datarootdir}/kohana/system"
+fi
+
+eval KOHANA_SYSTEM="${KOHANA_SYSTEM}"
 
 
 # Checks for library functions.
+
+ac_header= ac_cache=
+for ac_item in $ac_header_c_list
+do
+  if test $ac_cache; then
+    ac_fn_c_check_header_compile "$LINENO" $ac_header ac_cv_header_$ac_cache "$ac_includes_default"
+    if eval test \"x\$ac_cv_header_$ac_cache\" = xyes; then
+      printf "%s\n" "#define $ac_item 1" >> confdefs.h
+    fi
+    ac_header= ac_cache=
+  elif test $ac_header; then
+    ac_cache=$ac_item
+  else
+    ac_header=$ac_item
+  fi
+done
+
+
+
+
+
+
+
+
+if test $ac_cv_header_stdlib_h = yes && test $ac_cv_header_string_h = yes
+then :
+
+printf "%s\n" "#define STDC_HEADERS 1" >>confdefs.h
+
+fi
+
+  ac_fn_c_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default
+"
+if test "x$ac_cv_type_pid_t" = xyes
+then :
+
+else $as_nop
+                                          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+          #if defined _WIN64 && !defined __CYGWIN__
+          LLP64
+          #endif
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  ac_pid_type='int'
+else $as_nop
+  ac_pid_type='__int64'
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+printf "%s\n" "#define pid_t $ac_pid_type" >>confdefs.h
+
+
+fi
+
+
 
 ac_func=
 for ac_item in $ac_func_c_list
@@ -5024,7 +6182,6 @@ then :
 
 fi
 
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GNU libc compatible malloc" >&5
 printf %s "checking for GNU libc compatible malloc... " >&6; }
 if test ${ac_cv_func_malloc_0_nonnull+y}
@@ -5205,7 +6362,6 @@ printf "%s\n" "#define HAVE_STAT_EMPTY_STRING_BUG 1" >>confdefs.h
 
 fi
 
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
 printf %s "checking for an ANSI C-conforming const... " >&6; }
 if test ${ac_cv_c_const+y}
@@ -5290,151 +6446,646 @@ printf "%s\n" "#define const /**/" >>confdefs.h
 fi
 
 
-layout="default"
 
-# Check whether --with-layout was given.
-if test ${with_layout+y}
-then :
-  withval=$with_layout; layout=$withval
-fi
+# Checks for header files.
 
-
-case $layout in
-	debian)
-		prefix="/"
-		sysconfdir="/etc/${PACKAGE_NAME}"
-		localstatedir="/var/log/${PACKAGE_NAME}"
-		libexecdir="/usr/lib/${PACKAGE_NAME}/libexec"
-		libdir="/usr/lib/${PACKAGE_NAME}"
-		datarootdir="/usr/share/${PACKAGE_NAME}/html"
-		PERFDATA_LOG="/var/log/${PACKAGE_NAME}/perfdata.log"
-		PERFDATA_DIR="/var/lib/${PACKAGE_NAME}/perfdata"
-		PERFDATA_SPOOL_DIR="/var/spool/${PACKAGE_NAME}"
-		bindir="/usr/bin"
-		sbindir="/usr/sbin"
-	;;
-	default-0.4)
-		prefix="/usr/local/nagios"
-		sysconfdir="\${prefix}/etc/pnp"
-		localstatedir="\${prefix}/var"
-		libexecdir="\${prefix}/libexec"
-		datarootdir="\${prefix}/share/pnp"
-		libdir="\${prefix}/lib/pnp"
-		PERFDATA_LOG="\${prefix}/var/perfdata.log"
-		PERFDATA_DIR="\${prefix}/share/perfdata"
-		PERFDATA_SPOOL_DIR="\${prefix}/var/spool/perfdata"
-	;;
-	default)
-		PERFDATA_LOG="${localstatedir}/perfdata.log"
-		PERFDATA_DIR="${localstatedir}/perfdata"
-		PERFDATA_SPOOL_DIR="${localstatedir}/spool"
-		mandir="\${prefix}/man"
-	;;
-esac
-
-
-# Check whether --with-kohana was given.
-if test ${with_kohana+y}
-then :
-  withval=$with_kohana; KOHANA=no
-else $as_nop
-  KOHANA=yes
-fi
-
-
-
-# Check whether --with-kohana_system was given.
-if test ${with_kohana_system+y}
-then :
-  withval=$with_kohana_system; KOHANA_SYSTEM=$withval
-else $as_nop
-  KOHANA_SYSTEM=$libdir/kohana/system
-fi
-
-
-
-# Check whether --with-nagios_user was given.
-if test ${with_nagios_user+y}
-then :
-  withval=$with_nagios_user; nagios_user=$withval
-else $as_nop
-  nagios_user=nagios
-fi
-
-
-# Check whether --with-nagios_group was given.
-if test ${with_nagios_group+y}
-then :
-  withval=$with_nagios_group; nagios_grp=$withval
-else $as_nop
-  nagios_grp=nagios
-fi
-
-
-
-printf "%s\n" "#define DEFAULT_NAGIOS_USER \"$nagios_user\"" >>confdefs.h
-
-printf "%s\n" "#define DEFAULT_NAGIOS_GROUP \"$nagios_grp\"" >>confdefs.h
-
-INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
-
-
-# Checks for programs.
-# Extract the first word of "perl", so it can be a program name with args.
-set dummy perl; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_path_PERL+y}
+ac_header_dirent=no
+for ac_hdr in dirent.h sys/ndir.h sys/dir.h ndir.h; do
+  as_ac_Header=`printf "%s\n" "ac_cv_header_dirent_$ac_hdr" | $as_tr_sh`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_hdr that defines DIR" >&5
+printf %s "checking for $ac_hdr that defines DIR... " >&6; }
+if eval test \${$as_ac_Header+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  case $PERL in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_PERL="$PERL" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_path_PERL="$as_dir$ac_word$ac_exec_ext"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+#include <$ac_hdr>
 
-  ;;
-esac
-fi
-PERL=$ac_cv_path_PERL
-if test -n "$PERL"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PERL" >&5
-printf "%s\n" "$PERL" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-# Check for Perl lib path
-PERL_LIB_PATH=no
-
-# Check whether --with-perl_lib_path was given.
-if test ${with_perl_lib_path+y}
+int
+main (void)
+{
+if ((DIR *) 0)
+return 0;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
 then :
-  withval=$with_perl_lib_path; PERL_LIB_PATH=$withval
+  eval "$as_ac_Header=yes"
 else $as_nop
-  PERL_LIB_PATH=no
+  eval "$as_ac_Header=no"
 fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+eval ac_res=\$$as_ac_Header
+	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
+printf "%s\n" "$ac_res" >&6; }
+if eval test \"x\$"$as_ac_Header"\" = x"yes"
+then :
+  cat >>confdefs.h <<_ACEOF
+#define `printf "%s\n" "HAVE_$ac_hdr" | $as_tr_cpp` 1
+_ACEOF
+
+ac_header_dirent=$ac_hdr; break
+fi
+
+done
+# Two versions of opendir et al. are in -ldir and -lx on SCO Xenix.
+if test $ac_header_dirent = dirent.h; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing opendir" >&5
+printf %s "checking for library containing opendir... " >&6; }
+if test ${ac_cv_search_opendir+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+char opendir ();
+int
+main (void)
+{
+return opendir ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' dir
+do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"
+then :
+  ac_cv_search_opendir=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext
+  if test ${ac_cv_search_opendir+y}
+then :
+  break
+fi
+done
+if test ${ac_cv_search_opendir+y}
+then :
+
+else $as_nop
+  ac_cv_search_opendir=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_opendir" >&5
+printf "%s\n" "$ac_cv_search_opendir" >&6; }
+ac_res=$ac_cv_search_opendir
+if test "$ac_res" != no
+then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing opendir" >&5
+printf %s "checking for library containing opendir... " >&6; }
+if test ${ac_cv_search_opendir+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  ac_func_search_save_LIBS=$LIBS
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+char opendir ();
+int
+main (void)
+{
+return opendir ();
+  ;
+  return 0;
+}
+_ACEOF
+for ac_lib in '' x
+do
+  if test -z "$ac_lib"; then
+    ac_res="none required"
+  else
+    ac_res=-l$ac_lib
+    LIBS="-l$ac_lib  $ac_func_search_save_LIBS"
+  fi
+  if ac_fn_c_try_link "$LINENO"
+then :
+  ac_cv_search_opendir=$ac_res
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext
+  if test ${ac_cv_search_opendir+y}
+then :
+  break
+fi
+done
+if test ${ac_cv_search_opendir+y}
+then :
+
+else $as_nop
+  ac_cv_search_opendir=no
+fi
+rm conftest.$ac_ext
+LIBS=$ac_func_search_save_LIBS
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_search_opendir" >&5
+printf "%s\n" "$ac_cv_search_opendir" >&6; }
+ac_res=$ac_cv_search_opendir
+if test "$ac_res" != no
+then :
+  test "$ac_res" = "none required" || LIBS="$ac_res $LIBS"
+
+fi
+
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for sys/wait.h that is POSIX.1 compatible" >&5
+printf %s "checking for sys/wait.h that is POSIX.1 compatible... " >&6; }
+if test ${ac_cv_header_sys_wait_h+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+#include <sys/wait.h>
+#ifndef WEXITSTATUS
+# define WEXITSTATUS(stat_val) ((unsigned int) (stat_val) >> 8)
+#endif
+#ifndef WIFEXITED
+# define WIFEXITED(stat_val) (((stat_val) & 255) == 0)
+#endif
+
+int
+main (void)
+{
+  int s;
+  wait (&s);
+  s = WIFEXITED (s) ? WEXITSTATUS (s) : 1;
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  ac_cv_header_sys_wait_h=yes
+else $as_nop
+  ac_cv_header_sys_wait_h=no
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_header_sys_wait_h" >&5
+printf "%s\n" "$ac_cv_header_sys_wait_h" >&6; }
+if test $ac_cv_header_sys_wait_h = yes; then
+
+printf "%s\n" "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
+
+fi
+
+ac_fn_c_check_header_compile "$LINENO" "dirent.h" "ac_cv_header_dirent_h" "$ac_includes_default"
+if test "x$ac_cv_header_dirent_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_DIRENT_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "stdio.h" "ac_cv_header_stdio_h" "$ac_includes_default"
+if test "x$ac_cv_header_stdio_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_STDIO_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "errno.h" "ac_cv_header_errno_h" "$ac_includes_default"
+if test "x$ac_cv_header_errno_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_ERRNO_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
+if test "x$ac_cv_header_unistd_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_UNISTD_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "syslog.h" "ac_cv_header_syslog_h" "$ac_includes_default"
+if test "x$ac_cv_header_syslog_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYSLOG_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "signal.h" "ac_cv_header_signal_h" "$ac_includes_default"
+if test "x$ac_cv_header_signal_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SIGNAL_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "stdlib.h" "ac_cv_header_stdlib_h" "$ac_includes_default"
+if test "x$ac_cv_header_stdlib_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_STDLIB_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "dirent.h" "ac_cv_header_dirent_h" "$ac_includes_default"
+if test "x$ac_cv_header_dirent_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_DIRENT_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "string.h" "ac_cv_header_string_h" "$ac_includes_default"
+if test "x$ac_cv_header_string_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_STRING_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "pthread.h" "ac_cv_header_pthread_h" "$ac_includes_default"
+if test "x$ac_cv_header_pthread_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_PTHREAD_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "getopt.h" "ac_cv_header_getopt_h" "$ac_includes_default"
+if test "x$ac_cv_header_getopt_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_GETOPT_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "grp.h" "ac_cv_header_grp_h" "$ac_includes_default"
+if test "x$ac_cv_header_grp_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_GRP_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "pwd.h" "ac_cv_header_pwd_h" "$ac_includes_default"
+if test "x$ac_cv_header_pwd_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_PWD_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/mman.h" "ac_cv_header_sys_mman_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_mman_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_MMAN_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/types.h" "ac_cv_header_sys_types_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_types_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_TYPES_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/wait.h" "ac_cv_header_sys_wait_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_wait_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/stat.h" "ac_cv_header_sys_stat_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_stat_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_STAT_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/socket.h" "ac_cv_header_sys_socket_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_socket_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_SOCKET_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "sys/loadavg.h" "ac_cv_header_sys_loadavg_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_loadavg_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_SYS_LOADAVG_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "netinet/in.h" "ac_cv_header_netinet_in_h" "$ac_includes_default"
+if test "x$ac_cv_header_netinet_in_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_NETINET_IN_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "fcntl.h" "ac_cv_header_fcntl_h" "$ac_includes_default"
+if test "x$ac_cv_header_fcntl_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_FCNTL_H 1" >>confdefs.h
+
+fi
+ac_fn_c_check_header_compile "$LINENO" "limits.h" "ac_cv_header_limits_h" "$ac_includes_default"
+if test "x$ac_cv_header_limits_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_LIMITS_H 1" >>confdefs.h
+
+fi
+
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+  ac_fn_c_check_type "$LINENO" "pid_t" "ac_cv_type_pid_t" "$ac_includes_default
+"
+if test "x$ac_cv_type_pid_t" = xyes
+then :
+
+else $as_nop
+                                          cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+          #if defined _WIN64 && !defined __CYGWIN__
+          LLP64
+          #endif
+
+int
+main (void)
+{
+
+  ;
+  return 0;
+}
+
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  ac_pid_type='int'
+else $as_nop
+  ac_pid_type='__int64'
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
+
+printf "%s\n" "#define pid_t $ac_pid_type" >>confdefs.h
+
+
+fi
+
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking how to run the C preprocessor" >&5
+printf %s "checking how to run the C preprocessor... " >&6; }
+# On Suns, sometimes $CPP names a directory.
+if test -n "$CPP" && test -d "$CPP"; then
+  CPP=
+fi
+if test -z "$CPP"; then
+  if test ${ac_cv_prog_CPP+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+      # Double quotes because $CC needs to be expanded
+    for CPP in "$CC -E" "$CC -E -traditional-cpp" cpp /lib/cpp
+    do
+      ac_preproc_ok=false
+for ac_c_preproc_warn_flag in '' yes
+do
+  # Use a header file that comes with gcc, so configuring glibc
+  # with a fresh cross-compiler works.
+  # On the NeXT, cc -E runs the code through the compiler's parser,
+  # not just through cpp. "Syntax error" is here to catch this case.
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <limits.h>
+		     Syntax error
+_ACEOF
+if ac_fn_c_try_cpp "$LINENO"
+then :
+
+else $as_nop
+  # Broken: fails on valid input.
+continue
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+
+  # OK, works on sane cases.  Now check whether nonexistent headers
+  # can be detected and how.
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ac_nonexistent.h>
+_ACEOF
+if ac_fn_c_try_cpp "$LINENO"
+then :
+  # Broken: success on invalid input.
+continue
+else $as_nop
+  # Passes both tests.
+ac_preproc_ok=:
+break
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+
+done
+# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
+rm -f conftest.i conftest.err conftest.$ac_ext
+if $ac_preproc_ok
+then :
+  break
+fi
+
+    done
+    ac_cv_prog_CPP=$CPP
+
+fi
+  CPP=$ac_cv_prog_CPP
+else
+  ac_cv_prog_CPP=$CPP
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $CPP" >&5
+printf "%s\n" "$CPP" >&6; }
+ac_preproc_ok=false
+for ac_c_preproc_warn_flag in '' yes
+do
+  # Use a header file that comes with gcc, so configuring glibc
+  # with a fresh cross-compiler works.
+  # On the NeXT, cc -E runs the code through the compiler's parser,
+  # not just through cpp. "Syntax error" is here to catch this case.
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <limits.h>
+		     Syntax error
+_ACEOF
+if ac_fn_c_try_cpp "$LINENO"
+then :
+
+else $as_nop
+  # Broken: fails on valid input.
+continue
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+
+  # OK, works on sane cases.  Now check whether nonexistent headers
+  # can be detected and how.
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ac_nonexistent.h>
+_ACEOF
+if ac_fn_c_try_cpp "$LINENO"
+then :
+  # Broken: success on invalid input.
+continue
+else $as_nop
+  # Passes both tests.
+ac_preproc_ok=:
+break
+fi
+rm -f conftest.err conftest.i conftest.$ac_ext
+
+done
+# Because of `break', _AC_PREPROC_IFELSE's cleaning code was skipped.
+rm -f conftest.i conftest.err conftest.$ac_ext
+if $ac_preproc_ok
+then :
+
+else $as_nop
+  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "C preprocessor \"$CPP\" fails sanity check
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
+ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for uid_t in sys/types.h" >&5
+printf %s "checking for uid_t in sys/types.h... " >&6; }
+if test ${ac_cv_type_uid_t+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <sys/types.h>
+
+_ACEOF
+if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
+  $EGREP "uid_t" >/dev/null 2>&1
+then :
+  ac_cv_type_uid_t=yes
+else $as_nop
+  ac_cv_type_uid_t=no
+fi
+rm -rf conftest*
+
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_type_uid_t" >&5
+printf "%s\n" "$ac_cv_type_uid_t" >&6; }
+if test $ac_cv_type_uid_t = no; then
+
+printf "%s\n" "#define uid_t int" >>confdefs.h
+
+
+printf "%s\n" "#define gid_t int" >>confdefs.h
+
+fi
+
+
+
+  ac_fn_c_check_member "$LINENO" "struct dirent" "d_type" "ac_cv_member_struct_dirent_d_type" "
+#include <sys/types.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#else
+# define dirent direct
+# ifdef HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# ifdef HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# ifdef HAVE_NDIR_H
+#  include <ndir.h>
+# endif
+#endif
+
+"
+if test "x$ac_cv_member_struct_dirent_d_type" = xyes
+then :
+
+printf "%s\n" "#define HAVE_STRUCT_DIRENT_D_TYPE 1" >>confdefs.h
+
+
+fi
+
+
+
+
+
+if test "x$initdiroverridden" != "xyes"; then
+       initname="npcd"
+fi
+
+#initname=`echo "$initname" | ${SED} "s#${PKG_NAME}#npcd#"`
+initconf=`echo "$initconf" | ${SED} "s#${pkgsysconfdir}#npcd.cfg#"`
+
+case $src_init in
+    default-service)
+        src_init=npcd.service
+        initname=npcd.service
+        ;;
+    default-init)
+        src_init=rc.npcd
+        ;;
+    newbsd-init)
+        src_init=newbsd.npcd
+        ;;
+    openrc-init)
+       src_init=openrc.npcd
+       ;;
+    upstart-init)
+       src_init=upstart.npcd
+       ;;
+    *)
+       as_fn_error $? "missing an init file for npcd on this distro" "$LINENO" 5
+      ;;
+esac
+
+
+if test "x$spooldir" = "xN/A" ; then
+   spooldir="$localstatedir/spool/pnp4nagios"
+fi
+lockfile=`echo "${lockfile}"|${SED} "s#${localstatedir}#npcd.lock#"`
+
+logdir=`echo "${logdir}"|${SED} 's#/log$##'`
+logdir="${logdir}/log"
+eval logdir="$logdir"
+
+case $host_os in
+*bsd*|darwin*)
+        root_grp=wheel
+        ;;
+*)
+        root_grp=root
+        ;;
+esac
+
+
+# Check whether --with-root_group was given.
+if test ${with_root_group+y}
+then :
+  withval=$with_root_group; root_grp=$withval
+fi
+
+
+INIT_OPTS="-o root -g $root_grp"
+
 
 
 # Check for rrdtool
@@ -5518,17 +7169,334 @@ printf "%s\n" "yes" >&6; }
 
 
 
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking selinux capability" >&5
+printf %s "checking selinux capability... " >&6; }
+if test -e /etc/selinux/config  ;
+then
+    source /etc/selinux/config
+    CAN_SELINUX="yes"
+    SELINUX_POLICY="$SELINUXTYPE"
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else
+    CAN_SELINUX="no"
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
 
-# Check whether --with-perfdata-logfile was given.
-if test ${with_perfdata_logfile+y}
+SELINUX="no"
+# Check whether --enable-selinux was given.
+if test ${enable_selinux+y}
 then :
-  withval=$with_perfdata_logfile; PERFDATA_LOG=$withval
+  enableval=$enable_selinux;
+fi
 
+
+if test "x$enable_selinux" != "xno"
+then :
+
+  SELINUX=$CAN_SELINUX
+
+fi
+
+SELINUX_DEVELDIR="no"
+if test "x${SELINUX}" = "xyes" ; then
+
+# Check whether --with-selinux_develdir was given.
+if test ${with_selinux_develdir+y}
+then :
+  withval=$with_selinux_develdir; SELINUX_DEVELDIR=$withval
+else $as_nop
+  SELINUX_DEVELDIR=no
+fi
+
+    if test "x${SELINUX_DEVELDIR}" = "xno" ; then
+       if test -e "/usr/share/selinux/devel/Makefile" ; then
+          SELINUX_DEVELDIR="/usr/share/selinux/devel"
+       elif test -e "/usr/share/selinux/mcs/include/Makefile" ; then
+          SELINUX_DEVELDIR="/usr/share/selinux/mcs/include"
+       elif test -e "/usr/share/doc/selinux-policy-dev/examples/Makefile" ; then
+          SELINUX_DEVELDIR="/usr/share/doc/selinux-policy-dev/examples"
+       else
+          as_fn_error $? "Directory with selinux policy Makefile not fund, use --with-selinux_develdir to specify" "$LINENO" 5
+       fi
+    fi
 fi
 
 
 
 
+SE=""
+if test $SELINUX = no ; then
+  SE='#'
+fi
+
+
+
+
+# Check whether --with-nagios_cfg was given.
+if test ${with_nagios_cfg+y}
+then :
+  withval=$with_nagios_cfg; NAGIOS_CFG=$withval
+else $as_nop
+  NAGIOS_CFG=no
+fi
+
+
+
+# Check whether --with-nagios_version was given.
+if test ${with_nagios_version+y}
+then :
+  withval=$with_nagios_version; NAGIOS_VER=$withval
+else $as_nop
+  NAGIOS_VER=no
+fi
+
+
+NAGIOS_EXE=no
+
+if test x$NAGIOS_CFG = xno -a x$NAGIOS_VER = xno ; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Look for running nagios server" >&5
+printf %s "checking Look for running nagios server... " >&6; }
+    rnag=`ps -A -o command | ${EGREP} '/nagios4?( |$)' | head -n 1 | ${AWK} '{print $1;}'`
+
+    if test x$rnag = x ; then
+       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not seen" >&5
+printf "%s\n" "not seen" >&6; }
+    else
+       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $rnag" >&5
+printf "%s\n" "$rnag" >&6; }
+       ncfg=`ps -A -o command | ${EGREP} '/nagios4? +.*\.cfg' | head -n 1 | ${AWK} -v RS=' ' '/\.cfg/{print $1;}'`
+       if test x$ncfg != x ; then
+          NAGIOS_CFG=$ncfg
+       fi
+    fi
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios executable" >&5
+printf %s "checking Nagios executable... " >&6; }
+    if test x$rnag = x ; then
+       rnag=`which nagios 2>/dev/null`
+       if test x$rnag = x ; then
+           rnag=`which nagios4 2>/dev/null`
+       fi
+    fi
+    if test x$rnag = x ; then
+       rnag=no
+    fi
+    NAGIOS_EXE=$rnag
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_EXE" >&5
+printf "%s\n" "$NAGIOS_EXE" >&6; }
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios config file location" >&5
+printf %s "checking Nagios config file location... " >&6; }
+
+    if test x$NAGIOS_CFG = xno; then
+       if test -e /etc/nagios/nagios.cfg ; then
+          NAGIOS_CFG=/etc/nagios/nagios.cfg
+       elif test -e /etc/nagios4/nagios.cfg ; then
+          NAGIOS_CFG=/etc/nagios4/nagios.cfg
+       elif test -e /usr/local/etc/nagios/nagios.cfg ; then
+          NAGIOS_CFG=/usr/local/etc/nagios/nagios.cfg
+       fi
+    fi
+    if test x${NAGIOS_CFG} = xno ; then
+        NAGIOS_CFG=/etc/nagios/nagios.cfg
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: Not found, forced to $NAGIOS_CFG" >&5
+printf "%s\n" "Not found, forced to $NAGIOS_CFG" >&6; }
+    else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_CFG" >&5
+printf "%s\n" "$NAGIOS_CFG" >&6; }
+    fi
+
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios version" >&5
+printf %s "checking Nagios version... " >&6; }
+    # if nagios not installed yet, probably will install a new version
+    # so just pick a recent version unless one is given in arguments
+
+    if test x$NAGIOS_VER = xno; then
+       if test x$NAGIOS_EXE != xno ; then
+          NAGIOS_VER=`${NAGIOS_EXE} --help | ${AWK} '/^Nagios /'  | ${AWK} -v RS=' ' '/^[0-9]/'`
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_VER" >&5
+printf "%s\n" "$NAGIOS_VER" >&6; }
+       else
+          NAGIOS_VER=4.4.6
+          { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not found, assuming $NAGIOS_VER" >&5
+printf "%s\n" "not found, assuming $NAGIOS_VER" >&6; }
+       fi
+    else
+       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: forced use of version $NAGIOS_VER" >&5
+printf "%s\n" "forced use of version $NAGIOS_VER" >&6; }
+    fi
+fi
+
+
+
+
+# Check whether --with-nagios_unit was given.
+if test ${with_nagios_unit+y}
+then :
+  withval=$with_nagios_unit; NAGIOS_UNIT=$withval
+else $as_nop
+  NAGIOS_UNIT=no
+fi
+
+if test x$NAGIOS_UNIT = xno; then
+    nagunit=''
+    case $init_type in
+         systemd)
+            nagunit=`systemctl list-units -q 'nagios*.service'|${AWK} '{print $1;}'`
+            ;;
+         sysv)
+            nagunit=`chkconfig --list 2>/dev/null|${GREPE} 'nagios.?\s+0'|${AWK} '{print $1;}'`
+            ;;
+# not sure how to do other init_types
+    esac
+    if test "x$nagunit" != x; then
+       NAGIOS_UNIT=$nagunit
+    fi
+fi
+NAGIOS_UNIT=${NAGIOS_UNIT%.service}
+
+
+
+nagios_dir=`dirname $NAGIOS_CFG`
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios password file" >&5
+printf %s "checking Nagios password file... " >&6; }
+NAGIOS_PWD=no
+
+# Check whether --with-nagios_pwd was given.
+if test ${with_nagios_pwd+y}
+then :
+  withval=$with_nagios_pwd; NAGIOS_PWD=$withval
+else $as_nop
+  NAGIOS_PWD=no
+fi
+
+if test x$NAGIOS_PWD = xno; then
+   if test -e "${nagios_dir}/passwd" ; then
+      NAGIOS_PWD="${nagios_dir}/passwd"
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_PWD" >&5
+printf "%s\n" "$NAGIOS_PWD" >&6; }
+   elif test -e "${nagios_dir}/htpasswd.users" ; then
+      NAGIOS_PWD="${nagios_dir}/htpasswd.users"
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_PWD" >&5
+printf "%s\n" "$NAGIOS_PWD" >&6; }
+   elif test -e "${nagios_dir}/htdigest.users" ; then
+      NAGIOS_PWD="${nagios_dir}/htdigest.users"
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_PWD" >&5
+printf "%s\n" "$NAGIOS_PWD" >&6; }
+   else
+      NAGIOS_PWD="${nagios_dir}/passwd"
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not found, assume default $NAGIOS_PWD" >&5
+printf "%s\n" "not found, assume default $NAGIOS_PWD" >&6; }
+   fi
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: forced to $NAGIOS_PWD" >&5
+printf "%s\n" "forced to $NAGIOS_PWD" >&6; }
+fi
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios objects directory" >&5
+printf %s "checking Nagios objects directory... " >&6; }
+NAGIOS_OBJ=no
+
+# Check whether --with-nagios_objects was given.
+if test ${with_nagios_objects+y}
+then :
+  withval=$with_nagios_objects; NAGIOS_OBJ=$withval
+else $as_nop
+  NAGIOS_OBJ=no
+fi
+
+if test x$NAGIOS_OBJ = xno; then
+   if test -e "${nagios_dir}/objects" ; then
+       NAGIOS_OBJ="${nagios_dir}/objects"
+       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $NAGIOS_OBJ" >&5
+printf "%s\n" "$NAGIOS_OBJ" >&6; }
+   else
+       NAGIOS_OBJ="${nagios_dir}/objects"
+       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: not found, assume default $NAGIOS_OBJ" >&5
+printf "%s\n" "not found, assume default $NAGIOS_OBJ" >&6; }
+   fi
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: forced to $NAGIOS_OBJ" >&5
+printf "%s\n" "forced to $NAGIOS_OBJ" >&6; }
+fi
+
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Nagios user/group" >&5
+printf %s "checking Nagios user/group... " >&6; }
+nagios_user=no
+nagios_grp=no
+if test -e "$NAGIOS_CFG" ; then
+   nagios_user=`${AWK} -F= '/nagios_user/ {print $2;}' $NAGIOS_CFG`
+   nagios_grp=`${AWK} -F= '/nagios_group/ {print $2;}' $NAGIOS_CFG`
+fi
+
+
+# Check whether --with-nagios_user was given.
+if test ${with_nagios_user+y}
+then :
+  withval=$with_nagios_user; nagios_user=$withval
+fi
+
+
+# Check whether --with-nagios_group was given.
+if test ${with_nagios_group+y}
+then :
+  withval=$with_nagios_group; nagios_grp=$withval
+fi
+
+
+ugmsg=""
+if test x$nagios_user = xno ; then
+    ugmsg="using default"
+    nagios_user=nagios
+fi
+
+if test x$nagios_grp = xno ; then
+    ugmsg="using_default"
+    nagios_grp=nagios
+fi
+
+if test x$ugmsg = x ; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: ${nagios_user} / ${nagios_grp}" >&5
+printf "%s\n" "${nagios_user} / ${nagios_grp}" >&6; }
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ugmsg ${nagios_user} / ${nagios_grp}" >&5
+printf "%s\n" "$ugmsg ${nagios_user} / ${nagios_grp}" >&6; }
+fi
+
+
+
+INSTALL_OPTS="-o $nagios_user -g $nagios_grp"
+
+
+#
+# pnp4nagios locations and files
+#
+PNP_LOGDIR="${logdir}/pnp4nagios"
+
+# Check whether --with-pnp-logdir was given.
+if test ${with_pnp_logdir+y}
+then :
+  withval=$with_pnp_logdir; PNP_LOGDIR=$withval
+
+fi
+
+
+
+PERFDATA_LOG="${PNP_LOGDIR}/perfdata.log"
+
+
+PERFDATA_STATS="${PNP_LOGDIR}/stats"
+
+
+
+PERFDATA_DIR="${PNP_LOGDIR}/rrd"
 
 # Check whether --with-perfdata-dir was given.
 if test ${with_perfdata_dir+y}
@@ -5539,6 +7507,7 @@ fi
 
 
 
+PERFDATA_SPOOL_DIR="$spooldir"
 
 # Check whether --with-perfdata-spool-dir was given.
 if test ${with_perfdata_spool_dir+y}
@@ -5550,74 +7519,6 @@ fi
 
 
 
-# Check whether --with-debug was given.
-if test ${with_debug+y}
-then :
-  withval=$with_debug; DEBUG="2"
-else $as_nop
-  DEBUG="0"
-
-fi
-
-
-
-HTTP_CONF=no
-
-# Check whether --with-httpd_conf was given.
-if test ${with_httpd_conf+y}
-then :
-  withval=$with_httpd_conf; HTTPD_CONF=$withval
-else $as_nop
-  HTTPD_CONF=no
-fi
-
-if test x$HTTPD_CONF = xno; then
-        if test -d /etc/httpd/conf.d; then
-                HTTPD_CONF="/etc/httpd/conf.d"
-        elif test -d /etc/apache2/conf.d; then
-                HTTPD_CONF="/etc/apache2/conf.d"
-        elif test -d /etc/apache/conf.d; then
-                HTTPD_CONF="/etc/apache/conf.d"
-        else
-                HTTPD_CONF="/etc/httpd/conf.d"
-        fi
-fi
-
-
-init_dir=/etc/rc.d/init.d
-if test -d /etc/rc.d/init.d; then
-    init_dir="/etc/rc.d/init.d"
-elif test -d /usr/local/etc/rc.d; then
-    init_dir="/usr/local/etc/rc.d"
-elif test -d /etc/rc.d; then
-    init_dir="/etc/rc.d"
-elif test -d /etc/init.d; then
-    init_dir="/etc/init.d"
-elif test -d /sbin/init.d; then
-    init_dir="/sbin/init.d"
-fi
-
-BASE_URL=${PACKAGE_NAME}
-
-# Check whether --with-base-url was given.
-if test ${with_base_url+y}
-then :
-  withval=$with_base_url; BASE_URL=$withval
-else $as_nop
-  BASE_URL=/${PACKAGE_NAME}
-fi
-
-
-
-
-# Check whether --with-init_dir was given.
-if test ${with_init_dir+y}
-then :
-  withval=$with_init_dir; init_dir=$withval
-fi
-
-
-
 pnpsender_name=pnpsender
 
 
@@ -5626,6 +7527,258 @@ npcd_name=npcd
 
 pp_pl_name=process_perfdata.pl
 
+
+
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking http server" >&5
+printf %s "checking http server... " >&6; }
+HTTP_SERVER=no
+
+# Check whether --with-http_server was given.
+if test ${with_http_server+y}
+then :
+  withval=$with_http_server; HTTP_SERVER=$withval
+fi
+
+
+if test "x${HTTP_SERVER}" = xno ; then
+    http_server_types="httpd
+    apache
+    apache2
+    lighttpd
+    nginx"
+    http_unit=x
+    for HTTP_SERVER in $http_server_types
+    do
+        case "$init_type" in
+             systemd)
+                http_unit=`systemctl list-units -q "${HTTP_SERVER}.service"|${AWK} '{print $1;}'`
+                ;;
+              sysv)
+                http_unit=`chkconfig --list 2>/dev/null|${GREPE} "${HTTP_SERVER}\s+0"|${AWK} '{print $1;}'`
+                ;;
+         esac
+         if test "x${http_unit}" != x ; then
+            break;
+         fi
+     done
+fi
+
+
+# Check whether --with-http_server_base was given.
+if test ${with_http_server_base+y}
+then :
+  withval=$with_http_server_base; http_base=$withval
+else $as_nop
+  http_base=no
+fi
+
+
+if test x$http_base = xno ; then
+    case "${HTTP_SERVER}" in
+       apache*)
+        if apachectl -t -D DUMP_RUN_CFG >/dev/null 2>/dev/null ;
+        then
+             http_base=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^ServerRoot:/ {print $2;}'`
+             http_base=`echo "$srvroot"|${SED} 's/"//'`
+             HTTP_USER=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^User:/ {print $2;}'`
+             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/name=//'`
+             HTTP_USER=`echo "${HTTP_USER}"|${SED} 's/"//g'`
+             HTTP_GROUP=`apachectl -t -D DUMP_RUN_CFG | ${AWK} '/^Group:/ {print $2;}'`
+             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/name=//'`
+             HTTP_GROUP=`echo "${HTTP_GROUP}"|${SED} 's/"//g'`
+             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES| ${GREP} "$http_base/.*\.conf" | ${AWK} '/\/conf/{print $2;}' | ${SED} -E 's/^\/+$//' | head -n 1`
+
+             HTTP_CONFDIR=`apachectl -t -D DUMP_INCLUDES |${GREP} "$http_base/.*\.conf" | awk '/\/conf/{print $2;}'|${SED} -E 's/\/[^\/]+$//' | head -n 1`
+             fi
+         ;;
+   esac
+fi
+
+
+
+if test "x${http_base}" = xno ; then
+    if test -e "/etc/${HTTP_SERVER}" ; then
+       http_base="/etc/${HTTP_SERVER}"
+    elif test -e "/usr/local/${HTTP_SERVER}" ; then
+       http_base="/usr/local/${HTTP_SERVER}"
+    elif test -e "/usr/local/etc/${HTTP_SERVER}" ; then
+       http_base="/usr/local/etc/${HTTP_SERVER}"
+    elif test -e "/usr/pkg/etc/${HTTP_SERVER}" ; then
+       http_base="/usr/pkg/etc/${HTTP_SERVER}"
+    fi
+fi
+
+if test "x$http_base" = "xno" ; then
+   as_fn_error $? "http server base directory not found" "$LINENO" 5
+fi
+
+if test "x$HTTP_CONFDIR" = x ; then
+   case  "$HTTP_SERVER" in
+      apache* | httpd )
+          if test -e "${http_base}/conf/httpd.conf" ; then
+              hconf="${http_base}/conf/httpd.conf"
+          elif test -e "${http_base}/httpd.conf" ; then
+              hconf="${http_base}/httpd.conf"
+          elif test -e "${http_base}/apache.conf" ; then
+              hconf="${http_base}/apache.conf"
+          elif test -e "${http_base}/apache2.conf" ; then
+              hconf="${http_base}/apache2.conf"
+          else
+              echo "HTTPD main configure file not found"
+              hconf="${http_base}/httpd.conf"
+          fi
+          if test -e $hconf ; then
+              HTTP_USER=`${AWK} '/^User/{print $2;}' $hconf`
+              HTTP_GROUP=`${AWK} '/^Group/{print $2;}' $hconf`
+              HTTP_CONFDIR=`${AWK} '/^IncludeOptional .*\*/{print $2;}' $hconf|head -n 1`
+              if test "x${HTTP_CONFDIR}" != x ; then
+                   HTTP_CONFDIR=`dirname "${http_base}/${HTTP_CONFDIR}"`
+              fi
+           fi
+           HTTP_USER=${HTTP_USER:-daemon}
+           HTTP_GROUP=${HTTP_GROUP:-daemon}
+           HTTP_CONFDIR=${HTTP_CONFDIR:-$http_base}
+           ;;
+    lighttpd )
+           HTTP_USER=lighttpd
+           HTTP_GROUP=lighttpd
+           HTTP_CONFDIR="${http_base}/conf.d"
+           ;;
+    nginx )
+           HTTP_USER=nobody
+           HTTP_GROUP=root
+           HTTP_CONFDIR="${http_base}/conf.d"
+           ;;
+   esac
+fi
+
+if test ! -e ${HTTP_CONFDIR} ; then
+   HTTP_CONFDIR=${http_base}
+fi
+
+
+if test "${HTTP_SERVER}" = "httpd" ; then
+     HTTP_SERVER=apache
+elif test "${HTTP_SERVER}" = "apache2" ; then
+     HTTP_SERVER=apache
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $HTTP_SERVER" >&5
+printf "%s\n" "$HTTP_SERVER" >&6; }
+
+HTTP_UNIT=${HTTP_UNIT%.service}
+
+
+
+
+# Check whether --with-http_user was given.
+if test ${with_http_user+y}
+then :
+  withval=$with_http_user; http_user=$withval
+else $as_nop
+  http_user=$HTTP_USER
+fi
+
+
+# Check whether --with-http_group was given.
+if test ${with_http_group+y}
+then :
+  withval=$with_http_group; http_group=$withval
+else $as_nop
+  http_group=$HTTP_GROUP
+fi
+
+
+HTTP_USER=${http_user}
+HTTP_GROUP=${http_group}
+
+if test x${HTTP_USER} = xno ; then
+    as_fn_error $? "http_user not defined" "$LINENO" 5
+elif test x${HTTP_GROUP} = xno ; then
+    as_fn_error $? "http_group not defined" "$LINENO" 5
+fi
+
+
+
+HTTP_INSTALL_OPTS="-o $HTTP_USER -g $HTTP_GROUP"
+
+
+
+
+# Check whether --with-http_confdir was given.
+if test ${with_http_confdir+y}
+then :
+  withval=$with_http_confdir; HTTP_CONFDIR=$withval
+fi
+
+
+
+
+
+# Check whether --with-cache_dir was given.
+if test ${with_cache_dir+y}
+then :
+  withval=$with_cache_dir; CACHE_DIR=$withval
+else $as_nop
+  CACHE_DIR=no
+fi
+
+if test "x$CACHE_DIR" = "xno" ; then
+   if test -e "/var/cache" ; then
+      CACHE_DIR=/var/cache/pnp4nagios
+   else
+      as_fn_error $? "/var/cache missing, need to define cache_dir" "$LINENO" 5
+   fi
+fi
+
+
+
+# Check whether --with-pnp_url was given.
+if test ${with_pnp_url+y}
+then :
+  withval=$with_pnp_url; PNP_URL=$withval
+else $as_nop
+  PNP_URL=/pnp4nagios
+fi
+
+
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking Default paper size for pdf generation" >&5
+printf %s "checking Default paper size for pdf generation... " >&6; }
+
+PAPERSIZE=no
+
+# Check whether --with-papersize was given.
+if test ${with_papersize+y}
+then :
+  withval=$with_papersize; PAPERSIZE=$withval
+else $as_nop
+  PAPERSIZE=no
+fi
+
+if test x${PAPERSIZE} = xno ; then
+   localefile=no
+   if test -e "/etc/locale.conf" ; then
+       localefile=/etc/locale.conf
+   elif test -e "/etc/default/locale"  ; then
+       localefile=/etc/default/locale
+   fi
+   if test x${localefile} = xno ; then
+      PAPERSIZE=A4
+   else
+        country=`${GREP} "_..\." -o ${localefile} | ${SED} 's/[\._]//g'`
+        if echo 'BZ,CA,CL,CO,CR,SV,GT,MX,NI,PA,PH,PR,US,VE' | ${GREP} -q ${country} ; then
+            PAPERSIZE=letter
+        else
+            PAPERSIZE=A4
+        fi
+   fi
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PAPERSIZE" >&5
+printf "%s\n" "$PAPERSIZE" >&6; }
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for linker flags for loadable modules" >&5
 printf %s "checking for linker flags for loadable modules... " >&6; }
@@ -5662,49 +7815,6 @@ printf "%s\n" "$MOD_LDFLAGS" >&6; }
 
 
 
-#
-# Checking for Perl Modules
-#
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Time::HiRes" >&5
-printf %s "checking for Perl Module Time::HiRes... " >&6; }
-$PERL -MTime::HiRes -e exit >/dev/null 2>&1
-if test $? -ne 0; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-    as_fn_error $? "Perl Module Time::HiRes not available" "$LINENO" 5
-else
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-fi
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Getopt::Long" >&5
-printf %s "checking for Perl Module Getopt::Long... " >&6; }
-$PERL -MGetopt::Long -e exit >/dev/null 2>&1
-if test $? -ne 0; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-    as_fn_error $? "Perl Module Getopt::Long not available" "$LINENO" 5
-else
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-fi
-
-RRDS=0
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for optional Perl Module RRDs" >&5
-printf %s "checking for optional Perl Module RRDs... " >&6; }
-$PERL -I${PERL_LIB_PATH} -MRRDs -e exit >/dev/null 2>&1
-if test $? -ne 0; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Perl Module RRDs not available" >&5
-printf "%s\n" "$as_me: WARNING: Perl Module RRDs not available" >&2;}
-    RRDS=0
-else
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-    RRDS=1
-fi
-
 
 ac_config_files="$ac_config_files subst Makefile share/Makefile lib/Makefile scripts/Makefile src/Makefile sample-config/Makefile man/Makefile"
 
@@ -5712,108 +7822,58 @@ ac_config_files="$ac_config_files include/stamp-h"
 
 ac_config_files="$ac_config_files scripts/rrd_modify.pl scripts/rc.npcd scripts/rc.pnp_gearman_worker"
 
+ac_config_files="$ac_config_files scripts/npcd.service scripts/pnp_gearman_worker.service"
+
+ac_config_files="$ac_config_files scripts/newbsd.npcd"
+
 ac_config_files="$ac_config_files scripts/check_pnp_rrds.pl share/pnp/index.php share/pnp/install.php"
 
-ac_config_files="$ac_config_files sample-config/httpd.conf sample-config/lighttpd.pnp4nagios.conf"
+ac_config_files="$ac_config_files sample-config/README_config.md"
 
-ac_config_files="$ac_config_files sample-config/nginx.pnp4nagios.conf sample-config/nagios.cfg-sample"
+ac_config_files="$ac_config_files sample-config/SetLogLevels"
 
-ac_config_files="$ac_config_files sample-config/misccommands.cfg-sample sample-config/pnp/config.php"
+ac_config_files="$ac_config_files sample-config/config_tools/NagiosCfgMod.pl"
 
-ac_config_files="$ac_config_files sample-config/pnp/npcd.cfg-sample"
+ac_config_files="$ac_config_files sample-config/config_tools/TemplateMod.pl"
 
-ac_config_files="$ac_config_files sample-config/pnp/process_perfdata.cfg-sample"
+ac_config_files="$ac_config_files sample-config/config_tools/verify_pnp_config"
 
-ac_config_files="$ac_config_files sample-config/pnp/pnp4nagios_release contrib/ssi/status-header.ssi"
+ac_config_files="$ac_config_files sample-config/config_samples/apache.pnp4nagios.conf"
+
+ac_config_files="$ac_config_files sample-config/config_samples/config.php"
+
+ac_config_files="$ac_config_files sample-config/config_samples/lighttpd.pnp4nagios.conf"
+
+ac_config_files="$ac_config_files sample-config/config_samples/nagios.cfg"
+
+ac_config_files="$ac_config_files sample-config/config_samples/nginx.pnp4nagios.conf"
+
+ac_config_files="$ac_config_files sample-config/config_samples/npcd.cfg"
+
+ac_config_files="$ac_config_files sample-config/config_samples/pnp-bulk.cfg"
+
+ac_config_files="$ac_config_files sample-config/config_samples/pnp-npcd.cfg"
+
+ac_config_files="$ac_config_files sample-config/config_samples/pnp-sync.cfg"
+
+ac_config_files="$ac_config_files sample-config/config_samples/process_perfdata.cfg"
+
+ac_config_files="$ac_config_files sample-config/pnp4nagios_release"
 
 ac_config_files="$ac_config_files man/npcd.8 ci/pnp4nagios.spec"
 
+ac_config_files="$ac_config_files pnp4nagios.fc src/config.c src/npcdmod.c"
 
-cat >confcache <<\_ACEOF
-# This file is a shell script that caches the results of configure
-# tests run on this system so they can be shared between configure
-# scripts and configure runs, see configure's option --config-cache.
-# It is not useful on other systems.  If it contains results you don't
-# want to keep, you may remove or edit it.
-#
-# config.status only pays attention to the cache file if you give it
-# the --recheck option to rerun configure.
-#
-# `ac_cv_env_foo' variables (set or unset) will be overridden when
-# loading this file, other *unset* `ac_cv_foo' will be assigned the
-# following values.
+ac_config_files="$ac_config_files contrib/fedora/pnp4nagios.logrotate.conf"
 
-_ACEOF
+ac_config_files="$ac_config_files contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf"
 
-# The following way of writing the cache mishandles newlines in values,
-# but we know of no workaround that is simple, portable, and efficient.
-# So, we kill variables containing newlines.
-# Ultrix sh set writes to stderr and can't be redirected directly,
-# and sets the high bit in the cache file unless we assign to the vars.
-(
-  for ac_var in `(set) 2>&1 | sed -n 's/^\([a-zA-Z_][a-zA-Z0-9_]*\)=.*/\1/p'`; do
-    eval ac_val=\$$ac_var
-    case $ac_val in #(
-    *${as_nl}*)
-      case $ac_var in #(
-      *_cv_*) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: cache variable $ac_var contains a newline" >&5
-printf "%s\n" "$as_me: WARNING: cache variable $ac_var contains a newline" >&2;} ;;
-      esac
-      case $ac_var in #(
-      _ | IFS | as_nl) ;; #(
-      BASH_ARGV | BASH_SOURCE) eval $ac_var= ;; #(
-      *) { eval $ac_var=; unset $ac_var;} ;;
-      esac ;;
-    esac
-  done
+ac_config_files="$ac_config_files contrib/fedora/logwatch/scripts/services/pnp4nagios"
 
-  (set) 2>&1 |
-    case $as_nl`(ac_space=' '; set) 2>&1` in #(
-    *${as_nl}ac_space=\ *)
-      # `set' does not quote correctly, so add quotes: double-quote
-      # substitution turns \\\\ into \\, and sed turns \\ into \.
-      sed -n \
-	"s/'/'\\\\''/g;
-	  s/^\\([_$as_cr_alnum]*_cv_[_$as_cr_alnum]*\\)=\\(.*\\)/\\1='\\2'/p"
-      ;; #(
-    *)
-      # `set' quotes correctly as required by POSIX, so do not add quotes.
-      sed -n "/^[_$as_cr_alnum]*_cv_[_$as_cr_alnum]*=/p"
-      ;;
-    esac |
-    sort
-) |
-  sed '
-     /^ac_cv_env_/b end
-     t clear
-     :clear
-     s/^\([^=]*\)=\(.*[{}].*\)$/test ${\1+y} || &/
-     t end
-     s/^\([^=]*\)=\(.*\)$/\1=${\1=\2}/
-     :end' >>confcache
-if diff "$cache_file" confcache >/dev/null 2>&1; then :; else
-  if test -w "$cache_file"; then
-    if test "x$cache_file" != "x/dev/null"; then
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: updating cache $cache_file" >&5
-printf "%s\n" "$as_me: updating cache $cache_file" >&6;}
-      if test ! -f "$cache_file" || test -h "$cache_file"; then
-	cat confcache >"$cache_file"
-      else
-        case $cache_file in #(
-        */* | ?:*)
-	  mv -f confcache "$cache_file"$$ &&
-	  mv -f "$cache_file"$$ "$cache_file" ;; #(
-        *)
-	  mv -f confcache "$cache_file" ;;
-	esac
-      fi
-    fi
-  else
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: not updating unwritable cache $cache_file" >&5
-printf "%s\n" "$as_me: not updating unwritable cache $cache_file" >&6;}
-  fi
-fi
-rm -f confcache
+ac_config_files="$ac_config_files contrib/ssi/status-header.ssi"
+
+
+
 
 test "x$prefix" = xNONE && prefix=$ac_default_prefix
 # Let make expand exec_prefix.
@@ -6304,6 +8364,7 @@ gives unlimited permission to copy, distribute and modify it."
 ac_pwd='$ac_pwd'
 srcdir='$srcdir'
 INSTALL='$INSTALL'
+AWK='$AWK'
 test -n "\$AWK" || AWK=awk
 _ACEOF
 
@@ -6428,21 +8489,37 @@ do
     "scripts/rrd_modify.pl") CONFIG_FILES="$CONFIG_FILES scripts/rrd_modify.pl" ;;
     "scripts/rc.npcd") CONFIG_FILES="$CONFIG_FILES scripts/rc.npcd" ;;
     "scripts/rc.pnp_gearman_worker") CONFIG_FILES="$CONFIG_FILES scripts/rc.pnp_gearman_worker" ;;
+    "scripts/npcd.service") CONFIG_FILES="$CONFIG_FILES scripts/npcd.service" ;;
+    "scripts/pnp_gearman_worker.service") CONFIG_FILES="$CONFIG_FILES scripts/pnp_gearman_worker.service" ;;
+    "scripts/newbsd.npcd") CONFIG_FILES="$CONFIG_FILES scripts/newbsd.npcd" ;;
     "scripts/check_pnp_rrds.pl") CONFIG_FILES="$CONFIG_FILES scripts/check_pnp_rrds.pl" ;;
     "share/pnp/index.php") CONFIG_FILES="$CONFIG_FILES share/pnp/index.php" ;;
     "share/pnp/install.php") CONFIG_FILES="$CONFIG_FILES share/pnp/install.php" ;;
-    "sample-config/httpd.conf") CONFIG_FILES="$CONFIG_FILES sample-config/httpd.conf" ;;
-    "sample-config/lighttpd.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/lighttpd.pnp4nagios.conf" ;;
-    "sample-config/nginx.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/nginx.pnp4nagios.conf" ;;
-    "sample-config/nagios.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/nagios.cfg-sample" ;;
-    "sample-config/misccommands.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/misccommands.cfg-sample" ;;
-    "sample-config/pnp/config.php") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/config.php" ;;
-    "sample-config/pnp/npcd.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/npcd.cfg-sample" ;;
-    "sample-config/pnp/process_perfdata.cfg-sample") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/process_perfdata.cfg-sample" ;;
-    "sample-config/pnp/pnp4nagios_release") CONFIG_FILES="$CONFIG_FILES sample-config/pnp/pnp4nagios_release" ;;
-    "contrib/ssi/status-header.ssi") CONFIG_FILES="$CONFIG_FILES contrib/ssi/status-header.ssi" ;;
+    "sample-config/README_config.md") CONFIG_FILES="$CONFIG_FILES sample-config/README_config.md" ;;
+    "sample-config/SetLogLevels") CONFIG_FILES="$CONFIG_FILES sample-config/SetLogLevels" ;;
+    "sample-config/config_tools/NagiosCfgMod.pl") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/NagiosCfgMod.pl" ;;
+    "sample-config/config_tools/TemplateMod.pl") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/TemplateMod.pl" ;;
+    "sample-config/config_tools/verify_pnp_config") CONFIG_FILES="$CONFIG_FILES sample-config/config_tools/verify_pnp_config" ;;
+    "sample-config/config_samples/apache.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/apache.pnp4nagios.conf" ;;
+    "sample-config/config_samples/config.php") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/config.php" ;;
+    "sample-config/config_samples/lighttpd.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/lighttpd.pnp4nagios.conf" ;;
+    "sample-config/config_samples/nagios.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/nagios.cfg" ;;
+    "sample-config/config_samples/nginx.pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/nginx.pnp4nagios.conf" ;;
+    "sample-config/config_samples/npcd.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/npcd.cfg" ;;
+    "sample-config/config_samples/pnp-bulk.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/pnp-bulk.cfg" ;;
+    "sample-config/config_samples/pnp-npcd.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/pnp-npcd.cfg" ;;
+    "sample-config/config_samples/pnp-sync.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/pnp-sync.cfg" ;;
+    "sample-config/config_samples/process_perfdata.cfg") CONFIG_FILES="$CONFIG_FILES sample-config/config_samples/process_perfdata.cfg" ;;
+    "sample-config/pnp4nagios_release") CONFIG_FILES="$CONFIG_FILES sample-config/pnp4nagios_release" ;;
     "man/npcd.8") CONFIG_FILES="$CONFIG_FILES man/npcd.8" ;;
     "ci/pnp4nagios.spec") CONFIG_FILES="$CONFIG_FILES ci/pnp4nagios.spec" ;;
+    "pnp4nagios.fc") CONFIG_FILES="$CONFIG_FILES pnp4nagios.fc" ;;
+    "src/config.c") CONFIG_FILES="$CONFIG_FILES src/config.c" ;;
+    "src/npcdmod.c") CONFIG_FILES="$CONFIG_FILES src/npcdmod.c" ;;
+    "contrib/fedora/pnp4nagios.logrotate.conf") CONFIG_FILES="$CONFIG_FILES contrib/fedora/pnp4nagios.logrotate.conf" ;;
+    "contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf") CONFIG_FILES="$CONFIG_FILES contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf" ;;
+    "contrib/fedora/logwatch/scripts/services/pnp4nagios") CONFIG_FILES="$CONFIG_FILES contrib/fedora/logwatch/scripts/services/pnp4nagios" ;;
+    "contrib/ssi/status-header.ssi") CONFIG_FILES="$CONFIG_FILES contrib/ssi/status-header.ssi" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -6995,7 +9072,7 @@ printf "%s\n" "$as_me: $ac_file is unchanged" >&6;}
 
 
   case $ac_file$ac_mode in
-    "include/stamp-h":F) date -Is > include/stamp-h ;;
+    "include/stamp-h":F) date '+%Y-%m-%dT%H:%M:%S%z' > include/stamp-h ;;
 
   esac
 done # for ac_tag
@@ -7035,32 +9112,152 @@ printf "%s\n" "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2
 fi
 
 
-
-
-# $PERL subst scripts/rrd_modify.pl
-# $PERL subst scripts/rc.npcd
-# $PERL subst scripts/rc.pnp_gearman_worker
-# $PERL subst scripts/check_pnp_rrds.pl
-# $PERL subst share/pnp/index.php
-# $PERL subst share/pnp/install.php
-# $PERL subst sample-config/httpd.conf
-# $PERL subst sample-config/lighttpd.pnp4nagios.conf
-# $PERL subst sample-config/nginx.pnp4nagios.conf
-# $PERL subst sample-config/nagios.cfg-sample
-# $PERL subst sample-config/misccommands.cfg-sample
-# $PERL subst sample-config/pnp/config.php
-# $PERL subst sample-config/pnp/npcd.cfg-sample
-# $PERL subst sample-config/pnp/process_perfdata.cfg-sample
-# $PERL subst sample-config/pnp/pnp4nagios_release
-# $PERL subst contrib/ssi/status-header.ssi
-# $PERL subst man/npcd.8
-#
 #### need to use 'subst' instead of configure for this
-#### to deal with 'use lib "no"' case
+#### to deal with 'use lib "no"' case for perl scripts
 $PERL subst summary
 $PERL subst scripts/process_perfdata.pl
 $PERL subst scripts/rrd_convert.pl
-$PERL summary
 #
+if test "x$RRDS" = "x1";  then
+   $PERL -MRRDs -e '1;' 2>/dev/null
+   if test "$?" -ne 0; then
+        RRDS=0
+   else
+       rrds_version=`$PERL -MRRDs -e 'print \$RRDs::VERSION;'`
+   fi
+fi
+rrdtest=`${RRDTOOL}|head -n1|cut -d' ' -f1| ${AWK} '{print tolower($0)}'`
+rrdtest=`basename $rrdtest`
+if test "x$rrdtest" != "xrrdtool" ; then
+   rrdtool_message="WARNING: '$RRDTOOL' does not look like rrdtool"
+else
+   rrdtool_version=`${RRDTOOL}|head -n1|cut -d' ' -f2`
+   rrdtool_message="${RRDTOOL} Version ${rrdtool_version}"
+fi
 
+echo ""
+echo ""
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: *** Configuration summary for $PKG_NAME $PKG_VERSION $PKG_REL_DATE ***:" >&5
+printf "%s\n" "*** Configuration summary for $PKG_NAME $PKG_VERSION $PKG_REL_DATE ***:" >&6; }
+
+echo ""
+echo " General Options:"
+echo " -------------------------"
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                    Host OS:  $host_os" >&5
+printf "%s\n" "                   Host OS:  $host_os" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               Distribution:  $dist_type, $dist_ver" >&5
+printf "%s\n" "              Distribution:  $dist_type, $dist_ver" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:            SELINUX enabled:  $SELINUX" >&5
+printf "%s\n" "           SELINUX enabled:  $SELINUX" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:          Install \${prefix}:  $prefix" >&5
+printf "%s\n" "         Install \${prefix}:  $prefix" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:             Nagios version:  $NAGIOS_VER" >&5
+printf "%s\n" "            Nagios version:  $NAGIOS_VER" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:          Nagios user/group:  $nagios_user,$nagios_grp" >&5
+printf "%s\n" "         Nagios user/group:  $nagios_user,$nagios_grp" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:            Root user/group:  root,$root_grp" >&5
+printf "%s\n" "           Root user/group:  root,$root_grp" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               PNP HTML dir:  $datarootdir" >&5
+printf "%s\n" "              PNP HTML dir:  $datarootdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                 Config dir:  $pkgsysconfdir" >&5
+printf "%s\n" "                Config dir:  $pkgsysconfdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:             rrdtool binary:  $rrdtool_message" >&5
+printf "%s\n" "            rrdtool binary:  $rrdtool_message" >&6; }
+if test "x$RRDS" = "x0" ; then
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:          RRDs Perl Modules:  *** NOT FOUND ***" >&5
+printf "%s\n" "         RRDs Perl Modules:  *** NOT FOUND ***" >&6; }
+else
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:          RRDs Perl Modules:  (Version $rrds_version) FOUND" >&5
+printf "%s\n" "         RRDs Perl Modules:  (Version $rrds_version) FOUND" >&6; }
+fi
+if test "x$PERL_LIB_PATH" != "x" ; then
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:      RRDs Perl search path:  $PERL_LIB_PATH" >&5
+printf "%s\n" "     RRDs Perl search path:  $PERL_LIB_PATH" >&6; }
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:        RRD Files stored in:  $PERFDATA_DIR" >&5
+printf "%s\n" "       RRD Files stored in:  $PERFDATA_DIR" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:   process_perfdata Logfile:  $PERFDATA_LOG" >&5
+printf "%s\n" "  process_perfdata Logfile:  $PERFDATA_LOG" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:    NPCD perfdata stored in:  $PERFDATA_SPOOL_DIR" >&5
+printf "%s\n" "   NPCD perfdata stored in:  $PERFDATA_SPOOL_DIR" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:       fontconfig cache dir:  $CACHE_DIR" >&5
+printf "%s\n" "      fontconfig cache dir:  $CACHE_DIR" >&6; }
+
+
+
+echo ""
+echo " Web Interface Options:"
+echo " ------------------------"
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                http server:  $HTTP_SERVER" >&5
+printf "%s\n" "               http server:  $HTTP_SERVER" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:           http configs dir:  $HTTP_CONFDIR" >&5
+printf "%s\n" "          http configs dir:  $HTTP_CONFDIR" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:   put pnp http config File:  ${HTTP_CONFDIR}/${PACKAGE_NAME}.conf" >&5
+printf "%s\n" "  put pnp http config File:  ${HTTP_CONFDIR}/${PACKAGE_NAME}.conf" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:            http user/group:  $HTTP_USER,$HTTP_GROUP" >&5
+printf "%s\n" "           http user/group:  $HTTP_USER,$HTTP_GROUP" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                   HTML URL:  https://localhost${PNP_URL}/" >&5
+printf "%s\n" "                  HTML URL:  https://localhost${PNP_URL}/" >&6; }
+
+if test "x$DESTDIR" != "x" ; then
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:    WARNING \${DESTDIR} set:  $DESTDIR" >&5
+printf "%s\n" "   WARNING \${DESTDIR} set:  $DESTDIR" >&6; }
+fi
+
+if test "x${DEBUG_LEVEL}" != "x0" ; then
+echo " Debug output:"
+echo " -------------"
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:              DEBUG_LEVEL:  ${DEBUG_LEVEL}" >&5
+printf "%s\n" "             DEBUG_LEVEL:  ${DEBUG_LEVEL}" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                perl exec:  $PERL" >&5
+printf "%s\n" "               perl exec:  $PERL" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               shell exec:  $SHELL" >&5
+printf "%s\n" "              shell exec:  $SHELL" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               libexecdir:  $libexecdir" >&5
+printf "%s\n" "              libexecdir:  $libexecdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                   libdir:  $libdir" >&5
+printf "%s\n" "                  libdir:  $libdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:               sysconfdir:  $sysconfdir" >&5
+printf "%s\n" "              sysconfdir:  $sysconfdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:              datarootdir:  $datarootdir" >&5
+printf "%s\n" "             datarootdir:  $datarootdir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                  datadir:  $datadir" >&5
+printf "%s\n" "                 datadir:  $datadir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:              exec prefix:  $exec_prefix" >&5
+printf "%s\n" "             exec prefix:  $exec_prefix" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                  sbindir:  $sbindir" >&5
+printf "%s\n" "                 sbindir:  $sbindir" >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:                   bindir:  $bindir" >&5
+printf "%s\n" "                  bindir:  $bindir" >&6; }
+fi
+
+if test $opsys = unix ; then
+   if test "x$prefix" = "x/usr/local/nagios" ; then
+      echo ""
+      echo ""
+      echo "prefix=$prefix"
+      echo "You probably wanted to do:"
+      echo "   ./configure --prefix=/usr/local/pnp4nagios"
+      echo "(or some similar prefix) to get the correct prefix."
+   fi
+fi
+if test "$install_method"  = default ; then
+    if test $opsys = bsd ; then
+      echo ""
+      echo ""
+      echo "prefix=$prefix"
+      echo "You probably wanted to do:"
+      echo "   ./configure --enable-install-method=os "
+      echo "to get the correct installation paths"
+    fi
+fi
+
+echo ""
+echo ""
+echo "Review the options above for accuracy.  If they look okay,"
+echo "type 'make all' to compile the main program"
+echo ""
+echo "For more info run ./configure --with-debug_level=1"
 

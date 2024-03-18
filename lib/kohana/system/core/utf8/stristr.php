@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * utf8::stristr
  *
@@ -10,19 +14,22 @@
  */
 function _stristr($str, $search)
 {
-	if (utf8::is_ascii($str) AND utf8::is_ascii($search))
-		return stristr($str, $search);
+    if (utf8::is_ascii($str) and utf8::is_ascii($search)) {
+        return stristr($str, $search);
+    }
 
-	if ($search == '')
-		return $str;
+    if ($search == '') {
+        return $str;
+    }
 
-	$str_lower = utf8::strtolower($str);
-	$search_lower = utf8::strtolower($search);
+    $str_lower = utf8::strtolower($str);
+    $search_lower = utf8::strtolower($search);
 
-	preg_match('/^(.*?)'.preg_quote($search, '/').'/s', $str_lower, $matches);
+    preg_match('/^(.*?)' . preg_quote($search, '/') . '/s', $str_lower, $matches);
 
-	if (isset($matches[1]))
-		return substr($str, strlen($matches[1]));
+    if (isset($matches[1])) {
+        return substr($str, strlen($matches[1]));
+    }
 
-	return FALSE;
+    return false;
 }

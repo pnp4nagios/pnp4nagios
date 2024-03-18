@@ -1,4 +1,5 @@
 <?php
+
 #
 # Copyright (c) 2006-2010 Joerg Linge (http://www.pnp4nagios.org)
 # Plugin: check_pnp_rrds.pl
@@ -25,4 +26,3 @@ $def[1] .= "GPRINT:var3:LAST:\"%6.0lf last\" " ;
 $def[1] .= "GPRINT:var3:AVERAGE:\"%6.0lf avg\" " ;
 $def[1] .= "GPRINT:var3:MAX:\"%6.0lf max\\n\" ";
 $def[1] .= "LINE1:var1#000000 " ;
-?>

@@ -1,0 +1,130 @@
+Here are some steps to get your pnp4nagios working
+with Nagios and your webserver; it is intended primarily
+for the "new user". If you already have pnp4nagios
+working with your Nagios and httpd server, you can
+skip this, except perhaps as a source of tips. 
+
+
+In summary:
+
+  * [A] get the Nagios data to pnp4nagios
+  * [B] make pnp4nagios links on Nagios pages
+  * [C] make pnp4nagios available on webserver
+  * [D] restart http server and Nagios to use new settings
+
+**[A] get the Nagios data to pnp4nagios**
+
+There are several options for feeding Nagios data to
+pnp4nagios, and you need to choose one:
+
+  * **sync**: gets executed on each update,
+     best choice for a "low activity" Nagios.
+     Warning: Nagios versions 4.4.0 to 4.4.12 
+     do **not** work with sync, because of a bug
+     in Nagios. If you see failures in process_perfdata
+     with "Cant find Nagios Environment." you're probably
+     running into this. 
+
+  * **bulk**: batches updates, but otherwise like
+     the synchronous option in how the updates are
+     processed into the RRD database.
+
+  * **npcd**: bulk output, npcd server grabs the updates on
+    a regular schedule and deals with them; best for a 
+    "high activity" Nagios.
+
+All three options are included, and you can switch between
+them. 
+
+First, 
+   cp config_samples/nagios/objects/pnp-*.cfg  @NAGIOS_OBJ@/
+Use "bulk" mode as an example:
+   cp config_samples/nagios/nagios-bulk.cfg @NAGIOS_CFG@
+    
+
+
+
+**[B] make pnp4nagios links on Nagios pages**
+
+The one easy way to do this is to add a pair of new 
+definitions to the Nagios "templates.cfg" file to
+make host and service templates that just contain a
+action_url link to pnp4nagios code.  Then add
+a "use" line in the "generic-host" and "generic-service"
+definitions so that they'll include the pnp4nagios templates.
+
+You can also edit the generic-* templates directly to add the
+action urls. 
+
+For an already-edited example templates.cfg file, just
+   cp config_samples/nagios/objects/templates.cfg @NAGIOS_OBJ@/
+
+
+**[C] make pnp4nagios available on webserver**
+
+This is done by a "pnp4nagios.conf" file that 
+(for Apache) is placed in /etc/httpd/conf.d/ 
+It defines urls like /pnp4nagios/... to get handled
+by the pnp4nagios code.  Most of what is needed is
+to make sure that the pnp4nagios code is in the
+same "security domain" as your Nagios server, so
+that you don't have to enter passwords twice, once
+for a Nagios page and again for a pnp4nagios graph.
+
+For password authentication, that is done by adjusting the
+**AuthName** and **AuthType** to be the same as your 
+Nagios server, and pointing the **AuthUserFile** to the 
+Nagios file. An attempt at doing the "default setup" is
+what is in the pnp4nagios.conf file.
+
+For more complicated authentication schemes (user certificates,
+etc) the general rule is "copy what you use for Nagios". 
+
+For an example config:
+   cp config_samples/http_server_apache/pnp4nagios.conf @HTTP_CONFDIR@/
+
+**[D] restart http server and Nagios **
+
+Before restarting, it can be useful to run the 
+**verify_pnp_config** script, but you will have to 
+specify which "mode" (sync|bulk|npcd) you are using
+with (for example)
+ ./verify_pnp_config --mode=bulk
+
+If it looks good, restart the http server and Nagios
+(hopefully with no errors).  Point your browser to the
+Nagios page, and look for the little "graph" icons next
+to hosts and services.  Clicking on an icon should bring
+up an installation-check page. Again, if all good, the
+green box at the bottom of the installation-check page 
+will tell you how to skip the installation-check and get
+the graphs.  Please note that it will take a while for
+data to be stored in rrd files, and you may get some errors
+about "missing file" before the rrd files are created. 
+
+** Where to find configuration settings **
+
+Where to find config info: 
+
+    @pkgsysconfdir@
+        config.php
+        config_local.php (not present by default)
+        config.d/*.php   (not present by default)
+        npcd.cfg
+        process_perfdata.cfg
+        rra.cfg
+        
+    @datarootdir@/application/config/config.php
+    
+When things go wrong, it's useful to increase the logging level
+and see more. The **SetLogLevel** script can be used to
+assist with this, because log levels can be set for npcd,
+process_perfdata, and .../application/config/config.php
+for cgi execution. 
+
+When it's a "selinux problem", then you need to check in
+/var/log/messages or journalctl. The messages generally give
+information about how to work around the security violations,
+which can be extremely useful for updating the selinux 
+configuration for pnp4nagios. 
+

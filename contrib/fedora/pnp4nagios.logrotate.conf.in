@@ -1,4 +1,4 @@
-/var/log/pnp4nagios/*.log {
+@logdir@/*.log {
     compress
     missingok
     notifempty

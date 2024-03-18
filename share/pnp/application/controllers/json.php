@@ -1,4 +1,11 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
 /**
  * Json controller.
  *
@@ -6,28 +13,32 @@
  * @author     Joerg Linge
  * @license    GPL
  */
-class Json_Controller extends System_Controller  {
-
+class Json_Controller extends System_Controller
+{
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function index(){
+    public function index()
+    {
         // Disable auto-rendering
-        $this->auto_render = FALSE;
+        $this->auto_render = false;
         // Service Details
-        if($this->host != "" && $this->service != ""){
+        if ($this->host != "" && $this->service != "") {
             $services      = $this->data->getServices($this->host);
-            $this->data->buildDataStruct($this->host,$this->service,$this->view);
-            if($this->auth->is_authorized($this->data->MACRO['AUTH_HOSTNAME'], $this->data->MACRO['AUTH_SERVICEDESC']) === FALSE){
+            $this->data->buildDataStruct($this->host, $this->service, $this->view);
+            if ($this->auth->is_authorized($this->data->MACRO['AUTH_HOSTNAME'], $this->data->MACRO['AUTH_SERVICEDESC']) === false) {
                 print json_encode("not authorized");
                 exit;
             }
             $i = 0;
             $json = array();
-            foreach($this->data->STRUCT as $struct){
-                $json[$i]['image_url']   = "host=".$struct['MACRO']['HOSTNAME']."&srv=".$struct['MACRO']['SERVICEDESC']."&source=".$struct['SOURCE']."&view=".$struct['VIEW'];
+            foreach ($this->data->STRUCT as $struct) {
+                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] .
+                    "&srv=" . $struct['MACRO']['SERVICEDESC'] .
+                    "&source=" . $struct['SOURCE'] . "&view=" .
+                    $struct['VIEW'];
                 $json[$i]['ds_name']     = $struct['ds_name'];
                 $json[$i]['start']       = $struct['TIMERANGE']['start'];
                 $json[$i]['end']         = $struct['TIMERANGE']['end'];
@@ -36,21 +47,24 @@ class Json_Controller extends System_Controller  {
             }
             print json_encode($json);
         // Host Overview
-        }elseif($this->host != ""){
-            if($this->auth->is_authorized($this->host) === FALSE){
+        } elseif ($this->host != "") {
+            if ($this->auth->is_authorized($this->host) === false) {
                 print json_encode("not authorized");
                 exit;
             }
             $services = $this->data->getServices($this->host);
-            foreach($services as $service){
-                if($service['state'] == 'active'){
-                    $this->data->buildDataStruct($this->host,$service['name'],$this->view);
-                }    
+            foreach ($services as $service) {
+                if ($service['state'] == 'active') {
+                    $this->data->buildDataStruct($this->host, $service['name'], $this->view);
+                }
             }
             $i = 0;
             $json = array();
-            foreach($this->data->STRUCT as $struct){
-                $json[$i]['image_url']   = "host=".$struct['MACRO']['HOSTNAME']."&srv=".$struct['MACRO']['SERVICEDESC']."&source=".$struct['SOURCE']."&view=".$struct['VIEW'];
+            foreach ($this->data->STRUCT as $struct) {
+                $json[$i]['image_url']   = "host=" . $struct['MACRO']['HOSTNAME'] .
+                    "&srv=" . $struct['MACRO']['SERVICEDESC'] .
+                    "&source=" . $struct['SOURCE'] . "&view=" .
+                    $struct['VIEW'];
                 $json[$i]['servicedesc'] = $struct['MACRO']['SERVICEDESC'];
                 $json[$i]['ds_name']     = $struct['ds_name'];
                 $json[$i]['start']       = $struct['TIMERANGE']['start'];
@@ -59,12 +73,12 @@ class Json_Controller extends System_Controller  {
                 $i++;
             }
             print json_encode($json);
-        }else{
+        } else {
             $this->hosts = $this->data->getHosts();
             $i = 0;
             $json = array();
-            foreach($this->hosts as $host){
-                if($host['state'] == "active"){
+            foreach ($this->hosts as $host) {
+                if ($host['state'] == "active") {
                     $json[$i]['hostname'] = $host['name'];
                     $i++;
                 }

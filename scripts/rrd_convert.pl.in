@@ -35,7 +35,7 @@ if( $< == 0 ){
 #
 
 my %conf = (
-    CFG_DIR           => "@sysconfdir@/", 
+    CFG_DIR           => "@pkgsysconfdir@/", 
     RRDPATH           => "@PERFDATA_DIR@",
     RRDTOOL           => "@RRDTOOL@",
     LOG_LEVEL         => 0,
@@ -595,7 +595,7 @@ sub print_help{
 	print "          [ --read=<file with XML filenames> ]\n";
 	print "\n";
 	print "This script is used to switch to RRD_STORAGE_TYPE = MULTIPLE for all RRDs/a given Nagios Check Command/single RRDs \n";
-	print "More info online http://docs.pnp4nagios.org/pnp-0.6/rrd_convert\n";
+	print "More info online https://github.com/pnp4nagios/docs/blob/main/pages/pnp-0.6/rrd_convert.txt\n";
 	exit;
 }
 

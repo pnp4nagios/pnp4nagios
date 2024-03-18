@@ -9,16 +9,16 @@
 ########################################################
 
 # What actual file?  Defaults to LogPath if not absolute path....
-LogFile = pnp4nagios/perfdata.log
-Logfile = pnp4nagios/npcd.log
+LogFile = @PERFDATA_LOG@
+Logfile = @logdir@/npcd.log
 
 # If the archives are searched, here is one or more line
 # (optionally containing wildcards) that tell where they are...
 #If you use a "-" in naming add that as well -mgt
-Archive = pnp4nagios/perfdata.log?[0-9]+
-Archive = pnp4nagios/perfdata.log?[0-9]+.gz
-Archive = pnp4nagios/npcd.log.[0-9]+
-Archive = pnp4nagios/npcd.log.[0-9]+.gz
+Archive = @PERFDATA_LOG@?[0-9]+
+Archive = @PERFDATA_LOG@?[0-9]+.gz
+Archive = @logdir@/npcd.log.[0-9]+
+Archive = @logdir@/npcd.log.[0-9]+.gz
 
 
 *ApplyEuroDate =

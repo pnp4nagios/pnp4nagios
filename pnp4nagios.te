@@ -1,0 +1,28 @@
+#        type var_log_t;
+#allow httpd_t var_log_t:file { open getattr read write map };
+
+module pnp4nagios 1.0;
+
+require {
+        type httpd_log_t;
+        type nagios_t;
+        type nagios_etc_t;
+	type nagios_spool_t;
+	type nagios_log_t;
+        type nagios_var_lib_t;
+	type httpd_t;
+	class dir { add_name create read write };
+	class file { getattr create open read write map setattr lock };
+}
+allow httpd_t nagios_log_t:file { getattr setattr create read write open map };
+allow httpd_t nagios_log_t:dir { add_name read write };
+allow httpd_t httpd_log_t:file { read open getattr write map };
+allow httpd_t nagios_var_lib_t:file { getattr read write open map };
+allow httpd_t nagios_spool_t:file { getattr open read map lock };
+allow httpd_t nagios_spool_t:dir { read };
+allow nagios_t nagios_spool_t:dir { create read write add_name };
+allow nagios_t nagios_var_lib_t:file { getattr read write open map };
+allow nagios_t nagios_etc_t:file { getattr read open map };
+
+
+

@@ -1,4 +1,8 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
 /**
  * @package  Pagination
  *
@@ -16,10 +20,10 @@
  */
 $config['default'] = array
 (
-	'directory'      => 'pagination',
-	'style'          => 'classic',
-	'uri_segment'    => 3,
-	'query_string'   => '',
-	'items_per_page' => 20,
-	'auto_hide'      => FALSE,
+    'directory'      => 'pagination',
+    'style'          => 'classic',
+    'uri_segment'    => 3,
+    'query_string'   => '',
+    'items_per_page' => 20,
+    'auto_hide'      => false,
 );

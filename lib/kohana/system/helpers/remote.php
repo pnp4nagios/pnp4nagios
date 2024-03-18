@@ -1,4 +1,12 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
+
 /**
  * Remote url/file helper.
  *
@@ -9,58 +17,57 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-class remote_Core {
+class remote_Core
+{
+    public static function status($url)
+    {
+        if (! valid::url($url, 'http')) {
+            return false;
+        }
 
-	public static function status($url)
-	{
-		if ( ! valid::url($url, 'http'))
-			return FALSE;
+        // Get the hostname and path
+        $url = parse_url($url);
 
-		// Get the hostname and path
-		$url = parse_url($url);
+        if (empty($url['path'])) {
+            // Request the root document
+            $url['path'] = '/';
+        }
 
-		if (empty($url['path']))
-		{
-			// Request the root document
-			$url['path'] = '/';
-		}
+        // Open a remote connection
+        $remote = fsockopen($url['host'], 80, $errno, $errstr, 5);
 
-		// Open a remote connection
-		$remote = fsockopen($url['host'], 80, $errno, $errstr, 5);
+        if (! is_resource($remote)) {
+            return false;
+        }
 
-		if ( ! is_resource($remote))
-			return FALSE;
+        // Set CRLF
+        $CRLF = "\r\n";
 
-		// Set CRLF
-		$CRLF = "\r\n";
+        // Send request
+        fwrite($remote, 'HEAD ' . $url['path'] . ' HTTP/1.0' . $CRLF);
+        fwrite($remote, 'Host: ' . $url['host'] . $CRLF);
+        fwrite($remote, 'Connection: close' . $CRLF);
+        fwrite($remote, 'User-Agent: Kohana Framework (+http://kohanaphp.com/)' . $CRLF);
 
-		// Send request
-		fwrite($remote, 'HEAD '.$url['path'].' HTTP/1.0'.$CRLF);
-		fwrite($remote, 'Host: '.$url['host'].$CRLF);
-		fwrite($remote, 'Connection: close'.$CRLF);
-		fwrite($remote, 'User-Agent: Kohana Framework (+http://kohanaphp.com/)'.$CRLF);
+        // Send one more CRLF to terminate the headers
+        fwrite($remote, $CRLF);
 
-		// Send one more CRLF to terminate the headers
-		fwrite($remote, $CRLF);
+        while (! feof($remote)) {
+            // Get the line
+            $line = trim(fgets($remote, 512));
 
-		while ( ! feof($remote))
-		{
-			// Get the line
-			$line = trim(fgets($remote, 512));
+            if ($line !== '' and preg_match('#^HTTP/1\.[01] (\d{3})#', $line, $matches)) {
+                // Response code found
+                $response = (int) $matches[1];
 
-			if ($line !== '' AND preg_match('#^HTTP/1\.[01] (\d{3})#', $line, $matches))
-			{
-				// Response code found
-				$response = (int) $matches[1];
+                break;
+            }
+        }
 
-				break;
-			}
-		}
+        // Close the connection
+        fclose($remote);
 
-		// Close the connection
-		fclose($remote);
-
-		return isset($response) ? $response : FALSE;
-	}
-
-} // End remote
+        return isset($response) ? $response : false;
+    }
+}
+// End remote

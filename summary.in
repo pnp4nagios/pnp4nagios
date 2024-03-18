@@ -4,7 +4,7 @@
 my %conf = (
     VERSION           => "@PACKAGE_VERSION@",
     USE_RRDs          => "@RRDS@",
-    DEBUG_LEVEL       => "@DEBUG@",
+    DEBUG_LEVEL       => "@DEBUG_LEVEL@",
     PERL_LIB_PATH     => "@PERL_LIB_PATH@"
 );
 
@@ -38,6 +38,9 @@ printf ("  General Options:\n");
 printf ("  -------------------------         -------------------\n");
 printf ("  Nagios user/group:                %s %s\n","@nagios_user@","@nagios_grp@");
 printf ("  Install directory:                %s\n","@prefix@");
+printf ("  SELINUX enabled:                  %s\n","@SELINUX@");
+printf ("  Nagios cfg file:                  %s\n","@NAGIOS_CFG@");
+printf ("  Nagios version                    %s\n","@NAGIOS_VER@");
 printf ("  HTML Dir:                         %s\n","@datarootdir@");
 printf ("  Config Dir:                       %s\n","@sysconfdir@");
 printf ("  Location of rrdtool binary:       %s\n",$rrdtool_message);
@@ -50,8 +53,8 @@ printf ("  Perfdata files (NPCD) stored in:  %s\n","@PERFDATA_SPOOL_DIR@");
 printf ("\n");
 printf ("  Web Interface Options:\n");
 printf ("  -------------------------         -------------------\n");
-printf ("  HTML URL:                         %s\n","http://localhost@BASE_URL@");
-printf ("  Apache Config File:               %s\n","@HTTPD_CONF@/@PACKAGE_NAME@.conf");
+printf ("  HTML URL:                         %s\n","http://localhost@PNP_URL@");
+printf ("  HTTP server config File:          %s\n","@HTTP_CONFDIR@/@PACKAGE_NAME@.conf");
 if( $#ARGV == -1){
 printf ("\n\n"); 
 printf ("  Review the options above for accuracy.  If they look okay,\n");
@@ -72,7 +75,7 @@ if($conf{DEBUG_LEVEL} != 0){
     printf ("\n\n");
     printf ("  Found PERL at:                    %s\n","@PERL@");
     printf ("  Found SHELL at:                   %s\n","@SHELL@");
-    printf ("  Debug Level:                      %s\n","@DEBUG@");
+    printf ("  Debug Level:                      %s\n","@DEBUG_LEVEL@");
     printf ("  Libexecdir:                       %s\n","@libexecdir@");
     printf ("  localstatedir:                    %s\n","@localstatedir@");
     printf ("  libdir:                           %s\n","@libdir@");

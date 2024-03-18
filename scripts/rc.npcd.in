@@ -16,12 +16,10 @@
 #
 
 servicename=@npcd_name@
-prefix=@prefix@
-exec_prefix=${prefix}
 NpcdBin=@bindir@/@npcd_name@
-NpcdCfgFile=@sysconfdir@/npcd.cfg
+NpcdCfgFile=@pkgsysconfdir@/npcd.cfg
 NpcdVarDir=@localstatedir@
-NpcdRunFile=/run/nagios/npcd.pid
+NpcdRunFile=@piddir@/npcd.pid
 NpcdLockDir=/var/lock/subsys
 NpcdLockFile=@npcd_name@
 NpcdUser=@nagios_user@

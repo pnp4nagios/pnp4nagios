@@ -1,4 +1,11 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
 /**
  * Kohana event subject. Uses the SPL observer pattern.
  *
@@ -9,59 +16,59 @@
  * @copyright  (c) 2007-2008 Kohana Team
  * @license    http://kohanaphp.com/license.html
  */
-abstract class Event_Subject implements SplSubject {
+abstract class Event_Subject implements SplSubject
+{
+    // Attached subject listeners
+    protected $listeners = array();
 
-	// Attached subject listeners
-	protected $listeners = array();
+    /**
+     * Attach an observer to the object.
+     *
+     * @chainable
+     * @param   object  Event_Observer
+     * @return  object
+     */
+    public function attach(SplObserver $obj)
+    {
+        if (! ($obj instanceof Event_Observer)) {
+            throw new Kohana_Exception('eventable.invalid_observer', get_class($obj), get_class($this));
+        }
 
-	/**
-	 * Attach an observer to the object.
-	 *
-	 * @chainable
-	 * @param   object  Event_Observer
-	 * @return  object
-	 */
-	public function attach(SplObserver $obj)
-	{
-		if ( ! ($obj instanceof Event_Observer))
-			throw new Kohana_Exception('eventable.invalid_observer', get_class($obj), get_class($this));
+        // Add a new listener
+        $this->listeners[spl_object_hash($obj)] = $obj;
 
-		// Add a new listener
-		$this->listeners[spl_object_hash($obj)] = $obj;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Detach an observer from the object.
+     *
+     * @chainable
+     * @param   object  Event_Observer
+     * @return  object
+     */
+    public function detach(SplObserver $obj)
+    {
+        // Remove the listener
+        unset($this->listeners[spl_object_hash($obj)]);
 
-	/**
-	 * Detach an observer from the object.
-	 *
-	 * @chainable
-	 * @param   object  Event_Observer
-	 * @return  object
-	 */
-	public function detach(SplObserver $obj)
-	{
-		// Remove the listener
-		unset($this->listeners[spl_object_hash($obj)]);
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * Notify all attached observers of a new message.
+     *
+     * @chainable
+     * @param   mixed   message string, object, or array
+     * @return  object
+     */
+    public function notify($message)
+    {
+        foreach ($this->listeners as $obj) {
+            $obj->notify($message);
+        }
 
-	/**
-	 * Notify all attached observers of a new message.
-	 *
-	 * @chainable
-	 * @param   mixed   message string, object, or array
-	 * @return  object
-	 */
-	public function notify($message)
-	{
-		foreach ($this->listeners as $obj)
-		{
-			$obj->notify($message);
-		}
-
-		return $this;
-	}
-
-} // End Event Subject
+        return $this;
+    }
+}
+// End Event Subject

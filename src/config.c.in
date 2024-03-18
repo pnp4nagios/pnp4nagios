@@ -63,10 +63,12 @@ void process_configfile(char *config_file) {
 		while (feof(fh_config_file) == 0) {
 			line_number++;
 			temp = fgets(current_config_line, 1024, fh_config_file);
-			temp = NULL;
-			if (current_config_line == NULL) {
-				printf("Error reading config\n");
-				exit(1);
+			if (temp == NULL) {
+                          if (ferror(fh_config_file) != 0) {
+                            printf("Error reading config\n");
+                            exit(1);
+                          }
+                          break; 
 			}
 
 			if (current_config_line[0] == '#' || current_config_line[0] == '\n')
@@ -554,7 +556,7 @@ int prepare_vars() {
 	if (macro_x[CONFIG_OPT_SCANDIR] != NULL) {
 		directory = macro_x[CONFIG_OPT_SCANDIR];
 	} else {
-		directory = "/usr/local/nagios/var/spool/perfdata/";
+		directory = "@PERFDATA_SPOOL_DIR@/";
 		printf(
 				"WARNING - Adapting a hardcoded default perfdata spooldir - '%s'\n",
 				directory);
@@ -563,7 +565,7 @@ int prepare_vars() {
 	if (macro_x[CONFIG_OPT_PIDFILE] != NULL) {
 		pidfile = macro_x[CONFIG_OPT_PIDFILE];
 	} else
-		pidfile = "/run/nagios/npcd.pid";
+		pidfile = "@piddir@/npcd.pid";
 
 	if (macro_x[CONFIG_OPT_LOGLEVEL] != NULL) {
 		loglevel = atoi(macro_x[CONFIG_OPT_LOGLEVEL]);

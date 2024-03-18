@@ -1,4 +1,11 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
+
 /**
  * Graph controller.
  *
@@ -6,8 +13,8 @@
  * @author     Joerg Linge
  * @license    GPL
  */
-class Special_Controller extends System_Controller  {
-
+class Special_Controller extends System_Controller
+{
     public function __construct()
     {
         parent::__construct();
@@ -15,15 +22,17 @@ class Special_Controller extends System_Controller  {
         $this->template->graph = $this->add_view('graph');
         $this->templates       = $this->data->getSpecialTemplates();
         $this->data->GRAPH_TYPE = 'special';
-        if($this->tpl == ''){
-            if($this->templates)
+        if ($this->tpl == '') {
+            if ($this->templates) {
                 $this->tpl = $this->templates[0];
-                url::redirect('special?tpl='.$this->tpl, 302);
+            }
+                url::redirect('special?tpl=' . $this->tpl, 302);
         }
     }
 
-    public function index(){
-	$this->url = "?tpl=".$this->tpl;
+    public function index()
+    {
+        $this->url = "?tpl=" . $this->tpl;
         $this->template->zoom_header   = $this->add_view('zoom_header');
         $this->template->zoom_header->graph_width  = ($this->config->conf['zgraph_width'] + 140);
         $this->template->zoom_header->graph_height = ($this->config->conf['zgraph_height'] + 230);
@@ -38,7 +47,7 @@ class Special_Controller extends System_Controller  {
         $this->template->graph->widget_menu   = $this->add_view('widget_menu');
         $this->template->graph->graph_content->widget_graph  = $this->add_view('widget_graph');
         #print Kohana::debug($services);
-        $this->data->buildDataStruct('__special',$this->tpl,$this->view);
+        $this->data->buildDataStruct('__special', $this->tpl, $this->view);
         $this->template->graph->icon_box      = $this->add_view('icon_box');
         $this->template->graph->icon_box->position = "special";
         $this->template->graph->logo_box      = $this->add_view('logo_box');
@@ -48,5 +57,4 @@ class Special_Controller extends System_Controller  {
         $this->template->graph->header->title        = $this->data->MACRO['TITLE'];
         //print Kohana::debug($this->data);
     }
-
 }

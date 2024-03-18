@@ -1,12 +1,16 @@
 [Unit]
-Description=Nagios Performance Data C Daemon
-After=network.target
+Description=npcd rrd processor for pnp4nagios
+Documentation=https://github.com/pnp4nagios/docs
+After=network.target local-fs.target
 
 [Service]
-Type=simple
+Type=exec
 User=@nagios_user@
 Group=@nagios_grp@
-ExecStart=@bindir@/@npcd_name@ -f @sysconfdir@/npcd.cfg
+PIDFile=@piddir@/npcd.pid
+Environment="CONFIG_FILE=@pkgsysconfdir@/npcd.cfg"
+ExecStart=@bindir@/npcd -f ${CONFIG_FILE}
+#ExecStop=/bin/kill -s QUIT $MAINPID
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=@NAGIOS_UNIT@.service

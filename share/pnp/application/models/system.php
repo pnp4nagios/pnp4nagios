@@ -1,14 +1,19 @@
-<?php defined('SYSPATH') OR die('No direct access allowed.');
+<?php
+
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+// phpcs:disable PSR1.Files.SideEffects
+defined('SYSPATH') or die('No direct access allowed.');
+// phpcs:enable PSR1.Files.SideEffects
+// phpcs:disable Squiz.Classes.ValidClassName.NotCamelCaps
 
 /**
- * Retrieves the PNP config files 
+ * Retrieves the PNP config files
  */
-class System_Model extends Model {
+class System_Model extends Model
+{
+    public $ERROR = null;
 
-    public $ERROR = NULL;
-
-    public function __construct() {
-
+    public function __construct()
+    {
     }
-
 }

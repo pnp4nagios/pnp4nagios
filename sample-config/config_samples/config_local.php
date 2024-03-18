@@ -1,0 +1,5 @@
+<?php
+
+#
+# local config info
+#
