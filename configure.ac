@@ -132,10 +132,6 @@ AC_SUBST(PERL_LIB_PATH)
 #
 # Checking for Perl Modules
 #
-foo=`$PERL -V`
-AC_MSG_RESULT($foo)
-bar=`rpm -qa`
-AC_MSG_RESULT($bar)
 
 AC_MSG_CHECKING(for Perl Module Time::HiRes)
 $PERL -MTime::HiRes -e exit >/dev/null 2>&1
@@ -675,9 +671,9 @@ AC_ARG_WITH(http_group,[  --with-http_group=<grp> sets group name for http serve
 HTTP_USER=${http_user}
 HTTP_GROUP=${http_group}
 
-if test x${HTTP_USER} = xno ; then
+if test x${HTTP_USER} = xno -o x${HTTP_USER} = x ; then
     AC_MSG_ERROR(http_user not defined)
-elif test x${HTTP_GROUP} = xno ; then
+elif test x${HTTP_GROUP} = xno -o x${HTTP_GROUP} = x ; then
     AC_MSG_ERROR(http_group not defined)
 fi
 
