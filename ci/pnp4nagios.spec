@@ -146,7 +146,7 @@ install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
 #
 #mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
-#sed 's|/usr/local/nagios/etc/htpasswd.users|@NAGIOS_PWD@|' \
+#sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
 #   sample-config/httpd.conf \
 #   > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
 install -Dp -m 0644 scripts/npcd.service \

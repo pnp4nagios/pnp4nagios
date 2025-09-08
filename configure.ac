@@ -102,6 +102,8 @@ AC_PROG_SED
 AC_PROG_LN_S
 AC_PATH_PROG(CP,cp)
 AC_PATH_PROG(PERL,perl)
+AC_PATH_PROG(PHP,php)
+AC_PATH_PROG(PHPCONFIG,php-config)
 
 eval sbindir=$sbindir
 
@@ -123,6 +125,48 @@ AC_ARG_WITH(libdir,[ --with-libdir=<$libdir> pnp4nagios libs are kept ],
         libdir=$withval
         )
 AC_SUBST(libdir)
+
+AC_MSG_CHECKING(php installed)
+if test x${PHP} = x ; then
+   AC_MSG_RESULT(no)
+   AC_MSG_ERROR(php not found, needs installed?)
+else
+   AC_MSG_RESULT(yes)
+fi
+AC_MSG_CHECKING(php-config)
+if test x${PHPCONFIG} = x ; then
+   AC_MSG_RESULT(no)
+   AC_MSG_ERROR(php-config not found, needs installed?)
+else
+   AC_MSG_RESULT(yes)
+fi
+
+phplib=$(${PHPCONFIG} --extension-dir)
+AC_MSG_CHECKING(for php mbstring)
+if test -e "${phplib}/mbstring.so" ; then
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
+   AC_MSG_ERROR(php mbstring not found, needs installed?)
+fi               
+
+AC_MSG_CHECKING(for php xml)
+if test -e "${phplib}/xml.so" ; then
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
+   AC_MSG_ERROR(php xml not found, needs installed?)
+fi               
+
+AC_MSG_CHECKING(for php gd)
+if test -e "${phplib}/gd.so" ; then
+   AC_MSG_RESULT(yes)
+else
+   AC_MSG_RESULT(no)
+   AC_MSG_ERROR(php xml not found, needs installed?)
+fi               
+
+
 
 # Check for Perl lib path
 PERL_LIB_PATH=no

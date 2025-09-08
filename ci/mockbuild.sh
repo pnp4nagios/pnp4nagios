@@ -40,5 +40,5 @@ mock -v -r $config \
      --spec=${NAME}.spec \
      --sources=${NAME}-${VERSION}.tgz --resultdir=./outputs -N
 
-
+rm ${NAME}.spec.base
 ls -lR .

@@ -691,6 +691,8 @@ KOHANA_SYSTEM
 KOHANA
 RRDS
 PERL_LIB_PATH
+PHPCONFIG
+PHP
 PERL
 CP
 LN_S
@@ -5731,6 +5733,96 @@ printf "%s\n" "no" >&6; }
 fi
 
 
+# Extract the first word of "php", so it can be a program name with args.
+set dummy php; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_PHP+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $PHP in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PHP="$PHP" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_PHP="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PHP=$ac_cv_path_PHP
+if test -n "$PHP"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PHP" >&5
+printf "%s\n" "$PHP" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+# Extract the first word of "php-config", so it can be a program name with args.
+set dummy php-config; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_path_PHPCONFIG+y}
+then :
+  printf %s "(cached) " >&6
+else $as_nop
+  case $PHPCONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_PHPCONFIG="$PHPCONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_path_PHPCONFIG="$as_dir$ac_word$ac_exec_ext"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+  ;;
+esac
+fi
+PHPCONFIG=$ac_cv_path_PHPCONFIG
+if test -n "$PHPCONFIG"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PHPCONFIG" >&5
+printf "%s\n" "$PHPCONFIG" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
 
 eval sbindir=$sbindir
 
@@ -5763,6 +5855,63 @@ fi
 
 
 
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking php installed" >&5
+printf %s "checking php installed... " >&6; }
+if test x${PHP} = x ; then
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   as_fn_error needs installed? "php not found" "$LINENO" 5
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking php-config" >&5
+printf %s "checking php-config... " >&6; }
+if test x${PHPCONFIG} = x ; then
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   as_fn_error needs installed? "php-config not found" "$LINENO" 5
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+fi
+
+phplib=$(${PHPCONFIG} --extension-dir)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for php mbstring" >&5
+printf %s "checking for php mbstring... " >&6; }
+if test -e "${phplib}/mbstring.so" ; then
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   as_fn_error needs installed? "php mbstring not found" "$LINENO" 5
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for php xml" >&5
+printf %s "checking for php xml... " >&6; }
+if test -e "${phplib}/xml.so" ; then
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   as_fn_error needs installed? "php xml not found" "$LINENO" 5
+fi
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for php gd" >&5
+printf %s "checking for php gd... " >&6; }
+if test -e "${phplib}/gd.so" ; then
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+else
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+   as_fn_error needs installed? "php xml not found" "$LINENO" 5
+fi
+
+
+
 # Check for Perl lib path
 PERL_LIB_PATH=no
 
@@ -5779,12 +5928,6 @@ fi
 #
 # Checking for Perl Modules
 #
-foo=`$PERL -V`
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $foo" >&5
-printf "%s\n" "$foo" >&6; }
-bar=`rpm -qa`
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $bar" >&5
-printf "%s\n" "$bar" >&6; }
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Perl Module Time::HiRes" >&5
 printf %s "checking for Perl Module Time::HiRes... " >&6; }
@@ -7693,9 +7836,9 @@ fi
 HTTP_USER=${http_user}
 HTTP_GROUP=${http_group}
 
-if test x${HTTP_USER} = xno ; then
+if test x${HTTP_USER} = xno -o x${HTTP_USER} = x ; then
     as_fn_error $? "http_user not defined" "$LINENO" 5
-elif test x${HTTP_GROUP} = xno ; then
+elif test x${HTTP_GROUP} = xno -o x${HTTP_GROUP} = x ; then
     as_fn_error $? "http_group not defined" "$LINENO" 5
 fi
 

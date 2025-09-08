@@ -993,8 +993,8 @@ sub _parse {
     #
     if ( $p{warning} && $p{warning} =~ /^([\d\.\-~@]+)?:([\d\.\-~@]+)?$/ ) {
         print_log( "DEBUG: Processing warning ranges ( $p{warning} )", 3 );
-        $p{warning_min} = $1;
-        $p{warning_max} = $2;
+        $p{warning_min} = $1 || '';
+        $p{warning_max} = $2 || '';
         delete( $p{warning} );
         if ( $p{warning_min} =~ /^@/ ) {
             $p{warning_min} =~ s/@//;
@@ -1006,8 +1006,8 @@ sub _parse {
     }
     if ( $p{critical} && $p{critical} =~ /^([\d\.\-~@]+)?:([\d\.\-~@]+)?$/ ) {
         print_log( "DEBUG: Processing critical ranges ( $p{critical} )", 3 );
-        $p{critical_min} = $1;
-        $p{critical_max} = $2;
+        $p{critical_min} = $1 || '';
+        $p{critical_max} = $2 || '';
         delete( $p{critical} );
         if ( $p{critical_min} =~ /^@/ ) {
             $p{critical_min} =~ s/@//;

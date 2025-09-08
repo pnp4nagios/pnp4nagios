@@ -15,6 +15,8 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 class Mobile_Controller extends System_Controller
 {
+    public $is_authorized  = '';
+
     public function __construct()
     {
         parent::__construct();
