@@ -129,14 +129,14 @@ AC_SUBST(libdir)
 AC_MSG_CHECKING(php installed)
 if test x${PHP} = x ; then
    AC_MSG_RESULT(no)
-   AC_MSG_ERROR(php not found, needs installed?)
+   AC_MSG_ERROR([php not found, needs installed?])
 else
    AC_MSG_RESULT(yes)
 fi
 AC_MSG_CHECKING(php-config)
 if test x${PHPCONFIG} = x ; then
    AC_MSG_RESULT(no)
-   AC_MSG_ERROR(php-config not found, needs installed?)
+   AC_MSG_ERROR([php-config not found, needs php-devel installed?])
 else
    AC_MSG_RESULT(yes)
 fi
@@ -147,7 +147,7 @@ if test -e "${phplib}/mbstring.so" ; then
    AC_MSG_RESULT(yes)
 else
    AC_MSG_RESULT(no)
-   AC_MSG_ERROR(php mbstring not found, needs installed?)
+   AC_MSG_ERROR([php mbstring not found, needs installed?])
 fi               
 
 AC_MSG_CHECKING(for php xml)
@@ -155,7 +155,7 @@ if test -e "${phplib}/xml.so" ; then
    AC_MSG_RESULT(yes)
 else
    AC_MSG_RESULT(no)
-   AC_MSG_ERROR(php xml not found, needs installed?)
+   AC_MSG_ERROR([php xml not found, needs installed?])
 fi               
 
 AC_MSG_CHECKING(for php gd)
@@ -163,7 +163,7 @@ if test -e "${phplib}/gd.so" ; then
    AC_MSG_RESULT(yes)
 else
    AC_MSG_RESULT(no)
-   AC_MSG_ERROR(php xml not found, needs installed?)
+   AC_MSG_ERROR([php xml not found, needs installed?])
 fi               
 
 
@@ -181,7 +181,7 @@ AC_MSG_CHECKING(for Perl Module Time::HiRes)
 $PERL -MTime::HiRes -e exit >/dev/null 2>&1
 if test $? -ne 0; then
     AC_MSG_RESULT(no)
-    AC_MSG_ERROR(Perl Module Time::HiRes not available)
+    AC_MSG_ERROR([Perl Module Time::HiRes not available])
 else
     AC_MSG_RESULT(yes)
 fi
@@ -190,7 +190,7 @@ AC_MSG_CHECKING(for Perl Module Getopt::Long)
 $PERL -MGetopt::Long -e exit >/dev/null 2>&1
 if test $? -ne 0; then
     AC_MSG_RESULT(no)
-    AC_MSG_ERROR(Perl Module Getopt::Long not available)
+    AC_MSG_ERROR([Perl Module Getopt::Long not available])
 else
     AC_MSG_RESULT(yes)
 fi
@@ -646,7 +646,7 @@ if test "x${http_base}" = xno ; then
 fi
 
 if test "x$http_base" = "xno" ; then
-   AC_MSG_ERROR(http server base directory not found)
+   AC_MSG_ERROR([http server base directory not found])
 fi
 
 if test "x$HTTP_CONFDIR" = x ; then
@@ -716,9 +716,9 @@ HTTP_USER=${http_user}
 HTTP_GROUP=${http_group}
 
 if test x${HTTP_USER} = xno -o x${HTTP_USER} = x ; then
-    AC_MSG_ERROR(http_user not defined)
+    AC_MSG_ERROR([http_user not defined])
 elif test x${HTTP_GROUP} = xno -o x${HTTP_GROUP} = x ; then
-    AC_MSG_ERROR(http_group not defined)
+    AC_MSG_ERROR([http_group not defined])
 fi
 
 AC_SUBST(HTTP_USER)

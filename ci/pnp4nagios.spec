@@ -14,6 +14,7 @@ Source0:        %{name}-%{version}.tgz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires:  autoconf, automake, libtool
+BuildRequires:  php-devel
 Requires:       rrdtool-perl
 Requires:       perl(Time::HiRes)
 Requires:       nagios
@@ -146,7 +147,7 @@ install -m 0644 contrib/fedora/logwatch/conf/logfiles/pnp4nagios.conf \
         $RPM_BUILD_ROOT%{_sysconfdir}/logwatch/conf/logfiles/
 #
 #mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d
-#sed 's|/usr/local/nagios/etc/htpasswd.users|/etc/nagios/passwd|' \
+#sed 's|/usr/local/nagios/etc/htpasswd.users|@NAGIOS_PWD@|' \
 #   sample-config/httpd.conf \
 #   > $RPM_BUILD_ROOT%{_sysconfdir}/httpd/conf.d/%{name}.conf
 install -Dp -m 0644 scripts/npcd.service \
