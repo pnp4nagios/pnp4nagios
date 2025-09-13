@@ -129,7 +129,12 @@ final class Kohana
         }
 
         // Disable notices and "strict" errors
-        $ER = error_reporting(~E_NOTICE & ~E_STRICT);
+        if(PHP_VERSION_ID >= 70400) {
+            $ER = error_reporting(~E_NOTICE);
+        }
+        else {
+            $ER = error_reporting(~E_NOTICE & ~E_STRICT);
+        }
 
         // Set the user agent
         self::$user_agent = ( ! empty($_SERVER['HTTP_USER_AGENT']) ? trim($_SERVER['HTTP_USER_AGENT']) : '');
