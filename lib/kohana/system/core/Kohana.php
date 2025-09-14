@@ -131,8 +131,7 @@ final class Kohana
         // Disable notices and "strict" errors
         if (PHP_VERSION_ID >= 70400) {
             $ER = error_reporting(~E_NOTICE);
-        }
-        else {
+        } else {
             $ER = error_reporting(~E_NOTICE & ~E_STRICT);
         }
 
