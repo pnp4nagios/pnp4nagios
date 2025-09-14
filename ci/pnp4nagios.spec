@@ -4,7 +4,7 @@
 
 Name:           pnp4nagios
 Version:        0.6.27
-Release:        4%{?dist}
+Release:        6%{?dist}
 Summary:        Nagios performance data analysis tool
 
 Group:          Applications/System

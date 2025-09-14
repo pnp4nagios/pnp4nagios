@@ -15,8 +15,8 @@ PKG_VERSION="$PACKAGE_VERSION"
 # release and release_date
 # ...gets overwritten by github release-building
 #        
-PACKAGE_RELEASE="4"
-PKG_REL_DATE="2023-10-15"
+PACKAGE_RELEASE="6"
+PKG_REL_DATE="2025-9-13"
 AC_SUBST(PACKAGE_RELEASE)
 AC_SUBST(PKG_REL_DATE)
 
