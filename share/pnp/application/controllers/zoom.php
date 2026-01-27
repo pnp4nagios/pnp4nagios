@@ -18,6 +18,8 @@ class Zoom_Controller extends System_Controller
 {
     public function __construct()
     {
+        protected int $graph_width;
+        protected int $graph_height;
         parent::__construct();
         $this->template          = $this->add_view('zoom');
         #$this->tpl               = $this->input->get('tpl');
