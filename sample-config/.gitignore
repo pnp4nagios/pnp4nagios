@@ -16,3 +16,6 @@ config_samples/lighttpd.pnp4nagios.conf
 config_samples/nginx.pnp4nagios.conf
 config_samples/apache.pnp4nagios.conf
 config_samples/config.php
+config_samples/nagios-bulk.cfg
+config_samples/nagios-npcd.cfg
+config_samples/nagios-sync.cfg

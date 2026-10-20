@@ -19,6 +19,5 @@ $lang = array
     E_PARSE              => array( 1, 'Syntax-Fehler',        ''),
     E_WARNING            => array( 1, 'Warnung',              ''),
     E_USER_WARNING       => array( 1, 'Warnung',              ''),
-    E_STRICT             => array( 2, 'Strict Mode Error',    ''),
     E_NOTICE             => array( 2, 'Laufzeitfehler',       ''),
 );

@@ -87,8 +87,10 @@ static void start_daemon(const char *log_name, int facility) {
 	/* for core dump handling and better unmounting behavior */
 	/* Its return should not be ignored.
 	 * npcd.c:79: warning: ignoring return value of ‘chdir’ */
-	if (chdir("/") != 0)
+	if (chdir("/") != 0) {
+		printf("%s Could not chdir to /\n", log_name);
 		exit(EXIT_FAILURE);
+	}
 
 	/* change umask to defined value - be independet from parent umask */
 	umask(002);
@@ -126,8 +128,10 @@ int main(int argc, char **argv) {
 
 	load = 0.0;
 
-	if (process_arguments(argc, argv) == EXIT_FAILURE)
+	if (process_arguments(argc, argv) == EXIT_FAILURE) {
+		printf("%s Error processing arguments\n", progname);
 		exit(EXIT_FAILURE);
+	}
 
 	process_configfile(config_file);
 
@@ -149,13 +153,15 @@ int main(int argc, char **argv) {
 		printf("CONFIG_OPT_IDENTMYSELF = %s\n", macro_x[CONFIG_OPT_IDENTMYSELF]);
 		printf("---------------------------\n");
 		if (check_needed_config_options() != 0) {
-			printf("There is an Error! Exiting...\n");
+			printf("There is a configuration error! Exiting...\n");
 			exit(EXIT_FAILURE);
 		}
 	}
 
-	if (prepare_vars() != 0)
+	if (prepare_vars() != 0) {
+		printf("%s Error preparing variables\n", progname);
 		exit(EXIT_FAILURE);
+	}
 	if (loglevel == -1)
 		printf("DEBUG: load_threshold is %s - ('%f')\n",
 				use_load_threshold ? "enabled" : "disabled", load_threshold);
@@ -191,8 +197,13 @@ int main(int argc, char **argv) {
 	}
 
 	/* Try to drop the privileges */
-	if (drop_privileges(user, group) == EXIT_FAILURE)
+	snprintf(buffer, sizeof(buffer) - 1,
+		 "%s Dropping privileges to %s/%s\n", progname, user, group);
+	LOG(0, buffer);
+	if (drop_privileges(user, group) == EXIT_FAILURE) {
+		printf("%s Error dropping privileges\n", progname);
 		exit(EXIT_FAILURE);
+	}
 
 	snprintf(buffer, sizeof(buffer) - 1,
 			"%s Daemon (%s) started with PID=%d\n", progname, PACKAGE_VERSION,
@@ -216,8 +227,12 @@ int main(int argc, char **argv) {
 	/* beginn main loop */
 	while (1) {
 
-		if (chdir(directory) != 0)
+		if (chdir(directory) != 0) {
+			snprintf(buffer, sizeof(buffer) - 1,
+				 "%s Error changing to %s: %s\n", progname, directory, strerror(errno));
+			LOG(0, buffer);
 			exit(EXIT_FAILURE);
+		}
 
 		/* is_file() filter may cause trouble on some systems
 		 * like Solaris or HP-UX that don't have a d-type
