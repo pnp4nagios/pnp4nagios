@@ -1,16 +1,15 @@
 <html>
 <head>
 <?php echo html::stylesheet('media/css/common.css'); ?>
-<?php echo html::stylesheet('media/css/imgareaselect-default.css'); ?>
 <?php echo html::stylesheet('media/css/ui-' . $this->theme . '/jquery-ui.css'); ?>
 <?php echo html::link('media/images/favicon.ico', 'icon', 'image/ico'); ?>
-<?php echo html::script('media/js/jquery-min.js'); ?>
-<?php echo html::script('media/js/jquery.imgareaselect.min.js'); ?>
-<?php echo html::script('media/js/jquery-ui.min.js'); ?>
+<?php echo html::script('media/js/jquery-3.7.1.min.js'); ?>
+<?php echo html::script('media/js/pnp-range-select.js'); ?>
+<?php echo html::script('media/js/jquery-ui-1.14.1.min.js'); ?>
 
 <script type="text/javascript">
 jQuery.noConflict();
-    jQuery(window).load(
+    jQuery(window).on('load',
         function() {
 
         jQuery('div.graph').each(function(){
@@ -23,8 +22,7 @@ jQuery.noConflict();
         });
 
     jQuery('img.goto').css('visibility', 'visible');
-        jQuery('div.graph').imgAreaSelect({ handles: false, autoHide: true,
-            fadeSpeed: 500, onSelectEnd: redirect, minHeight: '<?php echo $this->config->conf['zgraph_height']; ?>' });
+        pnpRangeSelect(document.querySelectorAll('div.graph'), redirect);
 
         function redirect(img, selection) {
             if (!selection.width || !selection.height)

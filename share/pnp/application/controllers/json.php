@@ -15,6 +15,8 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 class Json_Controller extends System_Controller
 {
+    public $hosts = null;
+
     public function __construct()
     {
         parent::__construct();

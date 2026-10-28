@@ -1,6 +1,14 @@
 <?php if ($this->config->conf['use_calendar']) {
-    $start = $this->session->get('start', '');
-    $end   = $this->session->get('end', '');
+    // datetime-local needs Y-m-d\TH:i; session values may be timestamps or free text
+    $fmt = function ($value) {
+        if ($value === '' || $value === false) {
+            return '';
+        }
+        $ts = is_numeric($value) ? (int)$value : strtotime($value);
+        return $ts ? date('Y-m-d\TH:i', $ts) : '';
+    };
+    $start = $fmt($this->session->get('start', ''));
+    $end   = $fmt($this->session->get('end', ''));
     ?>
 <script type="text/javascript">
 jQuery(function() {
@@ -8,13 +16,6 @@ jQuery(function() {
         jQuery("#toggle-timerange").toggle("blind",500);
         return false;
     });
-    jQuery("#dpstart").datetimepicker({ showOn: 'button',
-                buttonImage: '<?php echo url::base(); ?>media/images/view-calendar.png',
-                buttonImageOnly: true, constrainInput: false });
-    jQuery("#dpend").datetimepicker({ showOn: 'button',
-                buttonImage: '<?php echo url::base(); ?>media/images/view-calendar.png',
-                buttonImageOnly: true,
-                constrainInput: false });
 });
 </script>
 
@@ -35,12 +36,10 @@ jQuery(function() {
                 echo '<input type="hidden" name="' . htmlspecialchars($key) . '" value="' . htmlspecialchars($val) . "\">\n";
             }
             ?>
-            <label for=start"><?php echo Kohana::lang('common.start'); ?>: </label>
-<input id="dpstart" type="text" size="18" maxlength="40" name="start" value="
-    <?php echo $start; ?>">
-            <label for=end">
-    <?php echo Kohana::lang('common.end'); ?>: </label>
-     <input id="dpend" type="text" size="18" maxlength="40" name="end" value="<?php echo $end; ?>">
+            <label for="dpstart"><?php echo Kohana::lang('common.start'); ?>: </label>
+<input id="dpstart" type="datetime-local" name="start" value="<?php echo htmlspecialchars($start); ?>">
+            <label for="dpend"><?php echo Kohana::lang('common.end'); ?>: </label>
+     <input id="dpend" type="datetime-local" name="end" value="<?php echo htmlspecialchars($end); ?>">
             <input type="submit" id="submit" class="ui-button ui-state-default ui-corner-all"
      value="<?php echo Kohana::lang('common.timerange-selector-submit-button'); ?>"></input>
             <input type="button" id="remove_timerange_session" class="ui-button ui-state-default ui-corner-all"

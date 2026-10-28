@@ -50,7 +50,17 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/views
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdf
-	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdf/filters
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Math
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/CrossReference
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/Filter
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/Type
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfReader
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfReader/DataStructure
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Tcpdf
+	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Tfpdf
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdf/font
 
 	for file in pnp/documents/_media/*; \
@@ -80,8 +90,38 @@ install:
 	for file in pnp/application/vendor/fpdf/font/*.php; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdf/font; done
 
-	for file in pnp/application/vendor/fpdf/filters/*.php; \
-		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdf/filters; done
+	for file in pnp/application/vendor/fpdi/LICENSE.txt; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi; done
+
+	for file in pnp/application/vendor/fpdi/src/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src; done
+
+	for file in pnp/application/vendor/fpdi/src/Math/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Math; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfParser/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfParser/CrossReference/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/CrossReference; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfParser/Filter/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/Filter; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfParser/Type/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfParser/Type; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfReader/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfReader; done
+
+	for file in pnp/application/vendor/fpdi/src/PdfReader/DataStructure/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/PdfReader/DataStructure; done
+
+	for file in pnp/application/vendor/fpdi/src/Tcpdf/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Tcpdf; done
+
+	for file in pnp/application/vendor/fpdi/src/Tfpdf/*.php; \
+		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/vendor/fpdi/src/Tfpdf; done
 
 	for file in pnp/application/controllers/*.php; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/application/controllers; done
@@ -110,7 +150,6 @@ install:
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/js
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/css
-	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/css/images
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/css/ui-lightness
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/css/ui-lightness/images
 	$(INSTALL) -m 755 $(INSTALL_OPTS) -d $(DESTDIR)$(DATAROOTDIR)/media/css/ui-smoothness
@@ -123,9 +162,6 @@ install:
 
 	for file in pnp/media/css/*.*; \
 		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/media/css; done
-
-	for file in pnp/media/css/images/*.*; \
-		do $(INSTALL) -m 644 $(INSTALL_OPTS) $$file $(DESTDIR)$(DATAROOTDIR)/media/css/images; done
 
 	$(INSTALL) -m 644 $(INSTALL_OPTS) pnp/media/css/shadow.png $(DESTDIR)$(DATAROOTDIR)/media/css
 

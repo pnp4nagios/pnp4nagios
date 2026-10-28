@@ -1,10 +1,113 @@
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    background: #f4f4f4;
+    color: #222;
+}
+div.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    min-height: 44px;
+    background: #333;
+    color: #fff;
+}
+div.header h1 {
+    margin: 0;
+    font-size: 18px;
+}
+div.header a.home {
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: #555;
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+}
+div.content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 12px;
+}
+ul.menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+}
+ul.menu li {
+    border-bottom: 1px solid #ddd;
+}
+ul.menu li:last-child {
+    border-bottom: 0;
+}
+ul.menu li.divider {
+    padding: 6px 12px;
+    background: #e6e6e6;
+    font-weight: bold;
+    font-size: 14px;
+}
+ul.menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    color: #222;
+    text-decoration: none;
+}
+ul.menu li a:active {
+    background: #e8f0fb;
+}
+ul.menu li a img {
+    flex: none;
+}
+input.filter, form.search input[type=search] {
+    width: 100%;
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+form.search button {
+    width: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #333;
+    color: #fff;
+    font-size: 16px;
+}
+div.alert {
+    padding: 12px;
+    border: 1px solid #e0b000;
+    border-radius: 8px;
+    background: #fff6d6;
+}
 div.timerange {
     margin-top: 2px;
-    padding: 2px;
+    padding: 6px 12px;
+    border-radius: 8px 8px 0 0;
+    background: #333;
+    color: #fff;
     font-size: 16px;
 }
 div.datasource {
-    padding: 2px;
+    padding: 6px 12px 12px;
+    border: 1px solid #ccc;
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    background: #fff;
     font-size: 14px;
 }
-
+div.datasource img {
+    max-width: 100%;
+}

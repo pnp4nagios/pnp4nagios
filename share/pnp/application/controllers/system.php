@@ -47,6 +47,8 @@ class System_Controller extends Template_Controller
 
     public $url = '';
 
+    public $is_authorized = null;
+
 
     public function __construct()
     {

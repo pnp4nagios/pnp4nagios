@@ -16,6 +16,9 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 class Zoom_Controller extends System_Controller
 {
+    public $graph_height = null;
+    public $graph_width = null;
+
     public function __construct()
     {
         parent::__construct();

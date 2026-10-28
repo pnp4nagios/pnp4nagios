@@ -15,6 +15,8 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 class Special_Controller extends System_Controller
 {
+    public $templates = null;
+
     public function __construct()
     {
         parent::__construct();

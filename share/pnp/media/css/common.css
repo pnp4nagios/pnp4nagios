@@ -33,6 +33,20 @@ img.icon {
 
 div.graph {
 	background: url(../images/1x1.gif);
+	overflow: hidden;
+	touch-action: pan-y;
+	user-select: none;
+}
+
+div.pnp-range-select {
+	position: absolute;
+	top: 0;
+	height: 100%;
+	box-sizing: border-box;
+	border: 1px dashed #fff;
+	outline: 1px solid #000;
+	box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+	transition: opacity 0.5s;
 }
 
 div.right {
@@ -176,18 +190,6 @@ pre.code, pre.file {
 #basket_items li { 
     margin: 0px 2px 2px 2px; height: 16px; 
 }
-
-img.ui-datepicker-trigger {
-  position:relative;
-  bottom:-6px; 
-}
-
-.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
-.ui-timepicker-div dl { text-align: left; }
-.ui-timepicker-div dl dt { height: 25px; }
-.ui-timepicker-div dl dd { margin: -25px 10px 10px 65px; }
-.ui-timepicker-div td { font-size: 90%; }
-.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
 
 ul.colorscheme{
     list-style: none;

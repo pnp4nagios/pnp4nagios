@@ -95,7 +95,7 @@ class Pdf_Controller extends System_Controller
         $pdf->AddPage();
         if ($this->use_bg) {
                 $pdf->setSourceFile($this->bg);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
+                $tplIdx = $pdf->importPage(1, \setasign\Fpdi\PdfReader\PageBoundaries::MEDIA_BOX);
                 $pdf->useTemplate($tplIdx);
         }
         $pdf->SetCreator('Created with PNP');
@@ -179,7 +179,7 @@ class Pdf_Controller extends System_Controller
         $pdf->AddPage();
         if ($this->use_bg) {
                 $pdf->setSourceFile($this->bg);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
+                $tplIdx = $pdf->importPage(1, \setasign\Fpdi\PdfReader\PageBoundaries::MEDIA_BOX);
                 $pdf->useTemplate($tplIdx);
         }
 
@@ -240,7 +240,7 @@ class Pdf_Controller extends System_Controller
         $pdf->AddPage();
         if ($this->use_bg) {
                 $pdf->setSourceFile($this->config->conf['background_pdf']);
-                $tplIdx = $pdf->importPage(1, '/MediaBox');
+                $tplIdx = $pdf->importPage(1, \setasign\Fpdi\PdfReader\PageBoundaries::MEDIA_BOX);
                 $pdf->useTemplate($tplIdx);
         }
 
@@ -285,11 +285,11 @@ class Pdf_Controller extends System_Controller
 */
 // phpcs:disable PSR1.Files.SideEffects
 require Kohana::find_file('vendor/fpdf', 'fpdf');
-require Kohana::find_file('vendor/fpdf', 'fpdi');
+require Kohana::find_file('vendor/fpdi/src', 'autoload');
 // phpcs:enable PSR1.Files.SideEffects
 // phpcs:disable PSR1.Classes.ClassDeclaration.MultipleClasses
 
-class PDF extends FPDI
+class PDF extends \setasign\Fpdi\Fpdi
 {
         //Page header
     public function Header()

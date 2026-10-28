@@ -9,16 +9,14 @@
     echo html::specialchars($this->title);
        } ?></title>
 <?php echo html::stylesheet('media/css/common.css') ?>
-<?php echo html::stylesheet('media/css/imgareaselect-default.css') ?>
 <?php echo html::stylesheet('media/css/ui-' . $this->theme . '/jquery-ui.css') ?>
 <?php echo html::link('media/images/favicon.ico', 'icon', 'image/ico') ?>
-<?php echo html::script('media/js/jquery-min.js')?>
-<?php echo html::script('media/js/jquery.imgareaselect.min.js')?>
-<?php echo html::script('media/js/jquery-ui.min.js')?>
-<?php echo html::script('media/js/jquery-ui-timepicker-addon.js')?>
+<?php echo html::script('media/js/jquery-3.7.1.min.js')?>
+<?php echo html::script('media/js/pnp-range-select.js')?>
+<?php echo html::script('media/js/jquery-ui-1.14.1.min.js')?>
 <script type="text/javascript">
 jQuery.noConflict();
-jQuery(window).load(
+jQuery(window).on('load',
     function() {
 
     jQuery('div.graph').each(function(){
@@ -31,8 +29,7 @@ jQuery(window).load(
     });
 
     jQuery('img.goto').css('visibility', 'visible');
-    jQuery('div.graph').imgAreaSelect({ handles: false, autoHide: true,
-        fadeSpeed: 500, onSelectEnd: redirect, minHeight: '<?php echo $this->config->conf['graph_height'] ?>' });
+    pnpRangeSelect(document.querySelectorAll('div.graph'), redirect);
 
     function redirect(img, selection) {
         if (!selection.width || !selection.height)
@@ -70,7 +67,7 @@ jQuery(window).load(
 jQuery(document).ready(function(){
     var path = "<?php echo url::base(true) . "/"?>";
     jQuery("img").fadeIn(1500);
-    jQuery("#basket_action_add a").live("click", function(){
+    jQuery(document).on("click", "#basket_action_add a", function(){
         var item = (this.id)
         var token = "<?php echo $this->session->get('csrf_token') ?>"
         jQuery.ajax({
@@ -83,7 +80,7 @@ jQuery(document).ready(function(){
             }
         });
     });
-    jQuery("#basket-clear").live("click", function(){
+    jQuery(document).on("click", "#basket-clear", function(){
         jQuery.ajax({
             type: "POST",
             url: path + "ajax/basket/clear",
@@ -92,10 +89,10 @@ jQuery(document).ready(function(){
             }
         });
     });
-    jQuery("#basket-show").live("click", function(){
+    jQuery(document).on("click", "#basket-show", function(){
                 window.location.href = path + 'page/basket'
     });
-    jQuery(".basket_action_remove a").live("click", function(){
+    jQuery(document).on("click", ".basket_action_remove a", function(){
         var item = (this.id)
         var token = "<?php echo $this->session->get('csrf_token') ?>"
         jQuery.ajax({

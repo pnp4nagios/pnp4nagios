@@ -1,4 +1,4 @@
-<div data-role="content" data-inset="true">
+<div class="content">
 <?php
 
 if ($this->data->MACRO['TITLE']) {
@@ -16,8 +16,8 @@ foreach ($this->data->STRUCT as $d) {
 // close last div
             print "</div>\n";
         }
-        printf("<div class=\"timerange ui-bar-b ui-corner-top\">%s</div>\n", $d['TIMERANGE']['title']);
-        printf("<div class=\"datasource ui-bar-c ui-corner-bottom\">%s\n", $d['ds_name']);
+        printf("<div class=\"timerange\">%s</div>\n", $d['TIMERANGE']['title']);
+        printf("<div class=\"datasource\">%s\n", $d['ds_name']);
         printf(
             '<div><img style="max-width: 100%%" src="' . url::base(true) . "image?tpl=%s&view=%s&source=%s\"></div>\n",
             $this->tpl,

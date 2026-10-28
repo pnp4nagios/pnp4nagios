@@ -1,36 +1,34 @@
 <?php
 if ($this->is_authorized == false) {
     ?>
-<div data-role="content">
-<ul data-role="listview" data-inset="true" data-theme="e">
-<li><strong>Alert:&nbsp;</strong><?php echo Kohana::lang('error.not_authorized')?></li>
-</ul>
-</div><!-- /content -->
+<div class="content">
+<div class="alert"><strong>Alert:&nbsp;</strong><?php echo Kohana::lang('error.not_authorized')?></div>
+</div>
     <?php
     return;
 }
 ?>
 
-<div data-role="content">
-<ul data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+<div class="content">
+<ul class="menu">
 <?php
 foreach ($services as $key => $service) {
     if ($key == 0) {
-        printf("<li data-role=\"list-divider\">%s</li>\n", $service['hostname']);
+        printf("<li class=\"divider\">%s</li>\n", htmlspecialchars($service['hostname']));
     }
 
      printf(
          "<li><a href=\"" . url::base(true) .
-             "mobile/graph/%s/%s\" data-transition=\"pop\"><img src=\"" .
+             "mobile/graph/%s/%s\"><img src=\"" .
              url::base(true) .
              "image?host=%s&srv=%s&h=80&w=80&view=1\">%s</a></li>",
          urlencode($service['hostname']),
          urlencode($service['name']),
          urlencode($service['hostname']),
          urlencode($service['name']),
-         $service['servicedesc']
+         htmlspecialchars($service['servicedesc'])
      );
 }
 ?>
 </ul>
-</div><!-- /content -->
+</div>

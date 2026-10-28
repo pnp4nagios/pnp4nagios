@@ -10,8 +10,8 @@
 <?php echo html::stylesheet('media/css/common.css'); ?>
 <?php echo html::stylesheet('media/css/ui-' . Kohana::config('core.theme') . '/jquery-ui.css'); ?>
 <?php echo html::link('media/images/favicon.ico', 'icon', 'image/ico'); ?>
-<?php echo html::script('media/js/jquery-min.js'); ?>
-<?php echo html::script('media/js/jquery-ui.min.js'); ?>
+<?php echo html::script('media/js/jquery-3.7.1.min.js'); ?>
+<?php echo html::script('media/js/jquery-ui-1.14.1.min.js'); ?>
 <style type="text/css">
 <?php
 // include Kohana::find_file('views', 'kohana_errors', FALSE, 'css')

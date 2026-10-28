@@ -1,14 +1,16 @@
-<div data-role="content">
-<ul data-filter="true" data-role="listview" data-inset="true" data-theme="c" data-dividertheme="b">
+<div class="content">
+<input type="search" class="filter" placeholder="Filter">
+<ul class="menu">
 <?php
 $l = '';
 foreach ($hosts as $host) {
     if (substr($host['name'], 0, 1) != $l) {
-        printf("<li data-role=\"list-divider\">%s</li>\n", strtoupper(substr($host['name'], 0, 1)));
+        printf("<li class=\"divider\">%s</li>\n", htmlspecialchars(strtoupper(substr($host['name'], 0, 1))));
     }
-    printf("<li><a href=\"" . url::base(true) . "mobile/host/%s\" data-transition=\"pop\">%s</a></li>", $host['name'], $host['name']);
+    $name = htmlspecialchars($host['name']);
+    printf("<li><a href=\"" . url::base(true) . "mobile/host/%s\">%s</a></li>", $name, $name);
     $l = substr($host['name'], 0, 1);
 }
 ?>
 </ul>
-</div><!-- /content -->
+</div>

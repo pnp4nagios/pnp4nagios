@@ -15,6 +15,9 @@ defined('SYSPATH') or die('No direct access allowed.');
  */
 class Mobile_Controller extends System_Controller
 {
+    public $page = null;
+    public $result = null;
+
     public function __construct()
     {
         parent::__construct();
